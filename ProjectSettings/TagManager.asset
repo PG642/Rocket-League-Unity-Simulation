@@ -3,7 +3,15 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground
+  - CarCameraTarget
+  - BodyCollider
+  - SphereCollider
+  - Ball
+  - Boundary
+  - Enemy
+  - Map
   layers:
   - Default
   - TransparentFX
@@ -13,11 +21,11 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Vehicle
+  - Ground
+  - Map
+  - Spheres
+  - Hitbox
   - 
   - 
   - 
