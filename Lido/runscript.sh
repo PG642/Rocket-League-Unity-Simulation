@@ -5,7 +5,8 @@
 #SBATCH --partition=short
 #SBATCH --time=02:00:00
 #SBATCH --job-name=ml-agents-job
-#SBATCH --mail-user=smttroet@tu-dortmund.de
+#ADD MAIL
+#SBATCH --mail-user=
 #SBATCH --mail-type=ALL
 #SBATCH --output=airdribble.log
 #SBATCH --signal=B:SIGINT@90
