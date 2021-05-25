@@ -14,12 +14,12 @@ public class ShootBall : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         Vector3 targetPos = Target.position;
-        ShootTarget(targetPos);
+        ShootTarget();
     }
 
-    public void ShootTarget(Vector3 targetPos)
+    public void ShootTarget()
     {
-        Vector3 dir = targetPos - transform.position;
+        Vector3 dir = Target.position - transform.position;
         _rb.velocity = dir.normalized * (Random.Range(speed.x, speed.y));
     }
 }
