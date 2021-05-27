@@ -11,7 +11,7 @@ public class GoalKeeperAgent : Agent
 
     private Rigidbody _rb, _rbBall;
 
-    private float _episodeLength = 5f;
+    private float _episodeLength = 10f;
     private float _lastResetTime;
 
     private Transform _ball;
@@ -23,7 +23,7 @@ public class GoalKeeperAgent : Agent
     private CubeGroundControl _groundControl;
     private CubeAirControl _airControl;
 
-    private GoalController _goalController;
+    private MapData _mapData;
 
     public InputManager InputManager;
     void Start()
@@ -42,7 +42,7 @@ public class GoalKeeperAgent : Agent
         _rbBall = _ball.GetComponent<Rigidbody>();
 
         _target = transform.parent.Find("World").Find("Rocket_Map").Find("Target");
-        _goalController = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").Find("GoalLineBlue").GetComponent<GoalController>();
+        _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
 
         _lastResetTime = Time.time;
     }
@@ -67,7 +67,7 @@ public class GoalKeeperAgent : Agent
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
 
-        _goalController.isScored = false;
+        _mapData.Reset();
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -103,15 +103,21 @@ public class GoalKeeperAgent : Agent
 
         if (Time.time - _lastResetTime > _episodeLength)
         {
-            AddReward(1f);
+            AddReward(0.5f);
             Reset();
         }
-        if(_goalController.isScored)
+        if(_mapData.isScoredBlue)
         {
             AddReward(-1f);
             Reset();
         }
-
+        if (_mapData.isScoredRed)
+        {
+            AddReward(1f);
+            Reset();
+        }
+        float ballDistanceReward = 0.01f * (1-(Vector3.Distance(_ball.position,transform.position)/_mapData.diag));
+        AddReward(ballDistanceReward);
 
     }
     public override void Heuristic(in ActionBuffers actionsOut)
