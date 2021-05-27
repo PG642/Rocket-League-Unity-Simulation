@@ -24,9 +24,12 @@ public class GoalKeeperAgent : Agent
     private CubeAirControl _airControl;
 
     private GoalController _goalController;
+
+    public InputManager InputManager;
     void Start()
     {
-        GameManager.InputManager.isAgent = true;
+        InputManager = GetComponent<InputManager>();
+        InputManager.isAgent = true;
 
         _rb = GetComponent<Rigidbody>();
         _airControl = GetComponentInChildren<CubeAirControl>();
@@ -35,11 +38,11 @@ public class GoalKeeperAgent : Agent
         _boostControl = GetComponentInChildren<CubeBoosting>();
         _groundControl = GetComponentInChildren<CubeGroundControl>();
 
-        _ball = GameObject.Find("Ball").transform;
+        _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
 
-        _target = GameObject.Find("Target").transform;
-        _goalController = GameObject.Find("GoalLineBlue").GetComponent<GoalController>();
+        _target = transform.parent.Find("World").Find("Rocket_Map").Find("Target");
+        _goalController = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").Find("GoalLineBlue").GetComponent<GoalController>();
 
         _lastResetTime = Time.time;
     }
@@ -81,21 +84,21 @@ public class GoalKeeperAgent : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         // set inputs
-        GameManager.InputManager.throttleInput = actionBuffers.ContinuousActions[0];
-        GameManager.InputManager.steerInput = actionBuffers.ContinuousActions[1];
-        GameManager.InputManager.yawInput = actionBuffers.ContinuousActions[1];
-        GameManager.InputManager.pitchInput = actionBuffers.ContinuousActions[2];
-        GameManager.InputManager.rollInput = 0;
-        if (actionBuffers.ContinuousActions[3] > 0) GameManager.InputManager.rollInput = 1;
-        if (actionBuffers.ContinuousActions[3] < 0) GameManager.InputManager.rollInput = -1;
+        InputManager.throttleInput = actionBuffers.ContinuousActions[0];
+        InputManager.steerInput = actionBuffers.ContinuousActions[1];
+        InputManager.yawInput = actionBuffers.ContinuousActions[1];
+        InputManager.pitchInput = actionBuffers.ContinuousActions[2];
+        InputManager.rollInput = 0;
+        if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
+        if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
 
-        GameManager.InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
-        GameManager.InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
-        GameManager.InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
+        InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
+        InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
+        InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
 
-        GameManager.InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
-        GameManager.InputManager.isJumpUp = actionBuffers.ContinuousActions[8] > 0;
-        GameManager.InputManager.isJumpDown = actionBuffers.ContinuousActions[9] > 0;
+        InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
+        InputManager.isJumpUp = actionBuffers.ContinuousActions[8] > 0;
+        InputManager.isJumpDown = actionBuffers.ContinuousActions[9] > 0;
 
 
         if (Time.time - _lastResetTime > _episodeLength)
@@ -113,7 +116,7 @@ public class GoalKeeperAgent : Agent
     }
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        GameManager.InputManager.isAgent = false;
+        InputManager.isAgent = false;
     }
 
     private void Reset()

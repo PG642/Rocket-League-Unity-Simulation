@@ -9,6 +9,7 @@ public class CubeParticleSystem : MonoBehaviour
     public GameObject firePs;
 
     const int SupersonicThreshold = 2200 / 100;
+    InputManager _inputManager;
     CubeController _controller;
     private TrailRenderer[] _trails;
     bool _isBoostAnimationPlaying = false;
@@ -16,6 +17,7 @@ public class CubeParticleSystem : MonoBehaviour
     void Start()
     {
         _controller = GetComponentInParent<CubeController>();
+        _inputManager = transform.parent.GetComponentInParent<InputManager>();
         _trails = GetComponentsInChildren<TrailRenderer>();
         _trails[0].time = _trails[1].time = 0;
         firePs.SetActive(false);
@@ -25,7 +27,7 @@ public class CubeParticleSystem : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.InputManager.isBoost)
+        if (_inputManager.isBoost)
         {
             if (_isBoostAnimationPlaying == false)
             {
@@ -34,7 +36,7 @@ public class CubeParticleSystem : MonoBehaviour
                 _isBoostAnimationPlaying = true;
             }
         }
-        else if (!GameManager.InputManager.isBoost)
+        else if (!_inputManager.isBoost)
         {
             boostPs.Stop();
             firePs.SetActive(false);

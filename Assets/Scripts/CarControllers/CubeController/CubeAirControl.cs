@@ -8,6 +8,7 @@ public class CubeAirControl : MonoBehaviour
     float _inputRoll = 0, _inputPitch = 0, _inputYaw = 0;
     
     Rigidbody _rb;
+    InputManager _inputManager;
     CubeController _controller;
     
     #region Torque Coefficients for rotation and drag
@@ -22,16 +23,17 @@ public class CubeAirControl : MonoBehaviour
     void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
+        _inputManager = GetComponentInParent<InputManager>();
         _controller = GetComponent<CubeController>();
     }
 
     void Update()
     {
-        _inputYaw = GameManager.InputManager.yawInput;
-        _inputPitch = GameManager.InputManager.pitchInput;
-        _inputRoll = GameManager.InputManager.rollInput;
+        _inputYaw = _inputManager.yawInput;
+        _inputPitch = _inputManager.pitchInput;
+        _inputRoll = _inputManager.rollInput;
 
-        if (GameManager.InputManager.isAirRoll)
+        if (_inputManager.isAirRoll)
         {
             _inputRoll = -_inputYaw;
             _inputYaw = 0;

@@ -16,6 +16,7 @@ public class CubeGroundControl : MonoBehaviour
     
     Rigidbody _rb;
     CubeController _controller;
+    InputManager _inputManager;
     CubeWheel[] _wheelArray;
     
     void Start()
@@ -23,6 +24,7 @@ public class CubeGroundControl : MonoBehaviour
         _rb = GetComponentInParent<Rigidbody>();
         _controller = GetComponent<CubeController>();
         _wheelArray = GetComponentsInChildren<CubeWheel>();
+        _inputManager = GetComponentInParent<InputManager>();
     }
 
     private void Update()
@@ -34,7 +36,7 @@ public class CubeGroundControl : MonoBehaviour
     {
         SetDriftFriction();
         
-        var forwardAcceleration = CalcForwardForce(GameManager.InputManager.throttleInput);
+        var forwardAcceleration = CalcForwardForce(_inputManager.throttleInput);
         ApplyWheelForwardForce(forwardAcceleration);
         
         currentSteerAngle = CalculateSteerAngle();
@@ -44,7 +46,7 @@ public class CubeGroundControl : MonoBehaviour
     private void SetDriftFriction()
     {
         // Sliding / drifting, lowers the wheel side friction when drifting
-        var currentDriftDrag = GameManager.InputManager.isDrift ? wheelSideFrictionDrift : wheelSideFriction;
+        var currentDriftDrag = _inputManager.isDrift ? wheelSideFrictionDrift : wheelSideFriction;
         currentWheelSideFriction = Mathf.MoveTowards(currentWheelSideFriction, currentDriftDrag, Time.deltaTime * driftTime);
     }
 
@@ -76,7 +78,7 @@ public class CubeGroundControl : MonoBehaviour
         // Throttle
         float forwardAcceleration = 0;
 
-        if (GameManager.InputManager.isBoost)
+        if (_inputManager.isBoost)
             forwardAcceleration = GetForwardAcceleration(_controller.forwardSpeedAbs);
         else
             forwardAcceleration = throttleInput * GetForwardAcceleration(_controller.forwardSpeedAbs);
@@ -95,7 +97,7 @@ public class CubeGroundControl : MonoBehaviour
     private float CalculateSteerAngle()
     {
         var curvature = 1 / GetTurnRadius(_controller.forwardSpeed);
-        return GameManager.InputManager.steerInput *  curvature * turnRadiusCoefficient;
+        return _inputManager.steerInput *  curvature * turnRadiusCoefficient;
     }
     
     static float GetForwardAcceleration(float speed)

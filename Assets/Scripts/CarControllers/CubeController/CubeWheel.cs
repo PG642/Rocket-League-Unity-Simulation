@@ -18,7 +18,8 @@ public class CubeWheel : MonoBehaviour
     Rigidbody _rb;
     CubeController _c;
     CubeGroundControl _groundControl;
-    
+    InputManager _inputManager;
+
     float _wheelRadius, _wheelForwardVelocity, _wheelLateralVelocity;
     Vector3 _wheelVelocity, _lastWheelVelocity, _wheelAcceleration, _wheelContactPoint, _lateralForcePosition = Vector3.zero;
     
@@ -31,6 +32,7 @@ public class CubeWheel : MonoBehaviour
     {
         _rb = GetComponentInParent<Rigidbody>();
         _c = GetComponentInParent<CubeController>();
+        _inputManager = transform.parent.parent.GetComponentInParent<InputManager>();
         _groundControl= GetComponentInParent<CubeGroundControl>();
         _wheelRadius = transform.localScale.z / 2;
     }
@@ -86,7 +88,7 @@ public class CubeWheel : MonoBehaviour
         if (!(_c.forwardSpeedAbs >= 0.1)) return;
         
         //TODO Make a separate function
-        var dragForce = AutoBrakeAcceleration / 4 * _c.forwardSpeedSign * (1 - Mathf.Abs(GameManager.InputManager.throttleInput));
+        var dragForce = AutoBrakeAcceleration / 4 * _c.forwardSpeedSign * (1 - Mathf.Abs(_inputManager.throttleInput));
         _rb.AddForce(-dragForce * transform.forward, ForceMode.Acceleration);
     }
 
