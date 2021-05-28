@@ -1,0 +1,65 @@
+default_settings: null
+behaviors:
+  Basic:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 4096
+      buffer_size: 20480
+      learning_rate: 0.001
+      beta: 0.02
+      epsilon: 0.25
+      lambd: 0.95
+      num_epoch: 6
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: true
+      hidden_units: 512
+      num_layers: 3
+      vis_encode_type: simple
+      memory: null
+    reward_signals:
+      extrinsic:
+        gamma: 0.99
+        strength: 1.0
+        network_settings:
+          normalize: false
+          hidden_units: 128
+          num_layers: 2
+          vis_encode_type: simple
+          memory: null
+    init_path: null
+    keep_checkpoints: 4
+    checkpoint_interval: 250000
+    max_steps: 50000000
+    time_horizon: 5000
+    summary_freq: 5000
+    threaded: true
+    self_play: null
+    behavioral_cloning: null
+env_settings:
+  env_path: airdribble.x86_64
+  env_args: null
+  base_port: 5005
+  num_envs: 4
+  seed: -1
+engine_settings:
+  width: 500
+  height: 500
+  quality_level: 5
+  time_scale: 80.0
+  target_frame_rate: -1
+  capture_frame_rate: 60
+  no_graphics: true
+environment_parameters: null
+checkpoint_settings:
+  run_id: test1
+  initialize_from: null
+  load_model: false
+  resume: false
+  force: false
+  train_model: false
+  inference: false
+  results_dir: results
+torch_settings:
+  device: null
+debug: false
