@@ -5,24 +5,29 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+    public bool isAgent = false;
+
     public float throttleInput, steerInput, yawInput, pitchInput, rollInput;
     public bool isBoost, isDrift, isAirRoll;
     public bool isJump, isJumpUp, isJumpDown;
     void Update() {
-        throttleInput = GetThrottle();
-        steerInput = GetSteerInput();
+        if (!isAgent)
+        {
+            throttleInput = GetThrottle();
+            steerInput = GetSteerInput();
 
-        yawInput = Input.GetAxis("Horizontal");
-        pitchInput = Input.GetAxis("PitchAxis");
-        rollInput = GetRollInput();
+            yawInput = Input.GetAxis("Horizontal");
+            pitchInput = Input.GetAxis("PitchAxis");
+            rollInput = GetRollInput();
 
-        isJump = Input.GetMouseButton(1) || Input.GetButton("A");
-        isJumpUp = Input.GetMouseButtonUp(1) || Input.GetButtonUp("A");
-        isJumpDown = Input.GetMouseButtonDown(1) || Input.GetButtonDown("A");
+            isJump = Input.GetMouseButton(1) || Input.GetButton("A");
+            isJumpUp = Input.GetMouseButtonUp(1) || Input.GetButtonUp("A");
+            isJumpDown = Input.GetMouseButtonDown(1) || Input.GetButtonDown("A");
 
-        isBoost = Input.GetButton("RB") || Input.GetMouseButton(0);
-        isDrift = Input.GetButton("LB") || Input.GetKey(KeyCode.LeftShift);
-        isAirRoll = Input.GetButton("LB") || Input.GetKey(KeyCode.LeftShift);
+            isBoost = Input.GetButton("RB") || Input.GetMouseButton(0);
+            isDrift = Input.GetButton("LB") || Input.GetKey(KeyCode.LeftShift);
+            isAirRoll = Input.GetButton("LB") || Input.GetKey(KeyCode.LeftShift);
+        }
     }
 
     private static float GetRollInput()
@@ -76,7 +81,8 @@ public class InputManager : MonoBehaviour
         //currentInput = Mathf.SmoothDamp(currentInput, target, ref vel, 1f, Mathf.Infinity, Time.fixedDeltaTime);
         //return currentInput * Mathf.Sign(Input.GetAxis(axisName));
     }
-    
+
+
     private void OnGUI()
     {
         GUILayout.HorizontalSlider(pitchInput, -1, 1, GUILayout.Width(200));

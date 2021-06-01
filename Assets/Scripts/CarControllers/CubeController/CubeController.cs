@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(Rigidbody))]
 public class CubeController : MonoBehaviour
 {
     [Header("Car State")]
@@ -35,7 +35,7 @@ public class CubeController : MonoBehaviour
     
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();
+        _rb = GetComponentInParent<Rigidbody>();
         _rb.centerOfMass = cogLow.localPosition;
         _rb.maxAngularVelocity = 5.5f;
 

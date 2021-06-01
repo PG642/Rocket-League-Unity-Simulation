@@ -18,11 +18,13 @@ public class CubeJumping : MonoBehaviour
     bool _isCanKeepJumping = false;
 
     Rigidbody _rb;
+    InputManager _inputManager;
     CubeController _controller;
 
     void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
+        _inputManager = GetComponentInParent<InputManager>();
         _controller = GetComponent<CubeController>();
     }
 
@@ -37,7 +39,7 @@ public class CubeJumping : MonoBehaviour
         // Do initial jump impulse only once
         // TODO: Currently bugged, should be .isJumpDown for the initial jump impulse.
         // Right now does the whole jump impulse
-        if (GameManager.InputManager.isJump && _isCanFirstJump)
+        if (_inputManager.isJump && _isCanFirstJump)
         {
             _rb.AddForce(transform.up * 292 / 100 * jumpForceMultiplier, ForceMode.VelocityChange);
             _isCanKeepJumping = true;
@@ -48,14 +50,14 @@ public class CubeJumping : MonoBehaviour
         }
         
         // Keep jumping if the jump button is being pressed
-        if (GameManager.InputManager.isJump && _isJumping && _isCanKeepJumping && _jumpTimer <= 0.2f)
+        if (_inputManager.isJump && _isJumping && _isCanKeepJumping && _jumpTimer <= 0.2f)
         {
             _rb.AddForce(transform.up * 1458f / 100 * jumpForceMultiplier, ForceMode.Acceleration);
             _jumpTimer += Time.fixedDeltaTime;
         }
         
         // If jump button was released we can't start jumping again mid air
-        if (GameManager.InputManager.isJumpUp)
+        if (_inputManager.isJumpUp)
             _isCanKeepJumping = false;
         
         // Reset jump flags when landed
@@ -78,7 +80,7 @@ public class CubeJumping : MonoBehaviour
     {
         if (_controller.carState != CubeController.CarStates.BodyGroundDead) return;
         
-        if (GameManager.InputManager.isJumpDown || Input.GetButtonDown("A"))
+        if (_inputManager.isJumpDown || Input.GetButtonDown("A"))
         {
             _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
             _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);

@@ -12,6 +12,7 @@ TagManager:
   - Boundary
   - Enemy
   - Map
+  - GoalLine
   layers:
   - Default
   - TransparentFX
