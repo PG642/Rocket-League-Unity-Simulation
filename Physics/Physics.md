@@ -37,11 +37,14 @@ Impulse Contraint * Friction
 
 ### Apply Force
  Friction Forces are applied in height of Center of mass
+ 
  Ball-Kraft aus Richtung des Masseschwerpunkt des Autos statt aus Berührungsnormale
 
 #### Stability
 Rollkraft basierend auf Normale der Berührungsstelle mit dem Boden
+
 Wenn zusätzlich Rad am Boden: Kraft nach unten
+
 Keine Stabilisierungskräfte wenn 3 oder mehr Räder am Boden
 
 ### Wheel position
