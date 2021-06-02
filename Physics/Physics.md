@@ -12,15 +12,25 @@ Fixed tick rate 120 hz 8.33ms
 ## Car
 
 force/accel fixed curve
+
 fixed mass
+
 Kräfte unabhängig von Masse
+
 Keine Reibung in Längsrichtung
+
 Reibung in Querrichtung vereinfacht:
+
 Ratio = SideSpeed/ (SideSpeed + ForwardSpeed)
+
 SlideFriction = Curve(Ratio)
+
 Curve(1)=0.2
+
 Curve(0)=1
+
 GroundFriction = Curve2(GroundNormal.Z)
+
 Friction = SlideFriction * GroundFriction
 
 Impulse Contraint * Friction
