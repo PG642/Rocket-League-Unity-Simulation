@@ -16,7 +16,7 @@ fixed mass
 Kräfte unabhängig von Masse
 Keine Reibung in Längsrichtung
 Reibung in Querrichtung vereinfacht:
- Ratio = SideSpeed/ (SideSpeed + ForwardSpeed)
+Ratio = SideSpeed/ (SideSpeed + ForwardSpeed)
 SlideFriction = Curve(Ratio)
 Curve(1)=0.2
 Curve(0)=1
