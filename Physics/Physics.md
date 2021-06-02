@@ -1,7 +1,11 @@
 # Physics
 
+RL verwendet Bullet Physics Engine
+
 ## Information for video 
 [link](https://www.youtube.com/watch?v=ueEmiDM94IE)
+## Rocket Science YouTube
+[link](https://www.youtube.com/channel/UCfKidiMlHTBRNkQZlLzUesw)
 
 Fixed tick rate 120 hz 8.33ms
 
@@ -9,32 +13,38 @@ Fixed tick rate 120 hz 8.33ms
 
 force/accel fixed curve
 fixed mass
-ignore mass
-tire friction
- Ratio = SideSpeed/ SideSpeed + ForwardSpeed (0 forward 1 sideways)
+Kräfte unabhängig von Masse
+Keine Reibung in Längsrichtung
+Reibung in Querrichtung vereinfacht:
+ Ratio = SideSpeed/ (SideSpeed + ForwardSpeed)
 SlideFriction = Curve(Ratio)
-GroundFriction = GroundNormal.Z
+Curve(1)=0.2
+Curve(0)=1
+GroundFriction = Curve2(GroundNormal.Z)
 Friction = SlideFriction * GroundFriction
 
 Impulse Contraint * Friction
 
 ### Apply Force
- Forces are applied in height of Center of mass
+ Friction Forces are applied in height of Center of mass
+ Ball-Kraft aus Richtung des Masseschwerpunkt des Autos statt aus Berührungsnormale
 
 #### Stability
-surface normal
-conact point
-rolling torque to roll back
-with wheel push car down 
+Rollkraft basierend auf Normale der Berührungsstelle mit dem Boden
+Wenn zusätzlich Rad am Boden: Kraft nach unten
+Keine Stabilisierungskräfte wenn 3 oder mehr Räder am Boden
 
 ### Wheel position
 Physic preset
 
+## Jump
+Doppelsprung dodge moves sind Impulse
 
 ## Body type 
 
 [link](https://rocketleague.fandom.com/wiki/Body_Type)
 
+Hitboxen
 Body Type	|Length	|Width	|Height
 --- | --- | --- | ---
 Octane	|118.0074000	|84.1994100	|36.1590700
@@ -53,7 +63,7 @@ Plank	|2.323	|1.967
 Breakout	|2.345	|2.014
 Hybrid	|2.342	|2.014
 
-
+Höhe der Hitbox
 Body Type	|Ground Height
 --- | --- | 
 Octane:	|48.469040
@@ -62,6 +72,7 @@ Plank:	|55.860375
 Breakout:	|54.858975
 Hybrid:	|45.447330
 
+Neigung nach vorne
 Body Type	|Inclination
 --- | --- |
 Octane:	|-0.55°
