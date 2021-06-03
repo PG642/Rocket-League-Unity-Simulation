@@ -6,6 +6,10 @@ RL verwendet Bullet Physics Engine
 [link](https://www.youtube.com/watch?v=ueEmiDM94IE)
 ## Rocket Science YouTube
 [link](https://www.youtube.com/channel/UCfKidiMlHTBRNkQZlLzUesw)
+## Stat Spreadsheet
+[link](https://onedrive.live.com/view.aspx?resid=F0182A0BAEBB5DFF!14583&ithint=file%2cxlsx&authkey=!ALu0cMkDZDoWOws)
+
+BakkesMod in RocketLeague benutzen um exakte Werte abzugleichen
 
 Fixed tick rate 120 hz 8.33ms
 
@@ -17,12 +21,24 @@ Fixed tick rate 120 hz 8.33ms
 Max Geschiwindigkeit 
 2300uu/s
 
+Geschwindigkeiten und Positionen werden auf 2 Nachkommastellen gerundet bevor sie benutzt werden
+
 ### Boost
+Boost wird als float zwischen 0 und 1 gespeichert
+
+Darstellung als 0-100 ist nur prozentualer Anteil
+
+Ein kleines Boostpad gibt 0.12 boost
+
+es wird immer abgerundet
+
  Boost ist 13 Frames an
 
 force/accel fixed curve
 
 fixed mass
+
+Das Auto hats das zehnfache Gewicht des Balls (unsicher ob exakt gemeinter Wert oder übertreibung im kontext)
 
 Kräfte unabhängig von Masse
 
@@ -58,6 +74,10 @@ Angular Geschwindigkeit max 5.5 rad/s
 Normales Fahren erzeugt 66 uu/s^2
 Boost 1058 uu/^2
 
+Beschleunigen bewegt das Auto in die Richtung in die es zeigt auch wenn es in der Luft ist (sehr leicht) 
+(auch nach oben und unten wenn die spitze das autos entsprechend gerichtet ist)
+Rückwarts ist die beschleunigung leicht geringer als vorwärts
+
 
 ### Apply Force
  Friction Forces are applied in height of Center of mass
@@ -65,9 +85,17 @@ Boost 1058 uu/^2
  Ball-Kraft aus Richtung des Masseschwerpunkt des Autos statt aus Berührungsnormale
  
  Hit Box war früher größer, deswegen wird der Vektor vom Masseschwerpunkt zum Ball angepasst (leicht zum schwerpunkt des Autos gedreht) und dann gekürzt
- Erdanziehungskraft 
+ 
+ Erdanziehungskraft: 650 uu/s^2
+ 
+ Es gibt kein besonderes Verhalten für verschiedene Teile der Autohitbox (Räder ausgenommen)
+ Update: doch, aber kompliziert (für Treffer auf Autodach):
+  https://www.youtube.com/watch?v=CPlOh5cAizo&list=PL5hjfcWPyvtLdn_hXukGCOgt6BYpF3AbX&index=6
+  
+  Fake Physik Modell (Kräfte von Masseschwerpunkt des Balls aus) und realistisches Physik Modell werden zusammen benutzt
+(Besser Video gucken für richtige erklärung mit verweis auf andere videos hier wird sehr funky)
+https://youtu.be/DRO8-784eSk?t=46
 
-650 uu/s^2
 
 #### Stability
 Rollkraft basierend auf Normale der Berührungsstelle mit dem Boden
@@ -76,23 +104,31 @@ Wenn zusätzlich Rad am Boden: Kraft nach unten -325 uu/s^2
 
 Keine Stabilisierungskräfte wenn 3 oder mehr Räder am Boden
 
-### Wheel position
+### Wheels
 Physic preset
+Räder haben keine physikalische Breite
+Ruheposition bei Rädern (0 Schwerkraft oder in der luft) RP
+Ruheposition bei Schwerkraft auf dem Boden (still stehend oder normal fahrend): 2 uu näher an Hitbox als bei RP (federung)
+Bei Sprung: Räder bis max 12 uu unter RP
+Federung bewegt Auto erst dann, wenn Räder über RP hinaus gedrückt werden
+Räder üben keine Kraft auf Ball aus, aber der Ball übt Kraft auf die Räder aus:
+ Die Radfederungen bremsen nur die Hitbox des Autos, welche dann langsamer ist wenn sie den ball berührt, was den schuss abschwächt
+ Dadurch kann man vom Ball apprallen ohne dass sich dieser bewegt
 
 ## Jump
 Doppelsprung dodge moves sind Impulse
 
-Für einen hohen Sprung kann man 200ms die Sprungtaste gedrückt halten. Diese Zeit zählt nicht in den Sprungtimer rein.
+Für einen hohen Sprung kann man 200ms / 250ms (widersprüchlich) die Sprungtaste gedrückt halten. Diese Zeit zählt nicht in den Sprungtimer rein.
 Kleiner Sprung 292 uu/s
 Gedrückt halten 1458 uu/s^2 (für 0.20s -> 292 uu/s)
 Sticky Forces -325 uu/s^2 für 0.05s -> -16 uu/s
 
 
-##Zweiter Srpung/Dodge
+## Zweiter Srpung/Dodge
 Um einen zweiten Sprung oder eine Rolle zu machen, hat man nach dem Sprung 1.25s (1.45 bei hohem Sprung) 
 Dieser Timer ist nicht aktiviert, wenn man vom Dach der Map fällt oder anderweitig ohne den Sprung sich vom Boden löst.
 Ein zweiter Sprung gibt einem 292 uu/s Geschwindigkeit
-
+Doppelsprung hat fixe Geschwindigkeit unabhängig von der Dauer des Inputs
 Auf dem Boden zählt man, wenn alle 4 Reifen den Boden berühren.
 
 ### Dodge
@@ -120,6 +156,10 @@ Die Stärke des Abbruchs hängt von der Stärke des Sticks ab.
 
 ### Hitboxen
  Räder können rein und raus (je nachdem ob man am Boden ist oder nicht)
+ Spiel benutzt 16 bit Integer für Winkel
+ Autohitboxen sind leicht angewinkelt
+ Masseschwerpunkt ist Ankerpunkt für Sachen am Auto
+ Höhe vorne und höhe hinten bezeichnet nicht wie hoch über dem boden die hitbox anfängt, sondern in welcher höhe die hitbox endet
 
 Die Höhe ines Autos ist  17.01 uu bei Octane
 Body Type	|Length	|Width	|Height
@@ -161,6 +201,17 @@ Hybrid:	|-0.55°
 ## Ball
 
 Maximale Geschwindigkeit 6000 uu/s
+Max. Spin Ball: 60 RPM = 60 Umdrehungen pro Minute
+Ball Gleitreibung bremst Ball mit 230 uu/s²
+Ball Rollt ohne zu gleiten wenn er langsamer als 565 uu/s ist
+Gleiten: Ball verliert 3% seiner geschwindigkeit pro Sekunde + Gleitreibung
+Rollen: Ball verliert 2.2% seiner geschwindigkeit pro Sekunde
+Nur wenn Ball mit langsamer als 40 uu/s UND 10 RPM für 2.5s rollt, stoppt er
+
 
 Bounces werden mit Geschwindigkeitsvektor und Oberflächennormale berechnet
+Beim Apprallen verliert der Ball 40% seiner zur Wand gerichteten Geschwindigkeit
+Der resultierende parallel zur Wand verlaufende geschwindigkeitsanteil wird durch Reibung beeinflusst
+
+
 Probleme bei Tickrate (normale stimmt nicht, da der Ball leicht im Object ist)
