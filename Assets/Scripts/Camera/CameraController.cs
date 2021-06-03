@@ -13,14 +13,20 @@ public class CameraController : MonoBehaviour
     public float stiffnessPosition = 50;
     public float stiffnessAngle = 30;
 
+    public bool keyBoardControl = true;
+
     float _rotationUpdateTime = 0.05f;
     float _lastRotationUpdate = 0f;
+
     Vector3 _actualRotationAxis = Vector3.zero;
     Vector3 _desiredRotationAxis = Vector3.zero;
     float _tmpRotationX = 0f;
     float _tmpRotationY = 0f;
 
     Transform _ball, _car;
+    Vector3 _checkVelocity;
+    Vector3 _prevPosistion;
+
     Vector3 _pivotPosition;
 
     bool _isBallCam = false;
@@ -29,6 +35,8 @@ public class CameraController : MonoBehaviour
         _ball = transform.parent.Find("Ball");
         _car = transform.parent.Find("ControllableCar");
         _pivotPosition = _car.position + Vector3.up * cameraHeight;
+        _checkVelocity = Vector3.zero;
+        _prevPosistion = _car.position;
     }
 
     void Update()
@@ -39,6 +47,9 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        _checkVelocity = (_car.position - _prevPosistion) / Time.deltaTime;
+        _prevPosistion = _car.position;
+        Debug.Log("X: " + _checkVelocity.x + "Y: " + _checkVelocity.y + "Z: " + _checkVelocity.z);
         UpdatePivotElement(stiffnessPosition);
         UpdateCamDirection(stiffnessAngle);
         UpdateCamPositon(stiffnessPosition);
@@ -46,12 +57,29 @@ public class CameraController : MonoBehaviour
 
     Vector3 AddRotation(Vector3 startPos)
     {
-        float sensitivityX = 0.05f;
-        float sensitivityY = 0.05f;
+        float sensitivityX;
+        float sensitivityY;
+
+        if (keyBoardControl)
+        {
+            sensitivityX = 0.05f;
+            sensitivityY = 0.05f;
+        }
+        else
+        {
+            sensitivityX = 120f;
+            sensitivityY = 60f;
+        }
+
         float minimumX = -120f;
         float maximumX = 120f;
-        float minimumY = -60;
+        float minimumY = -10;
         float maximumY = 60F;
+
+        _tmpRotationX += Input.GetAxis("Camera X") * sensitivityX * (Time.deltaTime/_rotationUpdateTime);
+        _tmpRotationX = Mathf.Clamp(_tmpRotationX, minimumX, maximumX);
+        _tmpRotationY += Input.GetAxis("Camera Y") * sensitivityY * (Time.deltaTime/_rotationUpdateTime);
+        _tmpRotationY = Mathf.Clamp(_tmpRotationY, minimumY, maximumY);
 
         if (Time.time - _lastRotationUpdate >= _rotationUpdateTime)
         {
@@ -59,13 +87,6 @@ public class CameraController : MonoBehaviour
             _tmpRotationX = 0f;
             _tmpRotationY = 0f;
             _lastRotationUpdate = Time.time;
-        }
-        else
-        {
-            _tmpRotationX += Input.GetAxis("Camera X") * sensitivityX * _rotationUpdateTime;
-            _tmpRotationX = Mathf.Clamp(_tmpRotationX, minimumX, maximumX);
-            _tmpRotationY += Input.GetAxis("Camera Y") * sensitivityY * _rotationUpdateTime;
-            _tmpRotationY = Mathf.Clamp(_tmpRotationY, minimumY, maximumY);
         }
 
         _actualRotationAxis = Vector3.Lerp(_actualRotationAxis, _desiredRotationAxis, _rotationUpdateTime);
@@ -115,7 +136,15 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, 0.2f * stiffnessPos * Time.deltaTime);
+            if (Mathf.Abs(_checkVelocity.x) <3f && Mathf.Abs(_checkVelocity.z) < 3f)
+            {
+                transform.position = Vector3.Lerp(transform.position, desiredPosition, 0.01f * stiffnessPos * Time.deltaTime);
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, desiredPosition, 0.4f * stiffnessPos * Time.deltaTime);
+
+            }
         }
     }
 
