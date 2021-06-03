@@ -4,109 +4,99 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public bool isWatchBall = false;
     public float distanceToBall = 20;
 
     [Header("Ballcam on settings")]
-    public float cameraDist = -9f;
+    public float cameraDist = 9f;
     public float cameraHeight = 3f;
     public float cameraAngle = 2.3f;
     public float stiffnessPosition = 50;
     public float stiffnessAngle = 30;
 
-    [Header("Ballcam off settings")]
-    public float cameraDistOff = -9f;
-    public float cameraHeightOff = 3f;
-    public float cameraAngleOff = 2.3f;
-    public float stiffnessPositionOff = 50;
-    public float stiffnessAngleOff = 30;
 
     Transform _ball, _car;
-    bool _isBallCam = true;
+    Vector3 _pivotPosition;
+
+    bool _isBallCam = false;
     void Start()
     {
-        _ball = GameObject.FindGameObjectWithTag("Ball").transform;
-        _car = GameObject.FindGameObjectWithTag("CarCameraTarget").transform;
+        _ball = transform.parent.Find("Ball");
+        _car = transform.parent.Find("ControllableCar");
+        _pivotPosition = _car.position + Vector3.up * cameraHeight;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("X"))
             _isBallCam = !_isBallCam;
-        if (Input.GetKeyDown(KeyCode.V))
-            isWatchBall = !isWatchBall;
     }
-    
+
     private void FixedUpdate()
     {
-        if (_isBallCam)
+        UpdatePivotElement(stiffnessPosition);
+        UpdateCamDirection(stiffnessAngle);
+        UpdateCamPositon(stiffnessPosition);
+        AddRotation(stiffnessAngle);
+    }
+
+    void AddRotation(float stiffnessAngle)
+    {
+        Vector3 axis = new Vector3(0, Input.GetAxis("Camera X"), Input.GetAxis("Camera Y"));
+        transform.RotateAround(_pivotPosition, axis, stiffnessAngle * Time.deltaTime);
+    }
+    void UpdatePivotElement(float stiffnessPos)
+    {
+        Vector3 desiredPosition;
+        CubeController.CarStates carState = _car.GetComponentInChildren<CubeController>().carState;
+        bool grounded = carState == CubeController.CarStates.AllWheelsGround || carState == CubeController.CarStates.AllWheelsSurface;
+        if (grounded)
         {
-            MoveToTarget(stiffnessPosition);
-            LookAtTarget(stiffnessAngle);
+            desiredPosition = _car.position + _car.up * cameraHeight;
         }
         else
         {
-            MoveToTarget(stiffnessPositionOff);
-            LookAtTarget(stiffnessAngleOff);
+            desiredPosition = _car.position + Vector3.up * cameraHeight;
         }
+        _pivotPosition = Vector3.Lerp(_pivotPosition, desiredPosition, stiffnessPos * Time.deltaTime);
     }
-    void MoveToTarget(float stiffnessPos)
+
+    void UpdateCamPositon(float stiffnessPos)
     {
-        var desiredPosition = transform.position;
-
-        if (isWatchBall)
+        Vector3 desiredPosition;
+        CubeController.CarStates carState = _car.GetComponentInChildren<CubeController>().carState;
+        bool grounded = carState == CubeController.CarStates.AllWheelsGround || carState == CubeController.CarStates.AllWheelsSurface;
+        if (_isBallCam)
         {
-            var direction = (transform.position - _ball.position).normalized;
-            desiredPosition = _ball.position + transform.forward * -distanceToBall;
-            if (desiredPosition.y < -7f)
-                desiredPosition.y = -7f;
+            desiredPosition = _pivotPosition + (_car.position - _ball.position).normalized * cameraDist;
+        }
+        else
+        {
+            if (grounded)
+            {
+                desiredPosition = _pivotPosition - _car.forward * cameraDist;
+            }
+            else
+            {
+                desiredPosition = _pivotPosition - _car.GetComponent<Rigidbody>().velocity.normalized * cameraDist;
+            }
+        }
+        if (grounded)
+        {
+            transform.position = Vector3.Lerp(transform.position, desiredPosition, stiffnessPos * Time.deltaTime);
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, desiredPosition, 0.2f * stiffnessPos * Time.deltaTime);
         }
 
-        else if (_isBallCam && !isWatchBall)
-        {
-            var offset = new Vector3(0, cameraHeight, cameraDist);
-            desiredPosition = _car.position + transform.forward * cameraDist + transform.right * offset.x + transform.up * offset.y;
-            if (desiredPosition.y < _car.position.y - 1)
-                desiredPosition.y = _car.position.y - 0.9f;
-        }
-
-        else if (!isWatchBall)
-        {
-            var offset = new Vector3(0, cameraHeightOff, cameraDistOff);
-            desiredPosition = _car.position + _car.forward * offset.z + _car.right * offset.x + _car.up * offset.y;
-        }
-
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, stiffnessPos * Time.deltaTime);
     }
 
-    void LookAtTarget(float stiffnessAngle)
+    void UpdateCamDirection(float stiffnessAngle)
     {
         Vector3 angleOffset = new Vector3(0, cameraAngle, 0);
-
-        if(isWatchBall)
-        {
-            Vector3 desiredAngle = _ball.position - transform.position + angleOffset;
-            //DesiredAngle.y = transform.rotation.y + CameraAngle;
-            Quaternion _rot = Quaternion.LookRotation(desiredAngle, Vector3.up);
-            transform.rotation = Quaternion.Lerp(transform.rotation, _rot, stiffnessAngle * Time.deltaTime);
-            return;
-        }
-
-        if (_isBallCam)
-        {
-            Vector3 desiredAngle = _ball.position - transform.position + angleOffset;
-            desiredAngle.y = transform.rotation.y + cameraAngle;
-            //DesiredAngle.z = 0;
-            Quaternion rot = Quaternion.LookRotation(desiredAngle, Vector3.up);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rot, stiffnessAngle * Time.deltaTime);
-        }
-        else
-        {
-            angleOffset = new Vector3(0, cameraAngleOff, 0);
-            Vector3 desiredAngle = _car.position - transform.position + angleOffset;
-            Quaternion rot = Quaternion.LookRotation(desiredAngle, Vector3.up);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rot, stiffnessAngle * Time.deltaTime);
-        }
+        Vector3 desiredAngle = _pivotPosition - transform.position + angleOffset;
+        Quaternion rot = Quaternion.LookRotation(desiredAngle, Vector3.up);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rot, stiffnessAngle * Time.deltaTime);
     }
 
     void OnDrawGizmos()
