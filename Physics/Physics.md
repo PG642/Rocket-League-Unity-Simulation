@@ -39,6 +39,8 @@ Impulse Contraint * Friction
  Friction Forces are applied in height of Center of mass
  
  Ball-Kraft aus Richtung des Masseschwerpunkt des Autos statt aus Berührungsnormale
+ 
+ Hit Box war früher größer, deswegen wird der Vektor vom Masseschwerpunkt zum Ball angepasst (leicht zum schwerpunkt des Autos gedreht) und dann gekürzt
 
 #### Stability
 Rollkraft basierend auf Normale der Berührungsstelle mit dem Boden
