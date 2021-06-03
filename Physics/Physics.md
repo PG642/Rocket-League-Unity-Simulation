@@ -68,6 +68,33 @@ Physic preset
 ## Jump
 Doppelsprung dodge moves sind Impulse
 
+Für einen hohen Sprung kann man 200ms die Sprungtaste gedrückt halten. Diese Zeit zählt nicht in den Sprungtimer rein.
+
+##Zweiter Srpung/Dodge
+Um einen zweiten Sprung oder eine Rolle zu machen, hat man nach dem Sprung 1.25s (1.45 bei hohem Sprung) 
+Dieser Timer ist nicht aktiviert, wenn man vom Dach der Map fällt oder anderweitig ohne den Sprung sich vom Boden löst.
+
+Auf dem Boden zählt man, wenn alle 4 Reifen den Boden berühren.
+
+### Dodge
+Dodge entfernt Vertikales Momentum bis auf in den ersten 0.15 s.
+
+Danach wird die Vertikale Geschwindigkeit um 35% jeden Tick reduziert.
+
+(Berechnet hat man eine fallende Geschwindigkeit von 15uu/s) Am besten für eine gute Erklärung das Video von Rocket Sience zu Dodges explained angucken.
+
+Ein Dodge nach vorne oder zur Seite gibt einem 500 uu/s Geschwidigkeit. Zur Seite hängt ein Dodge von der Bewegung des Sticks ab.
+
+Dodge zur Seite Skaliert mit Forward Geschwindigkeit. 1 + 0.9 * Geschwindigkeit/ 2300 uu/s(max) (Anteilig, wie der Stick gerichtet ist)
+
+Rückwärts  533 uu/s * 1 + 1.5 * Geschwindigkeit/2300 uu/s
+
+#### Dodge abbrechen
+Ein Dodge kann nach den ersten 5 Ticks abgebrochen werden.
+Dies ist möglich indem man den Stick in die entgegengesetze Richtung zieht. Eine Rolle kann man nicht abbrechen.
+Die Stärke des Abbruchs hängt von der Stärke des Sticks ab.
+
+
 ## Body type 
 
 [link](https://rocketleague.fandom.com/wiki/Body_Type)
