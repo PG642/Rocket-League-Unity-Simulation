@@ -13,6 +13,10 @@ public class CameraController : MonoBehaviour
     public float stiffnessPosition = 50;
     public float stiffnessAngle = 30;
 
+    float _rotationUpdateTime = 0.25f;
+    float _lastRotationUpdate = 0f;
+    float _rotationX = 0f;
+    float _rotationY = 0f;
 
     Transform _ball, _car;
     Vector3 _pivotPosition;
@@ -36,13 +40,36 @@ public class CameraController : MonoBehaviour
         UpdatePivotElement(stiffnessPosition);
         UpdateCamDirection(stiffnessAngle);
         UpdateCamPositon(stiffnessPosition);
-        AddRotation(stiffnessAngle);
     }
 
-    void AddRotation(float stiffnessAngle)
+    Vector3 AddRotation(Vector3 startPos)
     {
-        Vector3 axis = new Vector3(0, Input.GetAxis("Camera X"), Input.GetAxis("Camera Y"));
-        transform.RotateAround(_pivotPosition, axis, stiffnessAngle * Time.deltaTime);
+        float sensitivityX = 0.01f;
+        float sensitivityY = 0.01f;
+        float minimumX = -120f;
+        float maximumX = 120f;
+        float minimumY = -120F;
+        float maximumY = 120F;
+
+
+        Vector3 axis = Vector3.zero;
+        if(Time.time - _lastRotationUpdate >= _rotationUpdateTime)
+        {
+            axis += new Vector3(_rotationY, _rotationX, 0);
+            _rotationX = 0f;
+            _rotationY = 0f;
+            _lastRotationUpdate = Time.time;
+        }
+        else
+        {
+            _rotationX += Input.GetAxis("Camera X") * sensitivityX;
+            _rotationX = Mathf.Clamp(_rotationX, minimumX, maximumX);
+            _rotationY += Input.GetAxis("Camera Y") * sensitivityY;
+            _rotationY = Mathf.Clamp(_rotationY, minimumY, maximumY);
+        }
+
+
+        return Quaternion.Euler(axis) * (startPos - _pivotPosition) + _pivotPosition;
     }
     void UpdatePivotElement(float stiffnessPos)
     {
@@ -80,6 +107,7 @@ public class CameraController : MonoBehaviour
                 desiredPosition = _pivotPosition - _car.GetComponent<Rigidbody>().velocity.normalized * cameraDist;
             }
         }
+        desiredPosition = AddRotation(desiredPosition);
         if (grounded)
         {
             transform.position = Vector3.Lerp(transform.position, desiredPosition, stiffnessPos * Time.deltaTime);
@@ -88,6 +116,7 @@ public class CameraController : MonoBehaviour
         {
             transform.position = Vector3.Lerp(transform.position, desiredPosition, 0.2f * stiffnessPos * Time.deltaTime);
         }
+
 
     }
 

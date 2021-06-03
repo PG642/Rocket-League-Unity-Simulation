@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -398,6 +398,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rocket_Map
       objectReference: {fileID: 0}
+    - target: {fileID: 5098851544310445620, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: ball
+      value: 
+      objectReference: {fileID: 1496996339}
+    - target: {fileID: 5434087528511867626, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: ball
+      value: 
+      objectReference: {fileID: 1496996339}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
 --- !u!4 &1496996339 stripped
