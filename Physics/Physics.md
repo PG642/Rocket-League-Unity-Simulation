@@ -118,7 +118,10 @@ Die Stärke des Abbruchs hängt von der Stärke des Sticks ab.
 
 [link](https://rocketleague.fandom.com/wiki/Body_Type)
 
-Hitboxen
+### Hitboxen
+ Räder können rein und raus (je nachdem ob man am Boden ist oder nicht)
+
+Die Höhe ines Autos ist  17.01 uu bei Octane
 Body Type	|Length	|Width	|Height
 --- | --- | --- | ---
 Octane	|118.0074000	|84.1994100	|36.1590700
