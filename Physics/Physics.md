@@ -24,10 +24,6 @@ force/accel fixed curve
 
 fixed mass
 
-Erdanziehungskraft 
-
-650 uu/s^2
-
 Kräfte unabhängig von Masse
 
 Keine Reibung in Längsrichtung
@@ -48,17 +44,35 @@ Friction = SlideFriction * GroundFriction
 
 Impulse Contraint * Friction
 
+### Verhalten in der Luft
+Angular Geschwindigkeit max 5.5 rad/s
+
+#### Beschleunigung Achsen
+
+| Achse | Geschwindigkeit
+|---|---
+| Yaw |9.11 rad/s^2
+| Pitch |12.46 rad/s^2
+| Roll |38.34 rad/s^2
+
+Normales Fahren erzeugt 66 uu/s^2
+Boost 1058 uu/^2
+
+
 ### Apply Force
  Friction Forces are applied in height of Center of mass
  
  Ball-Kraft aus Richtung des Masseschwerpunkt des Autos statt aus Berührungsnormale
  
  Hit Box war früher größer, deswegen wird der Vektor vom Masseschwerpunkt zum Ball angepasst (leicht zum schwerpunkt des Autos gedreht) und dann gekürzt
+ Erdanziehungskraft 
+
+650 uu/s^2
 
 #### Stability
 Rollkraft basierend auf Normale der Berührungsstelle mit dem Boden
 
-Wenn zusätzlich Rad am Boden: Kraft nach unten
+Wenn zusätzlich Rad am Boden: Kraft nach unten -325 uu/s^2
 
 Keine Stabilisierungskräfte wenn 3 oder mehr Räder am Boden
 
@@ -69,10 +83,15 @@ Physic preset
 Doppelsprung dodge moves sind Impulse
 
 Für einen hohen Sprung kann man 200ms die Sprungtaste gedrückt halten. Diese Zeit zählt nicht in den Sprungtimer rein.
+Kleiner Sprung 292 uu/s
+Gedrückt halten 1458 uu/s^2 (für 0.20s -> 292 uu/s)
+Sticky Forces -325 uu/s^2 für 0.05s -> -16 uu/s
+
 
 ##Zweiter Srpung/Dodge
 Um einen zweiten Sprung oder eine Rolle zu machen, hat man nach dem Sprung 1.25s (1.45 bei hohem Sprung) 
 Dieser Timer ist nicht aktiviert, wenn man vom Dach der Map fällt oder anderweitig ohne den Sprung sich vom Boden löst.
+Ein zweiter Sprung gibt einem 292 uu/s Geschwindigkeit
 
 Auf dem Boden zählt man, wenn alle 4 Reifen den Boden berühren.
 
