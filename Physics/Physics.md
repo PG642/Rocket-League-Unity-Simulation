@@ -11,9 +11,22 @@ Fixed tick rate 120 hz 8.33ms
 
 ## Car
 
+### Super sonic speed
+2200uu/s
+
+Max Geschiwindigkeit 
+2300uu/s
+
+### Boost
+ Boost ist 13 Frames an
+
 force/accel fixed curve
 
 fixed mass
+
+Erdanziehungskraft 
+
+650 uu/s^2
 
 Kräfte unabhängig von Masse
 
@@ -95,3 +108,7 @@ Dominus:	|-0.97°
 Plank:	|-0.37°
 Breakout:	|-0.99°
 Hybrid:	|-0.55°
+
+## Ball
+
+Maximale Geschwindigkeit 6000 uu/s
