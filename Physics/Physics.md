@@ -112,3 +112,6 @@ Hybrid:	|-0.55°
 ## Ball
 
 Maximale Geschwindigkeit 6000 uu/s
+
+Bounces werden mit Geschwindigkeitsvektor und Oberflächennormale berechnet
+Probleme bei Tickrate (normale stimmt nicht, da der Ball leicht im Object ist)
