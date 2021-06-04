@@ -124,7 +124,7 @@ Gedrückt halten 1458 uu/s^2 (für 0.20s -> 292 uu/s)
 Sticky Forces -325 uu/s^2 für 0.05s -> -16 uu/s
 
 
-## Zweiter Srpung/Dodge
+## Zweiter Sprung/Dodge
 Um einen zweiten Sprung oder eine Rolle zu machen, hat man nach dem Sprung 1.25s (1.45 bei hohem Sprung) 
 Dieser Timer ist nicht aktiviert, wenn man vom Dach der Map fällt oder anderweitig ohne den Sprung sich vom Boden löst.
 Ein zweiter Sprung gibt einem 292 uu/s Geschwindigkeit
@@ -162,8 +162,9 @@ Die Stärke des Abbruchs hängt von der Stärke des Sticks ab.
  Höhe vorne und höhe hinten bezeichnet nicht wie hoch über dem boden die hitbox anfängt, sondern in welcher höhe die hitbox endet
 
 Die Höhe ines Autos ist  17.01 uu bei Octane
+
 Body Type	|Length	|Width	|Height
---- | --- | --- | ---
+| --- | --- | --- | ---
 Octane	|118.0074000	|84.1994100	|36.1590700
 Dominus	|127.9268000	|83.2799500	|31.3000000
 Plank	|128.8198000	|84.6703600	|29.3944000
@@ -173,7 +174,7 @@ Merc	|120.7200000	|76.7100000	|41.6600000
 
 
 Body Type	|Standard	|Boost
- --- | --- | ---
+| --- | --- | ---
 Octane	|2.336	|2.031
 Dominus	|2.336	|2.035
 Plank	|2.323	|1.967
@@ -181,6 +182,7 @@ Breakout	|2.345	|2.014
 Hybrid	|2.342	|2.014
 
 Höhe der Hitbox
+
 Body Type	|Ground Height
 --- | --- | 
 Octane:	|48.469040
@@ -190,8 +192,9 @@ Breakout:	|54.858975
 Hybrid:	|45.447330
 
 Neigung nach vorne
+
 Body Type	|Inclination
---- | --- |
+| --- | --- 
 Octane:	|-0.55°
 Dominus:	|-0.97°
 Plank:	|-0.37°
