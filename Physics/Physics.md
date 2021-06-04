@@ -71,12 +71,12 @@ Angular Geschwindigkeit max 5.5 rad/s
 | Pitch |12.46 rad/s^2
 | Roll |38.34 rad/s^2
 
-Normales Fahren erzeugt 66 uu/s^2
-Boost 1058 uu/^2
+* Normales Fahren erzeugt 66 uu/s^2
+* Boost 1058 uu/^2
 
-Beschleunigen bewegt das Auto in die Richtung in die es zeigt, auch wenn es in der Luft ist (sehr leicht) 
-(auch nach oben und unten wenn die spitze das autos entsprechend gerichtet ist)
-Rückwarts ist die beschleunigung leicht geringer als vorwärts
+* Beschleunigen bewegt das Auto in die Richtung in die es zeigt, auch wenn es in der Luft ist (sehr leicht) 
+* (auch nach oben und unten wenn die spitze das autos entsprechend gerichtet ist)
+* Rückwarts ist die beschleunigung leicht geringer als vorwärts
 
 
 ### Kräfte
@@ -92,9 +92,9 @@ Rückwarts ist die beschleunigung leicht geringer als vorwärts
  Update: doch, aber kompliziert (für Treffer auf Autodach):
   https://www.youtube.com/watch?v=CPlOh5cAizo&list=PL5hjfcWPyvtLdn_hXukGCOgt6BYpF3AbX&index=6
   
-  Fake Physik Modell (Kräfte von Masseschwerpunkt des Balls aus) und realistisches Physik Modell werden zusammen benutzt
-(Besser Video gucken für richtige erklärung mit verweis auf andere videos hier wird sehr funky)
-https://youtu.be/DRO8-784eSk?t=46
+  * Fake Physik Modell (Kräfte von Masseschwerpunkt des Balls aus) und realistisches Physik Modell werden zusammen benutzt
+* (Besser Video gucken für richtige erklärung mit verweis auf andere videos hier wird sehr funky)
+* https://youtu.be/DRO8-784eSk?t=46
 
 
 #### Stability
@@ -105,20 +105,20 @@ Wenn zusätzlich Rad am Boden: Kraft nach unten -325 uu/s^2
 Keine Stabilisierungskräfte wenn 3 oder mehr Räder am Boden
 
 ## Jump
-Doppelsprung dodge moves sind Impulse
+* Doppelsprung dodge moves sind Impulse
 
-Für einen hohen Sprung kann man 200ms / 250ms (widersprüchlich) die Sprungtaste gedrückt halten. Diese Zeit zählt nicht in den Sprungtimer rein.
-Kleiner Sprung 292 uu/s
-Gedrückt halten 1458 uu/s^2 (für 0.20s -> 292 uu/s)
-Sticky Forces -325 uu/s^2 für 0.05s -> -16 uu/s
+* Für einen hohen Sprung kann man 200ms / 250ms (widersprüchlich) die Sprungtaste gedrückt halten. Diese Zeit zählt nicht in den Sprungtimer rein.
+* Kleiner Sprung 292 uu/s
+* Gedrückt halten 1458 uu/s^2 (für 0.20s -> 292 uu/s)
+* Sticky Forces -325 uu/s^2 für 0.05s -> -16 uu/s
 
 
 ## Zweiter Sprung/Dodge
-Um einen zweiten Sprung oder eine Rolle zu machen, hat man nach dem Sprung 1.25s (1.45 bei hohem Sprung) 
-Dieser Timer ist nicht aktiviert, wenn man vom Dach der Map fällt oder anderweitig ohne den Sprung sich vom Boden löst.
-Ein zweiter Sprung gibt einem 292 uu/s Geschwindigkeit
-Doppelsprung hat fixe Geschwindigkeit unabhängig von der Dauer des Inputs
-Auf dem Boden zählt man, wenn alle 4 Reifen den Boden berühren.
+* Um einen zweiten Sprung oder eine Rolle zu machen, hat man nach dem Sprung 1.25s (1.45 bei hohem Sprung) 
+* Dieser Timer ist nicht aktiviert, wenn man vom Dach der Map fällt oder anderweitig ohne den Sprung sich vom Boden löst.
+* Ein zweiter Sprung gibt einem 292 uu/s Geschwindigkeit
+* Doppelsprung hat fixe Geschwindigkeit unabhängig von der Dauer des Inputs
+* Auf dem Boden zählt man, wenn alle 4 Reifen den Boden berühren.
 
 ### Dodge
 Dodge entfernt Vertikales Momentum bis auf in den ersten 0.15 s.
@@ -155,11 +155,11 @@ Die Stärke des Abbruchs hängt von der Stärke des Sticks ab.
 [link](https://rocketleague.fandom.com/wiki/Body_Type)
 
 ### Hitboxen
- Räder können rein und raus (je nachdem ob man am Boden ist oder nicht)
- Spiel benutzt 16 bit Integer für Winkel
- Autohitboxen sind leicht angewinkelt
- Masseschwerpunkt ist Ankerpunkt für Sachen am Auto
- Höhe vorne und höhe hinten bezeichnet nicht wie hoch über dem boden die hitbox anfängt, sondern in welcher höhe die hitbox endet
+ * Räder können rein und raus (je nachdem ob man am Boden ist oder nicht)
+ * Spiel benutzt 16 bit Integer für Winkel
+ * Autohitboxen sind leicht angewinkelt
+ * Masseschwerpunkt ist Ankerpunkt für Sachen am Auto
+ * Höhe vorne und höhe hinten bezeichnet nicht wie hoch über dem boden die hitbox anfängt, sondern in welcher höhe die hitbox endet
 
 Die Höhe ines Autos ist  17.01 uu bei Octane
 
@@ -203,18 +203,18 @@ Hybrid:	|-0.55°
 
 ## Ball
 
-Maximale Geschwindigkeit 6000 uu/s
-Max. Spin Ball: 60 RPM = 60 Umdrehungen pro Minute
-Ball Gleitreibung bremst Ball mit 230 uu/s²
-Ball Rollt ohne zu gleiten wenn er langsamer als 565 uu/s ist
-Gleiten: Ball verliert 3% seiner geschwindigkeit pro Sekunde + Gleitreibung
-Rollen: Ball verliert 2.2% seiner geschwindigkeit pro Sekunde
-Nur wenn Ball mit langsamer als 40 uu/s UND 10 RPM für 2.5s rollt, stoppt er
+* Maximale Geschwindigkeit 6000 uu/s
+* Max. Spin Ball: 60 RPM = 60 Umdrehungen pro Minute
+* Ball Gleitreibung bremst Ball mit 230 uu/s²
+* Ball Rollt ohne zu gleiten wenn er langsamer als 565 uu/s ist
+* Gleiten: Ball verliert 3% seiner geschwindigkeit pro Sekunde + Gleitreibung
+* Rollen: Ball verliert 2.2% seiner geschwindigkeit pro Sekunde
+* Nur wenn Ball mit langsamer als 40 uu/s UND 10 RPM für 2.5s rollt, stoppt er
 
 
-Bounces werden mit Geschwindigkeitsvektor und Oberflächennormale berechnet
-Beim Apprallen verliert der Ball 40% seiner zur Wand gerichteten Geschwindigkeit
-Der resultierende parallel zur Wand verlaufende geschwindigkeitsanteil wird durch Reibung beeinflusst
+* Bounces werden mit Geschwindigkeitsvektor und Oberflächennormale berechnet
+* Beim Apprallen verliert der Ball 40% seiner zur Wand gerichteten Geschwindigkeit
+* Der resultierende parallel zur Wand verlaufende geschwindigkeitsanteil wird durch Reibung beeinflusst
 
 
-Probleme bei Tickrate (normale stimmt nicht, da der Ball leicht im Object ist)
+* Probleme bei Tickrate (normale stimmt nicht, da der Ball leicht im Object ist)
