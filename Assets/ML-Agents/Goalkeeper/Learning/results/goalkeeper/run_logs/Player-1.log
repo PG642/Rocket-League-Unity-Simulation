@@ -1,0 +1,84 @@
+Mono path[0] = '/work/smttroet/goalkeeper/9envsgoalkeeper_Data/Managed'
+Mono config path = '/work/smttroet/goalkeeper/9envsgoalkeeper_Data/MonoBleedingEdge/etc'
+Preloaded 'lib_burst_generated.so'
+Preloaded 'libgrpc_csharp_ext.x64.so'
+Initialize engine version: 2020.3.8f1 (507919d4fff5)
+[Subsystems] Discovering subsystems at path /work/smttroet/goalkeeper/9envsgoalkeeper_Data/UnitySubsystems
+Forcing GfxDevice: Null
+GfxDevice: creating device client; threaded=0
+NullGfxDevice:
+    Version:  NULL 1.0 [1.0]
+    Renderer: Null Device
+    Vendor:   Unity Technologies
+Begin MonoManager ReloadAssembly
+- Completed reload, in  0.872 seconds
+ERROR: Shader Sprites/Default shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+ERROR: Shader Sprites/Mask shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+ERROR: Shader Legacy Shaders/VertexLit shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+WARNING: Shader Unsupported: 'Standard' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+ERROR: Shader Standard shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+WARNING: Shader Unsupported: 'Standard' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+WARNING: Shader Unsupported: 'Legacy Shaders/Diffuse' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+ERROR: Shader Legacy Shaders/Diffuse shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+WARNING: Shader Unsupported: 'Legacy Shaders/Diffuse' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+WARNING: Shader Unsupported: 'ArcadeCarPhysics/CheckerBoardGlobal' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+ERROR: Shader ArcadeCarPhysics/CheckerBoardGlobal shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+WARNING: Shader Unsupported: 'ArcadeCarPhysics/CheckerBoardGlobal' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+WARNING: Shader Unsupported: 'ArcadeCarPhysics/CheckerBoardLocal' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+ERROR: Shader ArcadeCarPhysics/CheckerBoardLocal shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+WARNING: Shader Unsupported: 'ArcadeCarPhysics/CheckerBoardLocal' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+WARNING: Shader Unsupported: 'Custom/FadeSurfaceShader' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+ERROR: Shader Custom/FadeSurfaceShader shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+WARNING: Shader Unsupported: 'Custom/FadeSurfaceShader' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+WARNING: Shader Unsupported: 'Particles/Standard Unlit' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+ERROR: Shader Particles/Standard Unlit shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+WARNING: Shader Unsupported: 'Particles/Standard Unlit' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+ERROR: Shader Legacy Shaders/Particles/Alpha Blended Premultiply shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+UnloadTime: 0.748330 ms
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libcoreclr.so
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libcoreclr.so
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libcoreclr.so
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libSystem.dylib
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libSystem.dylib.so
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libSystem.dylib
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libcoreclr.so
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libcoreclr.so
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libcoreclr.so
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libSystem.dylib
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libSystem.dylib.so
+Fallback handler could not load library /work/smttroet/goalkeeper/9envsgoalkeeper_Data/Mono/libSystem.dylib
+Setting up 10 worker threads for Enlighten.
+  Thread -> id: 2ac920501700 -> priority: 1 
+  Thread -> id: 2ac920702700 -> priority: 1 
+  Thread -> id: 2ac920903700 -> priority: 1 
+  Thread -> id: 2ac920b04700 -> priority: 1 
+  Thread -> id: 2ac920d05700 -> priority: 1 
+  Thread -> id: 2ac920f06700 -> priority: 1 
+  Thread -> id: 2ac921107700 -> priority: 1 
+  Thread -> id: 2ac921308700 -> priority: 1 
+  Thread -> id: 2ac921509700 -> priority: 1 
+  Thread -> id: 2ac92170a700 -> priority: 1 
