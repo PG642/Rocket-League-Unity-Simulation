@@ -11,15 +11,18 @@ RL verwendet Bullet Physics Engine
 
 BakkesMod in RocketLeague benutzen um exakte Werte abzugleichen
 
-Fixed tick rate 120 hz 8.33ms
+Tick rate 120 hz 8.33ms
 
 ## Car
 
-### Super sonic speed
-2200uu/s
+Das Auto hats das zehnfache Gewicht des Balls (unsicher ob exakt gemeinter Wert oder übertreibung im kontext)
 
-Max Geschiwindigkeit 
-2300uu/s
+Kräfte unabhängig von Masse
+
+#### Super sonic speed
+* 2200uu/s
+#### Max Geschwindigkeit
+* 2300uu/s
 
 Geschwindigkeiten und Positionen werden auf 2 Nachkommastellen gerundet bevor sie benutzt werden
 
@@ -38,10 +41,7 @@ force/accel fixed curve
 
 fixed mass
 
-Das Auto hats das zehnfache Gewicht des Balls (unsicher ob exakt gemeinter Wert oder übertreibung im kontext)
-
-Kräfte unabhängig von Masse
-
+### Reibung
 Keine Reibung in Längsrichtung
 
 Reibung in Querrichtung vereinfacht:
@@ -74,13 +74,13 @@ Angular Geschwindigkeit max 5.5 rad/s
 Normales Fahren erzeugt 66 uu/s^2
 Boost 1058 uu/^2
 
-Beschleunigen bewegt das Auto in die Richtung in die es zeigt auch wenn es in der Luft ist (sehr leicht) 
+Beschleunigen bewegt das Auto in die Richtung in die es zeigt, auch wenn es in der Luft ist (sehr leicht) 
 (auch nach oben und unten wenn die spitze das autos entsprechend gerichtet ist)
 Rückwarts ist die beschleunigung leicht geringer als vorwärts
 
 
-### Apply Force
- Friction Forces are applied in height of Center of mass
+### Kräfte
+ Friction Forces werden auf der Höhe des Masseschwerpunkts ausgeübt.
  
  Ball-Kraft aus Richtung des Masseschwerpunkt des Autos statt aus Berührungsnormale
  
@@ -103,17 +103,6 @@ Rollkraft basierend auf Normale der Berührungsstelle mit dem Boden
 Wenn zusätzlich Rad am Boden: Kraft nach unten -325 uu/s^2
 
 Keine Stabilisierungskräfte wenn 3 oder mehr Räder am Boden
-
-### Wheels
-Physic preset
-Räder haben keine physikalische Breite
-Ruheposition bei Rädern (0 Schwerkraft oder in der luft) RP
-Ruheposition bei Schwerkraft auf dem Boden (still stehend oder normal fahrend): 2 uu näher an Hitbox als bei RP (federung)
-Bei Sprung: Räder bis max 12 uu unter RP
-Federung bewegt Auto erst dann, wenn Räder über RP hinaus gedrückt werden
-Räder üben keine Kraft auf Ball aus, aber der Ball übt Kraft auf die Räder aus:
- Die Radfederungen bremsen nur die Hitbox des Autos, welche dann langsamer ist wenn sie den ball berührt, was den schuss abschwächt
- Dadurch kann man vom Ball apprallen ohne dass sich dieser bewegt
 
 ## Jump
 Doppelsprung dodge moves sind Impulse
@@ -149,6 +138,17 @@ Ein Dodge kann nach den ersten 5 Ticks abgebrochen werden.
 Dies ist möglich indem man den Stick in die entgegengesetze Richtung zieht. Eine Rolle kann man nicht abbrechen.
 Die Stärke des Abbruchs hängt von der Stärke des Sticks ab.
 
+## Wheels
+* Physic preset
+* Räder haben keine physikalische Breite
+* Ruheposition bei Rädern (0 Schwerkraft oder in der luft) RP
+* Ruheposition bei Schwerkraft auf dem Boden (still stehend oder normal fahrend): 2 uu näher an Hitbox als bei RP (federung)
+* Bei Sprung: Räder bis max 12 uu unter RP
+* Federung bewegt Auto erst dann, wenn Räder über RP hinaus gedrückt werden
+* Räder üben keine Kraft auf Ball aus, aber der Ball übt Kraft auf die Räder aus:
+* Die Radfederungen bremsen nur die Hitbox des Autos, welche dann langsamer ist wenn sie den ball berührt, was den schuss abschwächt
+* Dadurch kann man vom Ball apprallen ohne dass sich dieser bewegt
+
 
 ## Body type 
 
@@ -181,7 +181,7 @@ Plank	|2.323	|1.967
 Breakout	|2.345	|2.014
 Hybrid	|2.342	|2.014
 
-Höhe der Hitbox
+#### Höhe der Hitbox
 
 Body Type	|Ground Height
 --- | --- | 
@@ -191,7 +191,7 @@ Plank:	|55.860375
 Breakout:	|54.858975
 Hybrid:	|45.447330
 
-Neigung nach vorne
+#### Neigung nach vorne
 
 Body Type	|Inclination
 | --- | --- 

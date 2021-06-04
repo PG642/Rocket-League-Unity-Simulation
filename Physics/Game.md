@@ -1,5 +1,7 @@
 # Game
 
+Tick rate 120 hz 8.33ms
+
 ## Stadium 
  [link](https://rocketleague.fandom.com/wiki/DFH_Stadium)
  DFH Stadium 
