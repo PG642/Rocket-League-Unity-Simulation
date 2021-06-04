@@ -9,7 +9,10 @@ RL verwendet Bullet Physics Engine
 ## Stat Spreadsheet
 [link](https://onedrive.live.com/view.aspx?resid=F0182A0BAEBB5DFF!14583&ithint=file%2cxlsx&authkey=!ALu0cMkDZDoWOws)
 
+## BakkesMod
 BakkesMod in RocketLeague benutzen um exakte Werte abzugleichen
+[link](https://www.youtube.com/watch?v=47VgRmloyQI&list=PL5hjfcWPyvtLtQcDeOZqEgcxSfPl71Wl-)
+
 
 Tick rate 120 hz 8.33ms
 
