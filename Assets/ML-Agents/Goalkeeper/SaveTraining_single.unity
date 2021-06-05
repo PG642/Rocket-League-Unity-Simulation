@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -249,7 +249,7 @@ Transform:
   m_LocalPosition: {x: -53, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1872620631}
+  - {fileID: 1002328200}
   m_Father: {fileID: 1469899324}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -512,8 +512,8 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 1872620631}
-  m_Follow: {fileID: 1872620631}
+  m_LookAt: {fileID: 0}
+  m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 70
     OrthographicSize: 10
@@ -709,6 +709,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Target: {fileID: 1355295177}
   speed: {x: 30, y: 30}
+--- !u!4 &1002328200 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5295069023348888368, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
+  m_PrefabInstance: {fileID: 1872620630}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1295519837
 GameObject:
   m_ObjectHideFlags: 0
@@ -990,18 +995,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65cd1fe8837d24547876b81239beb8c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isWatchBall: 0
   distanceToBall: -7.57
   cameraDist: -4.01
   cameraHeight: 0.55
   cameraAngle: 0.03
   stiffnessPosition: 25
   stiffnessAngle: 50
-  cameraDistOff: -3.22
-  cameraHeightOff: 1.09
-  cameraAngleOff: 1.29
-  stiffnessPositionOff: 25
-  stiffnessAngleOff: 30
+  keyBoardControl: 1
 --- !u!1 &1469899323
 GameObject:
   m_ObjectHideFlags: 0
@@ -1183,11 +1183,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5295069023348888368, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295069023348888368, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295069023348888368, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1258923820049204483, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
---- !u!4 &1872620631 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1258923820049204482, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
-  m_PrefabInstance: {fileID: 1872620630}
-  m_PrefabAsset: {fileID: 0}
