@@ -15,7 +15,8 @@ public class MapData : MonoBehaviour
     private GoalController _blueGoal;
     private GoalController _redGoal;
 
-    private GUIStyle _style;
+    private GUIStyle _styleOrangeLabel;
+    private GUIStyle _styleBlueLabel;
 
 
     void Start()
@@ -24,11 +25,17 @@ public class MapData : MonoBehaviour
         _blueGoal = transform.Find("GoalLines").transform.Find("GoalLineBlue").GetComponent<GoalController>();
         _redGoal = transform.Find("GoalLines").transform.Find("GoalLineRed").GetComponent<GoalController>();
 
-        _style = new GUIStyle();
-        _style.normal.textColor = Color.red;
-        _style.fontSize = 25;
-        _style.fontStyle = FontStyle.Bold;
-        _style.alignment = TextAnchor.UpperCenter;
+        _styleOrangeLabel = new GUIStyle();
+        _styleOrangeLabel.normal.textColor = new Color(1.0f, 0.47f, 0f);
+        _styleOrangeLabel.fontSize = 25;
+        _styleOrangeLabel.fontStyle = FontStyle.Bold;
+        _styleOrangeLabel.alignment = TextAnchor.UpperCenter;
+
+        _styleBlueLabel = new GUIStyle();
+        _styleBlueLabel.normal.textColor = new Color(0f, 0.72f, 1f);
+        _styleBlueLabel.fontSize = 25;
+        _styleBlueLabel.fontStyle = FontStyle.Bold;
+        _styleBlueLabel.alignment = TextAnchor.UpperCenter;
     }
 
     public void NotifyScore(bool isBlueTeam)
@@ -53,6 +60,7 @@ public class MapData : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(Screen.width / 2 - 75, 0f, 150, 130), $"{blueScore:D2} : {orangeScore:D2}", _style);
+        GUI.Label(new Rect(Screen.width / 2 - 75 - 15, 0f, 150, 130), $"{blueScore:D2}", _styleBlueLabel);
+        GUI.Label(new Rect(Screen.width / 2 - 75 + 15, 0f, 150, 130), $"{orangeScore:D2}", _styleOrangeLabel);
     }
 }

@@ -23,7 +23,7 @@ public class GoalController : MonoBehaviour
         if ((isGoalLineBlue && ballPosition.x < transformPosition.x) ||
             (!isGoalLineBlue && ballPosition.x > transformPosition.x))
         {
-            _mapData.NotifyScore(isGoalLineBlue);
+            _mapData.NotifyScore(!isGoalLineBlue);
         }
     }
 }
