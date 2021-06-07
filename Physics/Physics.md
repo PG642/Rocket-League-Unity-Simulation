@@ -34,7 +34,10 @@ Boost wird als float zwischen 0 und 1 gespeichert
 
 Darstellung als 0-100 ist nur prozentualer Anteil
 
-Ein kleines Boostpad gibt 0.12 boost
+Ein kleines Boostpad gibt 0.12 boost und braucht 4 Sekunden zum Aufladen
+
+
+Ein kleines Boostpad gibt 1.00 boost und braucht 10 Sekunden zum Aufladen
 
 es wird immer abgerundet
 
