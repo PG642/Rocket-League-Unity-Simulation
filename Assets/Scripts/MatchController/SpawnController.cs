@@ -30,26 +30,26 @@ namespace MatchController
         private void Start()
         {
             blue_spawn_points.Add(new SpawnLocation(-20.48f,  0.0f, -25.6f, 45));
-            blue_spawn_points.Add(new SpawnLocation(20.48f, 0.0f, -25.6f, 135));
-            blue_spawn_points.Add(new SpawnLocation(-2.56f, 0.0f, -38.4f, 90));
-            blue_spawn_points.Add(new SpawnLocation(2.56f, 0.0f, -38.4f, 90));
-            blue_spawn_points.Add(new SpawnLocation(0.0f, 0.0f, -46.08f, 90));
+            blue_spawn_points.Add(new SpawnLocation(20.48f, 0.0f, -25.6f, -45));
+            blue_spawn_points.Add(new SpawnLocation(-2.56f, 0.0f, -38.4f, 0));
+            blue_spawn_points.Add(new SpawnLocation(2.56f, 0.0f, -38.4f, 0));
+            blue_spawn_points.Add(new SpawnLocation(0.0f, 0.0f, -46.08f, 0));
             
-            orange_spawn_points.Add(new SpawnLocation(20.48f,  0.0f, 25.6f, 135));
-            orange_spawn_points.Add(new SpawnLocation(-20.48f, 0.0f, 25.6f, -45));
-            orange_spawn_points.Add(new SpawnLocation(2.56f, 0.0f, 38.4f, -90));
-            orange_spawn_points.Add(new SpawnLocation(-2.56f, 0.0f, 38.4f, -90));
-            orange_spawn_points.Add(new SpawnLocation(0.0f, 0.0f, 46.08f, -90));
+            orange_spawn_points.Add(new SpawnLocation(20.48f,  0.0f, 25.6f, 225));
+            orange_spawn_points.Add(new SpawnLocation(-20.48f, 0.0f, 25.6f, 135));
+            orange_spawn_points.Add(new SpawnLocation(2.56f, 0.0f, 38.4f, 180));
+            orange_spawn_points.Add(new SpawnLocation(-2.56f, 0.0f, 38.4f, 180));
+            orange_spawn_points.Add(new SpawnLocation(0.0f, 0.0f, 46.08f, 180));
             
-            blue_demolition_spawn_points.Add(new SpawnLocation(-23.04f, 0.0f, -46.08f, 90));
-            blue_demolition_spawn_points.Add(new SpawnLocation(-26.88f, 0.0f, -46.08f, 90));
-            blue_demolition_spawn_points.Add(new SpawnLocation(23.04f, 0.0f, -46.08f, 90));
-            blue_demolition_spawn_points.Add(new SpawnLocation(26.88f, 0.0f, -46.08f, 90));
+            blue_demolition_spawn_points.Add(new SpawnLocation(-23.04f, 0.0f, -46.08f, 0));
+            blue_demolition_spawn_points.Add(new SpawnLocation(-26.88f, 0.0f, -46.08f, 0));
+            blue_demolition_spawn_points.Add(new SpawnLocation(23.04f, 0.0f, -46.08f, 0));
+            blue_demolition_spawn_points.Add(new SpawnLocation(26.88f, 0.0f, -46.08f, 0));
             
-            orange_demolition_spawn_points.Add(new SpawnLocation(-23.04f, 0.0f, -46.08f, 90));
-            orange_demolition_spawn_points.Add(new SpawnLocation(-26.88f, 0.0f, -46.08f, 90));
-            orange_demolition_spawn_points.Add(new SpawnLocation(23.04f, 0.0f, -46.08f, 90));
-            orange_demolition_spawn_points.Add(new SpawnLocation(26.88f, 0.0f, -46.08f, 90));
+            orange_demolition_spawn_points.Add(new SpawnLocation(-23.04f, 0.0f, 46.08f, 180));
+            orange_demolition_spawn_points.Add(new SpawnLocation(-26.88f, 0.0f, 46.08f, 180));
+            orange_demolition_spawn_points.Add(new SpawnLocation(23.04f, 0.0f, 46.08f, 180));
+            orange_demolition_spawn_points.Add(new SpawnLocation(26.88f, 0.0f, 46.08f, 180));
         }
 
         public SpawnLocation GetSpawnPosition(int team)
@@ -77,7 +77,16 @@ namespace MatchController
 
             return spawn_points[idx];
         }
-        
-        
+
+        public GameObject SpawnCar(GameObject car, bool was_demolished = false)
+        {
+            // we do not know how teams are implemented
+            // team = car.transform.Find("Team").team;
+            int team = 0;
+            SpawnLocation spawnLocation = was_demolished ? GetDemolitionSpawnPosition(team) : GetSpawnPosition(team);
+            car.transform.localPosition = spawnLocation.location;
+            car.transform.localRotation = spawnLocation.orientation;
+            return car;
+        }
     }
 }
