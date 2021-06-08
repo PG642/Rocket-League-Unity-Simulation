@@ -12,7 +12,7 @@ namespace MatchController
         {
             location = new Vector3(x, y, z);
             orientation = Quaternion.AngleAxis(yaw, Vector3.up);
-            last_used = 0.0f;
+            last_used = float.NegativeInfinity;
         }
             
         public Vector3 location;
@@ -57,7 +57,7 @@ namespace MatchController
             List<SpawnLocation> spawn_points = team == 0 ? orange_spawn_points : blue_spawn_points;
             
             int idx = Random.Range(0,4);
-            while (spawn_points[idx].last_used > 10.0f)
+            while (Time.time - spawn_points[idx].last_used < 5.0f)
             {
                 idx++;
             }
@@ -70,7 +70,7 @@ namespace MatchController
             List<SpawnLocation> spawn_points = team == 0 ? orange_demolition_spawn_points : blue_demolition_spawn_points;
             
             int idx = Random.Range(0, 3);
-            while (spawn_points[idx].last_used > 10.0f)
+            while (Time.time - spawn_points[idx].last_used < 5.0f)
             {
                 idx++;
             }
