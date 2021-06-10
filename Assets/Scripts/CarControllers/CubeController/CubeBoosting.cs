@@ -7,15 +7,20 @@ public class CubeBoosting : MonoBehaviour
     const float BoostForce = 991 / 100;
 
     public bool isBoosting = false;
-
     private float _boostAmount = 32f;
     private int _boostCountdown = 13;
+    public bool _infiniteBoosting = false;
     CubeController _c;
     InputManager _inputManager;
     Rigidbody _rb;
 
     private void Start()
     {
+        if (_infiniteBoosting)
+        {
+            _boostAmount = 100f;
+        }
+
         _inputManager = GetComponentInParent<InputManager>();
         _c = GetComponent<CubeController>();
         _rb = GetComponentInParent<Rigidbody>();
@@ -42,7 +47,10 @@ public class CubeBoosting : MonoBehaviour
                 {
                     _rb.AddForce(BoostForce * BoostForceMultiplier * transform.forward, ForceMode.Acceleration);
                 }
-                _boostAmount = Mathf.Max(0.0f, _boostAmount - 0.27f);
+                if (!_infiniteBoosting)
+                {
+                    _boostAmount = Mathf.Max(0.0f, _boostAmount - 0.27f);
+                }
 
             }
             else
