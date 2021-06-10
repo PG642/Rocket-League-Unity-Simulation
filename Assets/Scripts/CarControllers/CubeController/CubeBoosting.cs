@@ -69,12 +69,26 @@ public class CubeBoosting : MonoBehaviour
             _boostCountdown = 13;
             isBoosting = false;
         }
-        Debug.Log($"Boost: {_boostAmount}");
 
     }
+
+    //returns true if the boost was alreade 100
+    public bool IncreaseBoost(float boost)
+    {
+        if(_boostAmount == 100)
+        {
+            return true;
+        }
+        else
+        {
+            _boostAmount = Mathf.Min(100f, _boostAmount + boost);
+            return false;
+        }
+    }
+
     void OnGUI()
     {
-        GUI.Label(new Rect(Screen.width - 120, Screen.height - 50, 150, 130), $"Boost {(int)_boostAmount}", _style);
+        GUI.Label(new Rect(Screen.width - 140, Screen.height - 50, 150, 130), $"Boost {(int)_boostAmount}", _style);
 
     }
 }
