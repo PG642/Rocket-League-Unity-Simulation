@@ -8,14 +8,14 @@ Tick rate 120 hz 8.33ms
 ### Boost
 
 6 * 100% boost (corner and middle of the field)
-Hitbox: 208 uu Radiusund 168 uu Hähe
+Hitbox: 208 uu Radius und 168 uu Hähe
 28 * 12% boost  (like in picture)
 Hitbox: 144 uu Radius und 165 uu Hähe
 [picture](https://external-preview.redd.it/vdVj6_r4_bRb8qyzYPaeNjqgpNg8a_dO7eulrL7qM6c.png?auto=webp&s=44f2c0184ce142f33ea792b21f9761f9bfa89c93)
 
 Die Hitboxen verändern sich, wenn man drauf steht. Dabei wird kein Radius, sondern ein Quadrat genommen.
 (160uu für das Große und 96 für das kleine) Dabei zählen nicht die Reifen zum Auto. Man ist aber solange verbunden, wie man nicht die erste (radius) Hitbox verlässt.
-
+Die Höhe der Boxen liegt bei 130uu
 Bei einem Duell um Boost bekommt das Auto, welches weiter weg ist den Boost.
 
 game time 5:00 plus overtime - stops when goal is scored
