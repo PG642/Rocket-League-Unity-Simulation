@@ -35,7 +35,6 @@ public class Boostpad : MonoBehaviour
 
             if ((!isBig && Time.time - _lastPickup >= _SmallRefresh) || (isBig && Time.time - _lastPickup >= _BigRefresh))
             {
-                Debug.Log("active");
                 _isActive = true;
             }
         }
@@ -67,7 +66,6 @@ public class Boostpad : MonoBehaviour
 
     private void PickUpBoost()
     {
-        Debug.Log("not active");
         _lastPickup = Time.time;
         _isActive = false;
     }
