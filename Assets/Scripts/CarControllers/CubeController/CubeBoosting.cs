@@ -13,9 +13,15 @@ public class CubeBoosting : MonoBehaviour
     CubeController _c;
     InputManager _inputManager;
     Rigidbody _rb;
+    GUIStyle _style;
 
     private void Start()
     {
+        _style = new GUIStyle();
+        _style.normal.textColor = Color.red;
+        _style.fontSize = 25;
+        _style.fontStyle = FontStyle.Bold;
+
         if (_infiniteBoosting)
         {
             _boostAmount = 100f;
@@ -64,6 +70,11 @@ public class CubeBoosting : MonoBehaviour
             isBoosting = false;
         }
         Debug.Log($"Boost: {_boostAmount}");
+
+    }
+    void OnGUI()
+    {
+        GUI.Label(new Rect(Screen.width - 120, Screen.height - 50, 150, 130), $"Boost {(int)_boostAmount}", _style);
 
     }
 }
