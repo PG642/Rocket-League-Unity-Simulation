@@ -20,11 +20,48 @@ public class TeamController : MonoBehaviour
     {
         // Set a team for each car in the environment
         InitializeTeams();
+        // Set team colors for the walls
+        DyeWalls();
         // Spawn each car
         SpawnTeams();
     }
 
 
+
+    void DyeWalls()
+    {
+        Transform rocketMap = transform.Find("World").Find("Rocket_Map");
+        Material[] materials = rocketMap.Find("StaticMeshActor_2").GetComponent<Renderer>().materials;
+        FindAndDyeMaterial(materials, "GChecker1", new Color(0.0f, 0.48f, 1.0f));
+        
+        materials = rocketMap.Find("StaticMeshActor_4").GetComponent<Renderer>().materials;
+        FindAndDyeMaterial(materials, "GChecker1", new Color(0.0f, 0.48f, 1.0f));
+
+        materials = rocketMap.Find("StaticMeshActor_5").GetComponent<Renderer>().materials;
+        FindAndDyeMaterial(materials, "GChecker1", new Color(0.0f, 0.48f, 1.0f));
+
+        materials = rocketMap.Find("StaticMeshActor_1").GetComponent<Renderer>().materials;
+        FindAndDyeMaterial(materials, "GChecker1", new Color(0.8f, 0.4f, 0.0f));
+        
+        materials = rocketMap.Find("StaticMeshActor_3").GetComponent<Renderer>().materials;
+        FindAndDyeMaterial(materials, "GChecker1", new Color(0.8f, 0.4f, 0.0f));
+
+        materials = rocketMap.Find("StaticMeshActor_6").GetComponent<Renderer>().materials;
+        FindAndDyeMaterial(materials, "GChecker1", new Color(0.8f, 0.4f, 0.0f));
+
+
+    }
+
+    void FindAndDyeMaterial(Material[] materials, string name, Color color)
+    {
+        foreach (Material mat in materials)
+        {
+            if (mat.name.Contains(name))
+            {
+                mat.color = color;
+            }
+        }
+    }
     // searches for all cars in the environment and selects a team for them
     void InitializeTeams()
     {
@@ -39,14 +76,20 @@ public class TeamController : MonoBehaviour
                 if (playerCount % 2 == 0)
                 {
                     TeamBlue[playerCount / 2] = child.gameObject;
+                    Material[] materials = child.Find("CubeController").Find("Body Mesh").Find("Octane").GetComponent<Renderer>().materials;
+                    FindAndDyeMaterial(materials, "Red", new Color(0.0f, 0.48f, 1.0f));
                 }
                 else
                 {
                     TeamOrange[playerCount / 2] = child.gameObject;
+                    Material[] materials = child.Find("CubeController").Find("Body Mesh").Find("Octane").GetComponent<Renderer>().materials;
+                    FindAndDyeMaterial(materials, "Red", new Color(0.8f, 0.4f, 0.0f));
                 }
                 playerCount++;
             }
         }
+
+
     }
 
 

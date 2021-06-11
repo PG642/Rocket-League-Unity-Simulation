@@ -17,6 +17,7 @@ namespace MatchController
             _mapData = transform.Find("World").GetComponentInChildren<MapData>();
             _teamController = GetComponent<TeamController>();
             _teamController.Initialize();
+            _ball = transform.Find("Ball");
         }
 
         // Update is called once per frame
