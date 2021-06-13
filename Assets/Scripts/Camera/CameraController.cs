@@ -49,7 +49,7 @@ public class CameraController : MonoBehaviour
     {
         _checkVelocity = (_car.position - _prevPosistion) / Time.deltaTime;
         _prevPosistion = _car.position;
-        Debug.Log("X: " + _checkVelocity.x + "Y: " + _checkVelocity.y + "Z: " + _checkVelocity.z);
+        //Debug.Log("X: " + _checkVelocity.x + "Y: " + _checkVelocity.y + "Z: " + _checkVelocity.z);
         UpdatePivotElement(stiffnessPosition);
         UpdateCamDirection(stiffnessAngle);
         UpdateCamPositon(stiffnessPosition);
