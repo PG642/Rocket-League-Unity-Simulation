@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using Consolation;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class Ball : MonoBehaviour
@@ -7,17 +11,21 @@ public class Ball : MonoBehaviour
     [SerializeField] [Range(10,80)] float randomSpeed = 40;
     [SerializeField] float initialForce = 400;
     [SerializeField] float hitMultiplier = 50;
-
+    [SerializeField] private float _maxAngluarVelocity = 6.0f;
+    [SerializeField] private float _maxVelocity = 60.0f;
     private bool isTouchedGround = false;
     
     Rigidbody _rb;
     Transform _transform;
-    
+
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _transform = this.transform;
         isTouchedGround = false;
+        _rb.maxAngularVelocity = _maxAngluarVelocity;
+        _rb.maxDepenetrationVelocity = _maxVelocity;
+        
     }
     
     void Update()
@@ -31,8 +39,17 @@ public class Ball : MonoBehaviour
         
         if (Input.GetButtonDown("Select"))
             ResetShot(new Vector3(7.76f, 2.98f, 0f));
+        _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _maxVelocity);
     }
-    
+
+    private void FixedUpdate()
+    {
+        if (_rb.velocity.magnitude > _maxVelocity)
+        {
+            _rb.velocity = _rb.velocity.normalized * _maxVelocity;
+        }
+    }
+
     private void ResetShot(Vector3 pos)
     {
         _transform.position = pos;
