@@ -48,6 +48,11 @@ public class Ball : MonoBehaviour
         {
             _rb.velocity = _rb.velocity.normalized * _maxVelocity;
         }
+
+        if (_rb.angularVelocity.magnitude > _maxAngluarVelocity)
+        {
+            _rb.angularVelocity = _rb.angularVelocity.normalized * _maxVelocity;
+        }
     }
 
     private void ResetShot(Vector3 pos)
