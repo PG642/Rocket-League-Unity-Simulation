@@ -85,10 +85,14 @@ public class Ball : MonoBehaviour
 
         if (col.gameObject.CompareTag("Player"))
         {
+            
             float force = initialForce + col.rigidbody.velocity.magnitude * hitMultiplier;
             //Vector3 dir = transform.position - col.contacts[0].point;
             var dir = transform.position - col.transform.position;
             _rb.AddForce(dir.normalized * force);
+            _rb.AddForce(CalculatePsyonixImpulse(col), ForceMode.Impulse);
+            
+            
         }
 
 
@@ -101,5 +105,25 @@ public class Ball : MonoBehaviour
         //    //rb.AddForce(Vector3.up * -downForce);
         //        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - SlowVelocityGround, rb.velocity.z);
         //    }
+    }
+
+    Vector3 CalculatePsyonixImpulse(Collision col)
+    {
+        var n = _rb.position - col.transform.position;
+        n.y *= 0.35f;
+        var f = col.transform.forward;
+        var dot = Vector3.Dot(n, f);
+        n = Vector3.Normalize(n - 0.35f * dot * f);
+        var impulse = _rb.mass * col.relativeVelocity.magnitude * col.relativeVelocity.magnitude * 0.2f * n; // TODO scaling
+        Debug.Log(impulse);
+        Debug.Log(col.relativeVelocity.magnitude);
+        return impulse ;
+    }
+
+    float scaling(float magninute)
+    {
+        
+        var scale = 0.0f;
+        return scale;
     }
 }
