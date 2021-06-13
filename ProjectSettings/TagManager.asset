@@ -16,6 +16,7 @@ TagManager:
   - Rotator
   - SpawnPosition
   - RespawnPosition
+  - ControllableCar
   layers:
   - Default
   - TransparentFX

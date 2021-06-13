@@ -1,5 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using Random = UnityEngine.Random;
+
 
 namespace MatchController
 {
@@ -17,10 +21,10 @@ namespace MatchController
         private Transform _orangeFallBackSpawnPosition;
         private Transform _orangeRespawnPositions;
         private Transform _orangeSpawnPositions;
-
+        
         private void Start()
         {
-            var spawnPositions = transform.Find("SpawnPositions");
+            var spawnPositions = transform.Find("World").Find("Rocket_Map").Find("SpawnPositions");
 
             _orangeSpawnPositions = spawnPositions.Find("Orange").Find("Spawn");
             _blueSpawnPositions = spawnPositions.Find("Blue").Find("Spawn");
@@ -37,10 +41,15 @@ namespace MatchController
             _ballSpawnPosition = spawnPositions.Find("Ball").Find("Center");
         }
 
-        private Transform GetSpawnPosition(GameObject car, Transform spawnPositions, int team)
+        private Transform GetSpawnPosition(GameObject car, TeamController.Team team, bool wasDemolished)
         {
+            Transform spawnPositions;
+            if (team == TeamController.Team.ORANGE)
+                spawnPositions = wasDemolished ? _orangeRespawnPositions : _orangeSpawnPositions;
+            else
+                spawnPositions = wasDemolished ? _blueRespawnPositions : _blueSpawnPositions;
+            
             var childNum = spawnPositions.childCount;
-
             var idx = Random.Range(0, childNum - 1);
             for (var i = 0; i < childNum; i++)
             {
@@ -49,9 +58,9 @@ namespace MatchController
                 if (_spawnPositionUsage.ContainsKey(spawnPosition))
                 {
                     if (_spawnPositionUsage[spawnPosition] == car ||
-                        _spawnPositionUsage[spawnPosition].transform.position == spawnPosition.transform.position)
+                        (_spawnPositionUsage[spawnPosition].transform.position - spawnPosition.transform.position).magnitude > 0.1)
                     {
-                        _spawnPositionUsage.Add(spawnPosition, car);
+                        _spawnPositionUsage[spawnPosition] = car;
                         return spawnPosition;
                     }
                 }
@@ -65,21 +74,13 @@ namespace MatchController
             // this code should never be reached but it is here as a safety net
             return team == 0 ? _orangeFallBackSpawnPosition : _blueFallBackSpawnPosition;
         }
-
-        public GameObject SpawnCar(GameObject car, bool wasDemolished = false)
+        
+        public GameObject SpawnCar(GameObject car, TeamController.Team team, bool wasDemolished = false)
         {
-            // we do not know how teams are implemented
-            // team = car.transform.Find("Team").team;
-            var team = 0;
-            Transform spawnPositions;
-            if (team == 0)
-                spawnPositions = wasDemolished ? _orangeRespawnPositions : _orangeSpawnPositions;
-            else
-                spawnPositions = wasDemolished ? _blueRespawnPositions : _blueSpawnPositions;
-
-            var spawnLocation = GetSpawnPosition(car, spawnPositions, team);
+            var spawnLocation = GetSpawnPosition(car, team, wasDemolished);
             car.transform.position = spawnLocation.position;
             car.transform.rotation = spawnLocation.rotation;
+
             return car;
         }
 
