@@ -10,15 +10,13 @@ public class CubeParticleSystem : MonoBehaviour
 
     const int SupersonicThreshold = 2200 / 100;
     InputManager _inputManager;
-    CubeController _cubeController;
-    CubeBoosting _cubeBoosting;
+    CubeController _controller;
     private TrailRenderer[] _trails;
     bool _isBoostAnimationPlaying = false;
 
     void Start()
     {
-        _cubeController = GetComponentInParent<CubeController>();
-        _cubeBoosting = GetComponentInParent<CubeBoosting>();
+        _controller = GetComponentInParent<CubeController>();
         _inputManager = transform.parent.GetComponentInParent<InputManager>();
         _trails = GetComponentsInChildren<TrailRenderer>();
         _trails[0].time = _trails[1].time = 0;
@@ -29,7 +27,7 @@ public class CubeParticleSystem : MonoBehaviour
 
     void Update()
     {
-        if (_cubeBoosting.isBoosting)
+        if (_inputManager.isBoost)
         {
             if (_isBoostAnimationPlaying == false)
             {
@@ -38,7 +36,7 @@ public class CubeParticleSystem : MonoBehaviour
                 _isBoostAnimationPlaying = true;
             }
         }
-        else if (!_cubeBoosting.isBoosting)
+        else if (!_inputManager.isBoost)
         {
             boostPs.Stop();
             firePs.SetActive(false);
@@ -51,11 +49,11 @@ public class CubeParticleSystem : MonoBehaviour
     private void FixedUpdate()
     {
         //  Wind and trail effect
-        if (_cubeController.forwardSpeed >= SupersonicThreshold)
+        if (_controller.forwardSpeed >= SupersonicThreshold)
         {
             windPs.Play();
             
-            if (_cubeController.isAllWheelsSurface)
+            if (_controller.isAllWheelsSurface)
                 _trails[0].time = _trails[1].time = Mathf.Lerp(_trails[1].time, TrailLength, Time.fixedDeltaTime * 5);
             else 
                 _trails[0].time = _trails[1].time = 0;
