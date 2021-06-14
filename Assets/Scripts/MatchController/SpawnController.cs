@@ -1,91 +1,94 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEditor;
 using Random = UnityEngine.Random;
 
 
-
 namespace MatchController
 {
-    public struct SpawnLocation
-    {
-        public SpawnLocation(float x, float y, float z, float yaw)
-        {
-            location = new Vector3(x, y, z);
-            orientation = Quaternion.AngleAxis(yaw, Vector3.up);
-            last_used = float.NegativeInfinity;
-        }
-            
-        public Vector3 location;
-        public Quaternion orientation;
-        public float last_used;
-    }
-    
     public class SpawnController : MonoBehaviour
     {
-        List<SpawnLocation> blue_spawn_points = new List<SpawnLocation>();
-        List<SpawnLocation> orange_spawn_points = new List<SpawnLocation>();
-        List<SpawnLocation> blue_demolition_spawn_points = new List<SpawnLocation>();
-        List<SpawnLocation> orange_demolition_spawn_points = new List<SpawnLocation>();
+        private readonly Dictionary<Transform, GameObject>
+            _spawnPositionUsage = new Dictionary<Transform, GameObject>();
 
+        private Transform _ballSpawnPosition;
+
+        private Transform _blueFallBackSpawnPosition;
+        private Transform _blueRespawnPositions;
+        private Transform _blueSpawnPositions;
+
+        private Transform _orangeFallBackSpawnPosition;
+        private Transform _orangeRespawnPositions;
+        private Transform _orangeSpawnPositions;
+        
         private void Start()
         {
-            blue_spawn_points.Add(new SpawnLocation(-20.48f,  0.0f, -25.6f, 45));
-            blue_spawn_points.Add(new SpawnLocation(20.48f, 0.0f, -25.6f, -45));
-            blue_spawn_points.Add(new SpawnLocation(-2.56f, 0.0f, -38.4f, 0));
-            blue_spawn_points.Add(new SpawnLocation(2.56f, 0.0f, -38.4f, 0));
-            blue_spawn_points.Add(new SpawnLocation(0.0f, 0.0f, -46.08f, 0));
-            
-            orange_spawn_points.Add(new SpawnLocation(20.48f,  0.0f, 25.6f, 225));
-            orange_spawn_points.Add(new SpawnLocation(-20.48f, 0.0f, 25.6f, 135));
-            orange_spawn_points.Add(new SpawnLocation(2.56f, 0.0f, 38.4f, 180));
-            orange_spawn_points.Add(new SpawnLocation(-2.56f, 0.0f, 38.4f, 180));
-            orange_spawn_points.Add(new SpawnLocation(0.0f, 0.0f, 46.08f, 180));
-            
-            blue_demolition_spawn_points.Add(new SpawnLocation(-23.04f, 0.0f, -46.08f, 0));
-            blue_demolition_spawn_points.Add(new SpawnLocation(-26.88f, 0.0f, -46.08f, 0));
-            blue_demolition_spawn_points.Add(new SpawnLocation(23.04f, 0.0f, -46.08f, 0));
-            blue_demolition_spawn_points.Add(new SpawnLocation(26.88f, 0.0f, -46.08f, 0));
-            
-            orange_demolition_spawn_points.Add(new SpawnLocation(-23.04f, 0.0f, 46.08f, 180));
-            orange_demolition_spawn_points.Add(new SpawnLocation(-26.88f, 0.0f, 46.08f, 180));
-            orange_demolition_spawn_points.Add(new SpawnLocation(23.04f, 0.0f, 46.08f, 180));
-            orange_demolition_spawn_points.Add(new SpawnLocation(26.88f, 0.0f, 46.08f, 180));
+            var spawnPositions = transform.Find("World").Find("Rocket_Map").Find("SpawnPositions");
+
+            _orangeSpawnPositions = spawnPositions.Find("Orange").Find("Spawn");
+            _blueSpawnPositions = spawnPositions.Find("Blue").Find("Spawn");
+            _orangeRespawnPositions = spawnPositions.Find("Orange").Find("Respawn");
+            _blueRespawnPositions = spawnPositions.Find("Blue").Find("Respawn");
+
+            var up = transform.up;
+            _orangeFallBackSpawnPosition =
+                Instantiate(_orangeSpawnPositions.GetChild(_orangeSpawnPositions.childCount - 1));
+            _orangeFallBackSpawnPosition.transform.localPosition += 10 * up;
+            _blueFallBackSpawnPosition = Instantiate(_blueSpawnPositions.GetChild(_blueSpawnPositions.childCount - 1));
+            _blueFallBackSpawnPosition.transform.localPosition += 10 * up;
+
+            _ballSpawnPosition = spawnPositions.Find("Ball").Find("Center");
         }
 
-        public SpawnLocation GetSpawnPosition(TeamController.Team team)
+        private Transform GetSpawnPosition(GameObject car, TeamController.Team team, bool wasDemolished)
         {
-            List<SpawnLocation> spawn_points = team == TeamController.Team.ORANGE ? orange_spawn_points : blue_spawn_points;
+            Transform spawnPositions;
+            if (team == TeamController.Team.ORANGE)
+                spawnPositions = wasDemolished ? _orangeRespawnPositions : _orangeSpawnPositions;
+            else
+                spawnPositions = wasDemolished ? _blueRespawnPositions : _blueSpawnPositions;
             
-            int idx = Random.Range(0,4);
-            while (Time.time - spawn_points[idx].last_used < 5.0f)
+            var childNum = spawnPositions.childCount;
+            var idx = Random.Range(0, childNum - 1);
+            for (var i = 0; i < childNum; i++)
             {
-                idx++;
+                idx = (idx + 1) % childNum;
+                var spawnPosition = spawnPositions.GetChild(idx);
+                if (_spawnPositionUsage.ContainsKey(spawnPosition))
+                {
+                    if (_spawnPositionUsage[spawnPosition] == car ||
+                        (_spawnPositionUsage[spawnPosition].transform.position - spawnPosition.transform.position).magnitude > 0.1)
+                    {
+                        _spawnPositionUsage[spawnPosition] = car;
+                        return spawnPosition;
+                    }
+                }
+                else
+                {
+                    _spawnPositionUsage.Add(spawnPosition, car);
+                    return spawnPosition;
+                }
             }
 
-            return spawn_points[idx];
+            // this code should never be reached but it is here as a safety net
+            return team == 0 ? _orangeFallBackSpawnPosition : _blueFallBackSpawnPosition;
         }
         
-        public SpawnLocation GetDemolitionSpawnPosition(TeamController.Team team)
+        public GameObject SpawnCar(GameObject car, TeamController.Team team, bool wasDemolished = false)
         {
-            List<SpawnLocation> spawn_points = team == TeamController.Team.ORANGE ? orange_demolition_spawn_points : blue_demolition_spawn_points;
-            
-            int idx = Random.Range(0, 3);
-            while (Time.time - spawn_points[idx].last_used < 5.0f)
-            {
-                idx++;
-            }
+            var spawnLocation = GetSpawnPosition(car, team, wasDemolished);
+            car.transform.position = spawnLocation.position;
+            car.transform.rotation = spawnLocation.rotation;
 
-            return spawn_points[idx];
+            return car;
         }
 
-        public GameObject SpawnCar(GameObject car, TeamController.Team team, bool was_demolished = false)
+        public GameObject SpawnBall(GameObject ball)
         {
-            SpawnLocation spawnLocation = was_demolished ? GetDemolitionSpawnPosition(team) : GetSpawnPosition(team);
-            car.transform.localPosition = spawnLocation.location;
-            car.transform.localRotation = spawnLocation.orientation;
-            return car;
+            ball.transform.position = _ballSpawnPosition.position;
+            ball.transform.rotation = _ballSpawnPosition.rotation;
+            return ball;
         }
     }
 }
