@@ -26340,6 +26340,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &7892651330806512699
 SphereCollider:
+
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -26494,6 +26495,7 @@ SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
+
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7892651330852551499}
   m_Material: {fileID: 0}

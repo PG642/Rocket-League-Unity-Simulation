@@ -67,7 +67,7 @@ public class GoalKeeperAgent : Agent
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
 
-        _mapData.Reset();
+        _mapData.ResetIsScored();
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -99,8 +99,13 @@ public class GoalKeeperAgent : Agent
         InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
         InputManager.isJumpUp = actionBuffers.ContinuousActions[8] > 0;
         InputManager.isJumpDown = actionBuffers.ContinuousActions[9] > 0;
+        
+        float ballDistanceReward = 0.01f * (1-(Vector3.Distance(_ball.position,transform.position)/_mapData.diag));
+        AddReward(ballDistanceReward);
+    }
 
-
+    public void Update()
+    {
         if (Time.time - _lastResetTime > _episodeLength)
         {
             AddReward(0.5f);
@@ -111,15 +116,13 @@ public class GoalKeeperAgent : Agent
             AddReward(-1f);
             Reset();
         }
-        if (_mapData.isScoredRed)
+        if (_mapData.isScoredOrange)
         {
             AddReward(1f);
             Reset();
         }
-        float ballDistanceReward = 0.01f * (1-(Vector3.Distance(_ball.position,transform.position)/_mapData.diag));
-        AddReward(ballDistanceReward);
-
     }
+    
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         InputManager.isAgent = false;
