@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using Random = UnityEngine.Random;
 
+
+
 namespace MatchController
 {
     public struct SpawnLocation
@@ -52,9 +54,9 @@ namespace MatchController
             orange_demolition_spawn_points.Add(new SpawnLocation(26.88f, 0.0f, 46.08f, 180));
         }
 
-        public SpawnLocation GetSpawnPosition(int team)
+        public SpawnLocation GetSpawnPosition(TeamController.Team team)
         {
-            List<SpawnLocation> spawn_points = team == 0 ? orange_spawn_points : blue_spawn_points;
+            List<SpawnLocation> spawn_points = team == TeamController.Team.ORANGE ? orange_spawn_points : blue_spawn_points;
             
             int idx = Random.Range(0,4);
             while (Time.time - spawn_points[idx].last_used < 5.0f)
@@ -65,9 +67,9 @@ namespace MatchController
             return spawn_points[idx];
         }
         
-        public SpawnLocation GetDemolitionSpawnPosition(int team)
+        public SpawnLocation GetDemolitionSpawnPosition(TeamController.Team team)
         {
-            List<SpawnLocation> spawn_points = team == 0 ? orange_demolition_spawn_points : blue_demolition_spawn_points;
+            List<SpawnLocation> spawn_points = team == TeamController.Team.ORANGE ? orange_demolition_spawn_points : blue_demolition_spawn_points;
             
             int idx = Random.Range(0, 3);
             while (Time.time - spawn_points[idx].last_used < 5.0f)
@@ -78,11 +80,8 @@ namespace MatchController
             return spawn_points[idx];
         }
 
-        public GameObject SpawnCar(GameObject car, bool was_demolished = false)
+        public GameObject SpawnCar(GameObject car, TeamController.Team team, bool was_demolished = false)
         {
-            // we do not know how teams are implemented
-            // team = car.transform.Find("Team").team;
-            int team = 0;
             SpawnLocation spawnLocation = was_demolished ? GetDemolitionSpawnPosition(team) : GetSpawnPosition(team);
             car.transform.localPosition = spawnLocation.location;
             car.transform.localRotation = spawnLocation.orientation;
