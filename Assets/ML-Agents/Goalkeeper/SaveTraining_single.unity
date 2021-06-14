@@ -249,7 +249,7 @@ Transform:
   m_LocalPosition: {x: -53, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1002328200}
+  - {fileID: 1074200133}
   m_Father: {fileID: 1469899324}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -371,7 +371,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 69c9109361b40814cbf318fb1539f0c1, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: GoalKeeping
@@ -709,7 +709,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Target: {fileID: 1355295177}
   speed: {x: 30, y: 30}
---- !u!4 &1002328200 stripped
+--- !u!4 &1074200133 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5295069023348888368, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
   m_PrefabInstance: {fileID: 1872620630}
