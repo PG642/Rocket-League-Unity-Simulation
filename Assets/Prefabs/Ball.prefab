@@ -328,7 +328,13 @@ MonoBehaviour:
   initialForce: 400
   hitMultiplier: 50
   _maxAngluarVelocity: 6
-  _maxVelocity: 6
+  _maxVelocity: 60
+  pysionixImpulseCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &2532842153811578200
 MonoBehaviour:
   m_ObjectHideFlags: 0

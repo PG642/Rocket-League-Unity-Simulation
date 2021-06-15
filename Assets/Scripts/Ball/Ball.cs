@@ -9,10 +9,11 @@ using Random = UnityEngine.Random;
 public class Ball : MonoBehaviour
 {
     [SerializeField] [Range(10,80)] float randomSpeed = 40;
-    [SerializeField] float initialForce = 400;
-    [SerializeField] float hitMultiplier = 50;
-    [SerializeField] private float _maxAngluarVelocity = 6.0f;
-    [SerializeField] private float _maxVelocity = 60.0f;
+    [SerializeField] float initialForce = 4000;
+    [SerializeField] float hitMultiplier = 200;
+    public float _maxAngluarVelocity = 6.0f;
+    public  float _maxVelocity = 60.0f;
+    public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     private bool isTouchedGround = false;
     
     Rigidbody _rb;
@@ -86,11 +87,12 @@ public class Ball : MonoBehaviour
         if (col.gameObject.CompareTag("Player"))
         {
             
-            float force = initialForce + col.rigidbody.velocity.magnitude * hitMultiplier;
+            float force = initialForce + col.relativeVelocity.magnitude * hitMultiplier;
             //Vector3 dir = transform.position - col.contacts[0].point;
-            var dir = transform.position - col.transform.position;
-            _rb.AddForce(dir.normalized * force);
+            var dir = _rb.position - col.transform.position;
             _rb.AddForce(CalculatePsyonixImpulse(col), ForceMode.Impulse);
+            //_rb.AddForce(dir.normalized * force);
+            Debug.Log($" Force : {dir.normalized * force}");
             
             
         }
@@ -114,16 +116,17 @@ public class Ball : MonoBehaviour
         var f = col.transform.forward;
         var dot = Vector3.Dot(n, f);
         n = Vector3.Normalize(n - 0.35f * dot * f);
-        var impulse = _rb.mass * col.relativeVelocity.magnitude * col.relativeVelocity.magnitude * 0.2f * n; // TODO scaling
-        Debug.Log(impulse);
-        Debug.Log(col.relativeVelocity.magnitude);
+        var impulse = _rb.mass * Math.Abs(col.relativeVelocity.magnitude) * scaling(col.relativeVelocity.magnitude) * n; // TODO scaling
+        //Debug.Log(impulse);
+        //Debug.Log(col.relativeVelocity.magnitude);
         return impulse ;
     }
 
     float scaling(float magninute)
     {
+        var test = pysionixImpulseCurve.Evaluate(magninute);
         
-        var scale = 0.0f;
-        return scale;
+        Debug.Log($"{Time.time}: Curve {test} : Value {magninute}");
+        return test ;
     }
 }
