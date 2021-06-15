@@ -91,7 +91,7 @@ public class Ball : MonoBehaviour
             //Vector3 dir = transform.position - col.contacts[0].point;
             var dir = _rb.position - col.transform.position;
             _rb.AddForce(CalculatePsyonixImpulse(col), ForceMode.Impulse);
-            //_rb.AddForce(dir.normalized * force);
+            _rb.AddForce(dir.normalized * force);
             Debug.Log($" Force : {dir.normalized * force}");
             
             
