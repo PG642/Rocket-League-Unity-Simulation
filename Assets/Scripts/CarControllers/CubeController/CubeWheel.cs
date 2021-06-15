@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEditor;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
 public class CubeWheel : MonoBehaviour
 {
@@ -96,15 +99,14 @@ public class CubeWheel : MonoBehaviour
         _lateralForcePosition = transform.localPosition;
         _lateralForcePosition.y = _c.cogLow.localPosition.y;
         _lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
-        if (Mathf.Abs(impulse) > 0.01f)
-            _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.VelocityChange);
+        //_rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.VelocityChange);
         //Debug.LogFormat("Ratio: {0} - SlideFriction: {1} - GroundFriction: {2} - Friction: {3} - Constraint {4} - Impulse {5} - Forward Speed: {6} - Lateral Speed: {7}", ratio, slideFriction, groundFriction, friction, constraint, impulse, _wheelForwardVelocity, _wheelLateralVelocity);
 
         Fy = _wheelLateralVelocity * _groundControl.currentWheelSideFriction;
         _lateralForcePosition = transform.localPosition;
         _lateralForcePosition.y = _c.cogLow.localPosition.y;
         _lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
-        // _rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
+        _rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
         Debug.LogFormat("Our Friction: {0} - RoboLeague Friction: {1}", impulse * transform.right, -Fy * transform.right);
     }
 
@@ -125,7 +127,10 @@ public class CubeWheel : MonoBehaviour
         _wheelVelocity = _rb.GetPointVelocity(_wheelContactPoint);
         _wheelForwardVelocity = Vector3.Dot(_wheelVelocity, transform.forward);
         _wheelLateralVelocity = Vector3.Dot(_wheelVelocity, transform.right);
-
+        Debug.DrawRay(transform.position, _wheelVelocity);
+        Debug.DrawRay(transform.position, Vector3.right * _wheelVelocity.x, Color.red);
+        Debug.DrawRay(transform.position, Vector3.forward * _wheelVelocity.z, Color.green);
+        
         _wheelAcceleration = (_wheelVelocity - _lastWheelVelocity) * Time.fixedTime;
         _lastWheelVelocity = _wheelVelocity;
     }
