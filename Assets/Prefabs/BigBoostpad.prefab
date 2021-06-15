@@ -200,7 +200,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2546091910606873564}
-  - component: {fileID: 2546091910606873538}
   - component: {fileID: 2546091910606873565}
   m_Layer: 0
   m_Name: BigBoostpad
@@ -217,7 +216,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2546091910606873567}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -7.49, z: 0}
+  m_LocalPosition: {x: 0, y: -7.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2546091910032844900}
@@ -225,20 +224,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &2546091910606873538
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2546091910606873567}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 1.04
-  m_Height: 3.36
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2546091910606873565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,4 +236,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59e7c195c80f12e4e97e7fb2f7f774a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  refreshTime: 10
+  boostAmount: 100
+  height: 1.68
+  radius: 2.08
   isBig: 1

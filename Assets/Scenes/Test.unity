@@ -272,6 +272,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 799813831}
     m_Modifications:
+    - target: {fileID: 74719656673803450, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: isAgent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 74719656673803450, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: isBoost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 74719656673803450, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: yawInput
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 74719656673803450, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: steerInput
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 74719656673803450, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: throttleInput
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1114429093350856521, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.3
