@@ -325,8 +325,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   randomSpeed: 40
-  initialForce: 400
-  hitMultiplier: 50
+  initialForce: 0
+  hitMultiplier: 1
   _maxAngluarVelocity: 6
   _maxVelocity: 60
   pysionixImpulseCurve:
