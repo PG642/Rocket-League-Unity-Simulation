@@ -7,8 +7,8 @@ public class CubeJumping : MonoBehaviour
     [Range(0.25f,4)]
     // default 1
     public float jumpForceMultiplier = 1f;
-    public int upForce = 3;
-    public int upTorque = 50;
+    public int upForce = 2;
+    public int upTorque = 125;
     
     float _jumpTimer = 0;
     [SerializeField]
@@ -78,10 +78,12 @@ public class CubeJumping : MonoBehaviour
     //Auto jump and rotate when the car is on the roof
     void JumpBackToTheFeet()
     {
+        //_rb.maxAngularVelocity = 7;
         if (_controller.carState != CubeController.CarStates.BodyGroundDead) return;
         
         if (_inputManager.isJumpDown || Input.GetButtonDown("A"))
         {
+            _rb.maxAngularVelocity = 50;
             _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
             _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
         }
