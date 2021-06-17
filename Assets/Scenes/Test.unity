@@ -951,6 +951,10 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 13400000, guid: 8129f5e68e1256246ae934d78a6445e2, type: 2}
+    - target: {fileID: 4577203034283390129, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Ceiling
+      objectReference: {fileID: 0}
     - target: {fileID: 4577203034283390131, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -999,13 +1003,61 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339520, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339522, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339524, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339526, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339528, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339532, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339534, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 5044392351188339536, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
       propertyPath: m_TagString
       value: Ground
       objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339538, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 5044392351188339542, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
       propertyPath: m_Name
       value: Rocket_Map
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339544, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339546, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339548, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351188339550, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 5098851544310445620, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
       propertyPath: ball

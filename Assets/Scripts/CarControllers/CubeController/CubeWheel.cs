@@ -29,7 +29,8 @@ public class CubeWheel : MonoBehaviour
     float _wheelRadius, _wheelForwardVelocity, _wheelLateralVelocity;
     Vector3 _wheelVelocity, _lastWheelVelocity, _wheelAcceleration, _wheelContactPoint, _lateralForcePosition = Vector3.zero;
 
-    const float AutoBrakeAcceleration = 5.25f;
+    private const float ForwardDragWheels = 5.25f;
+    private const float ForwardDragRoof = 2.5f;
 
     //[HideInInspector]
     public bool isDrawWheelVelocities, isDrawWheelDisc, isDrawForces;
@@ -63,11 +64,12 @@ public class CubeWheel : MonoBehaviour
     private void FixedUpdate()
     {
         UpdateWheelState();
-
-        if (!_c.isCanDrive) return;
+        
         //ApplyForwardForce();
-        ApplyLateralForce();
-        SimulateDrag();
+        if(_c.isCanDrive)
+            ApplyLateralForce();
+        if(_c.carState != CubeController.CarStates.Air)
+            SimulateDrag();
     }
 
     public void ApplyForwardForce(float force)
@@ -115,7 +117,8 @@ public class CubeWheel : MonoBehaviour
         if (!(_c.forwardSpeedAbs >= 0.1)) return;
 
         //TODO Make a separate function
-        var dragForce = AutoBrakeAcceleration / 4 * _c.forwardSpeedSign * (1 - Mathf.Abs(_inputManager.throttleInput));
+        var dragForce = (_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4 * _c.forwardSpeedSign * 
+                        (1 - Mathf.Abs(_inputManager.throttleInput));
         _rb.AddForce(-dragForce * transform.forward, ForceMode.Acceleration);
     }
 
