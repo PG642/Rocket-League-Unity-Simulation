@@ -87,6 +87,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1733474344396911142}
     m_Modifications:
+    - target: {fileID: 3359239930532182891, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
+      propertyPath: car
+      value: 
+      objectReference: {fileID: 1733474344396911142}
     - target: {fileID: 3642640959119940878, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
       propertyPath: m_Name
       value: CubeController

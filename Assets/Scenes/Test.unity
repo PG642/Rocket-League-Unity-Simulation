@@ -316,6 +316,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2679859411596245631, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9999885
+      objectReference: {fileID: 0}
+    - target: {fileID: 2679859411596245631, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.0047996636
+      objectReference: {fileID: 0}
+    - target: {fileID: 2679859411596245631, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -0.55
+      objectReference: {fileID: 0}
     - target: {fileID: 6116194479964122941, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_Name
       value: ControllableCar
