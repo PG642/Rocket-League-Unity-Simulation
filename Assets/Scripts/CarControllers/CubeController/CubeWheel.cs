@@ -32,7 +32,7 @@ public class CubeWheel : MonoBehaviour
     {
         _rb = GetComponentInParent<Rigidbody>();
         _c = GetComponentInParent<CubeController>();
-        _inputManager = transform.parent.parent.GetComponentInParent<InputManager>();
+        _inputManager = GetComponentInParent<InputManager>();
         _groundControl= GetComponentInParent<CubeGroundControl>();
         _wheelRadius = transform.localScale.z / 2;
     }
