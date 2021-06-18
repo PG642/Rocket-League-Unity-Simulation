@@ -17,7 +17,7 @@ public class CubeController : MonoBehaviour
     public Transform cogLow;
     public GameObject sceneViewFocusObject;
     
-    public const float MaxSpeedBoost = 2300 / 100;
+    public const float MaxSpeedBoost = 23.00f;
 
     Rigidbody _rb;
     GUIStyle _style;
@@ -58,7 +58,10 @@ public class CubeController : MonoBehaviour
     {
         SetCarState();
         UpdateCarVariables();
-        //TODO:  limit _rb.velocity.magnitude to < maxSpeedBoost
+        if (_rb.velocity.magnitude > MaxSpeedBoost)
+        {
+            _rb.velocity = _rb.velocity.normalized * MaxSpeedBoost;
+        }
     }
 
     private void UpdateCarVariables()
