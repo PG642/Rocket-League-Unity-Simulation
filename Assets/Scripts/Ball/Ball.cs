@@ -64,7 +64,7 @@ public class Ball : MonoBehaviour
     }
 
     [ContextMenu("ResetBall")]
-    private void ResetBall()
+    public void ResetBall()
     {
         var desired = new Vector3(0, 12.23f, 0f);
         _transform.SetPositionAndRotation(desired, Quaternion.identity);

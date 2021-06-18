@@ -5,7 +5,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 
-public class GoalKeeperAgent : Agent
+public class NormalMatchAgent: Agent
 {
     // Start is called before the first frame update
 
@@ -15,7 +15,6 @@ public class GoalKeeperAgent : Agent
     private float _lastResetTime;
 
     private Transform _ball;
-    private Transform _target;
 
     private CubeJumping _jumpControl;
     private CubeController _controller;
@@ -26,6 +25,8 @@ public class GoalKeeperAgent : Agent
     private MapData _mapData;
 
     public InputManager InputManager;
+
+
     void Start()
     {
         InputManager = GetComponent<InputManager>();
@@ -41,33 +42,12 @@ public class GoalKeeperAgent : Agent
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
 
-        _target = transform.parent.Find("World").Find("Rocket_Map").Find("Target");
         _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
-
-        _lastResetTime = Time.time;
     }
 
     public override void OnEpisodeBegin()
     {
-        //Reset Car
-        transform.localPosition = new Vector3(-53f, 0f, 0);
-        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-        _rb.velocity = Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
 
-        //Reset Ball
-        _ball.localPosition = new Vector3(0f, 1f, Random.Range(-8f, 8f));
-        //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
-        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-
-        // Set new Taget Position
-        _target.localPosition = new Vector3(-53f, 1f, Random.Range(-8f, 8f));
-
-        //Throw Ball
-        _ball.GetComponent<ShootBall>().ShootTarget();
-
-        _mapData.ResetIsScored();
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -104,25 +84,17 @@ public class GoalKeeperAgent : Agent
         AddReward(ballDistanceReward);
     }
 
-    public void Update()
+
+    public void AddRewardToAgent(float increment)
     {
-        if (Time.time - _lastResetTime > _episodeLength)
-        {
-            AddReward(0.5f);
-            Reset();
-        }
-        if(_mapData.isScoredBlue)
-        {
-            AddReward(-1f);
-            Reset();
-        }
-        if (_mapData.isScoredOrange)
-        {
-            AddReward(1f);
-            Reset();
-        }
+        AddReward(increment);
     }
     
+    public void SetRewardOfAgent(float reward)
+    {
+        SetReward(reward);
+    }
+
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         InputManager.isAgent = false;

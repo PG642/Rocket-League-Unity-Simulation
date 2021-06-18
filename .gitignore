@@ -73,3 +73,5 @@ InitTestScene*.unity
 
 # End of https://www.toptal.com/developers/gitignore/api/unity
 /Lido/airdribble.log
+
+.idea/
