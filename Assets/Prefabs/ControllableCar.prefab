@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6116194479964122941}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.251015, y: -4.6648693, z: 32.36808}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6205513847053220111}
@@ -87,6 +87,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1733474344396911142}
     m_Modifications:
+    - target: {fileID: 3359239930532182891, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
+      propertyPath: car
+      value: 
+      objectReference: {fileID: 1733474344396911142}
     - target: {fileID: 3642640959119940878, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
       propertyPath: m_Name
       value: CubeController
@@ -149,6 +153,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5739607125717357501, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003208987805840144, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
+      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
