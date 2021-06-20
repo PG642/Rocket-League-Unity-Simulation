@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -58,6 +59,10 @@ public class CubeController : MonoBehaviour
     {
         SetCarState();
         UpdateCarVariables();
+    }
+
+    private void LateUpdate()
+    {
         if (_rb.velocity.magnitude > MaxSpeedBoost)
         {
             _rb.velocity = _rb.velocity.normalized * MaxSpeedBoost;

@@ -9,8 +9,8 @@ using Random = UnityEngine.Random;
 public class Ball : MonoBehaviour
 {
     [SerializeField] [Range(10,80)] float randomSpeed = 40;
-    [SerializeField] float initialForce = 4000;
-    [SerializeField] float hitMultiplier = 200;
+    [SerializeField] float initialForce ;
+    [SerializeField] float hitMultiplier;
     public float _maxAngluarVelocity = 6.0f;
     public  float _maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
@@ -43,7 +43,7 @@ public class Ball : MonoBehaviour
         _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _maxVelocity);
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         if (_rb.velocity.magnitude > _maxVelocity)
         {
