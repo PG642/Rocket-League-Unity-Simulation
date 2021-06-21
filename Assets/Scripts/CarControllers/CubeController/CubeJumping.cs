@@ -83,7 +83,7 @@ public class CubeJumping : MonoBehaviour
         
         if (_inputManager.isJumpDown || Input.GetButtonDown("A"))
         {
-            _rb.maxAngularVelocity = 50;
+            //_rb.maxAngularVelocity = 50;
             _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
             _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
         }
