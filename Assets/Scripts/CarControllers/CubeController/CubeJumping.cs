@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 [RequireComponent(typeof(CubeController))]
 public class CubeJumping : MonoBehaviour
@@ -14,9 +15,10 @@ public class CubeJumping : MonoBehaviour
     bool _lowerSecondJumpTimer = false;
     bool _lastFrameNoButton = true;
 
-    bool _isDodge = false;
-    float _timerDodge = 0f;
+    public bool IsDodge = false;
+    public float TimerDodge = 0f;
     const float _dodgeDeadzone = 0.50f;
+    public bool IsCancelled = false;
 
     float _pitch = 0.0f;
     float _yaw = 0.0f;
@@ -79,9 +81,18 @@ public class CubeJumping : MonoBehaviour
             _isSecondJump = true;
             if(Mathf.Abs(_inputManager.yawInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.rollInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.pitchInput) > _dodgeDeadzone)
             {
-                _isDodge = true;
-                _timerDodge = 0f;
+                IsDodge = true;
+                TimerDodge = 0f;
             }
+        }
+
+        if (IsDodge && TimerDodge >= 0.04f && Math.Sign(_pitch) != Math.Sign(_inputManager.pitchInput) && Mathf.Abs(_inputManager.pitchInput) > 0.999f)
+        {
+            IsCancelled = true;
+        }
+        else
+        {
+            IsCancelled = false;
         }
 
         _lastFrameNoButton = !_inputManager.isJump;
@@ -106,7 +117,7 @@ public class CubeJumping : MonoBehaviour
         //Second Jump
         if(_isSecondJump)
         {
-            if (_isDodge)
+            if (IsDodge)
             {   
 
                 if(!_isSecondJumpUsed)
@@ -125,16 +136,16 @@ public class CubeJumping : MonoBehaviour
                     AddDodgeVelocity();
                 }
                 AddTorque();
-                if (_timerDodge >= 0.15f && _timerDodge <= 0.65f )
+                if (TimerDodge >= 0.15f && TimerDodge <= 0.65f )
                 {
                     _rb.velocity = Vector3.Scale(_rb.velocity, new Vector3(1f, 0.65f, 1f));
                 }
-                if(_timerDodge >= 0.65f)
+                if(TimerDodge >= 0.65f)
                 {
-                    _isDodge = false;
-                    _isSecondJump = false;
+                    IsDodge = false;
+                    _isSecondJump = false; 
                 }
-                _timerDodge += Time.deltaTime;
+                TimerDodge += Time.deltaTime;
             }
             else
             { 
@@ -147,9 +158,13 @@ public class CubeJumping : MonoBehaviour
 
     private void AddTorque()
     {
-        _rb.AddTorque(-_rb.transform.forward * 47f * _yaw, ForceMode.VelocityChange);
-        _rb.AddTorque(_rb.transform.right * 47f * _pitch, ForceMode.VelocityChange);
+        if (!IsCancelled)
+        {
+            _rb.AddTorque(_rb.transform.right * (220.0f * _pitch), ForceMode.Acceleration);
+        }
+        _rb.AddTorque(-_rb.transform.forward * (220.0f * _yaw), ForceMode.Acceleration);
     }
+    
     private void AddDodgeVelocity()
     {
         Vector3 forwardVelocity = _rb.velocity;
