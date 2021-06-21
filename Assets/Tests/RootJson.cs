@@ -4,7 +4,7 @@ using System.Numerics;
 using UnityEngine;
 using Vector3 = System.Numerics.Vector3;
 
-namespace Tests
+namespace JsonObjects
 {
     [Serializable]
 
@@ -36,7 +36,7 @@ namespace Tests
     }
 
     [Serializable]
-    public class Root
+    public class RootJson
     {
         public List<ValuePair> startValues;
         public List<ValuePair> actions;
