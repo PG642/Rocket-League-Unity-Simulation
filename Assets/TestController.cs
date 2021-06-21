@@ -19,7 +19,7 @@ public class TestController : MonoBehaviour
     private void SetupCar(Root fromJson)
     {
         var car = transform.Find("ControllableCar");
-        var carStartValue = fromJson.StartValues.Find(x => x.name == "car");
+        var carStartValue = fromJson.startValues.Find(x => x.name == "car");
         var rotation = Quaternion.Euler(carStartValue.rotation.x, carStartValue.rotation.y, carStartValue.rotation.z);
         var position = new Vector3(carStartValue.position.x, carStartValue.position.y, carStartValue.position.z);
         car.SetPositionAndRotation(position,rotation);

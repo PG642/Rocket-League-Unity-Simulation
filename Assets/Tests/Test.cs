@@ -30,13 +30,17 @@ namespace Tests
     {
         public string name;
         public Point velocity;
+        public double execTime;
+        public double duration;
+        public string action;
     }
 
     [Serializable]
     public class Root
     {
-        public List<ValuePair> StartValues;
+        public List<ValuePair> startValues;
         public List<ValuePair> actions;
         public double time;
+        public bool activateBoost;
     }
 }
