@@ -7,7 +7,6 @@ using Vector3 = System.Numerics.Vector3;
 namespace JsonObjects
 {
     [Serializable]
-
     public class Point
     {
         public float x;
@@ -16,31 +15,40 @@ namespace JsonObjects
     }
 
     [Serializable]
-
-    public class ValuePair
+    public class StartValue
     {
-        public string name;
+        public string gameObject;
         public Point position;
         public Point velocity;
+        public Point angularVelocity;
         public Point rotation;
     }
-    [Serializable]
 
+    [Serializable]
     public class Action
     {
+        public float duration;
+        public List<Input> inputs;
+    }
+
+    [Serializable]
+    public class Input
+    {
         public string name;
-        public Point velocity;
-        public double execTime;
-        public double duration;
-        public string action;
+        public float value;
     }
 
     [Serializable]
     public class RootJson
     {
-        public List<ValuePair> startValues;
-        public List<ValuePair> actions;
-        public double time;
-        public bool activateBoost;
+        public List<Scenario> scenarios;
+    }
+    [Serializable]
+    public class Scenario
+    {
+        public List<StartValue> startValues;
+        public List<Action> actions;
+        public float time;
+        public string name;
     }
 }
