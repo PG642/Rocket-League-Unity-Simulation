@@ -7,7 +7,7 @@ using Vector3 = System.Numerics.Vector3;
 namespace JsonObjects
 {
     [Serializable]
-    public class Point
+    public class SetupPoint
     {
         public float x;
         public float y;
@@ -18,10 +18,10 @@ namespace JsonObjects
     public class StartValue
     {
         public string gameObject;
-        public Point position;
-        public Point velocity;
-        public Point angularVelocity;
-        public Point rotation;
+        public SetupPoint position;
+        public SetupPoint velocity;
+        public SetupPoint angularVelocity;
+        public SetupPoint rotation;
     }
 
     [Serializable]

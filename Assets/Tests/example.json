@@ -26,6 +26,29 @@
             "y": 0.0,
             "z": 0.0
           }
+        },
+        {
+          "gameObject": "ball",
+          "position": {
+            "x": 5.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "angularVelocity": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
         }
       ],
       "actions": [
@@ -93,8 +116,9 @@
               "name": "jump",
               "value": 1.0
             },
-            {"name": "roll",
-            "value" : -1.0
+            {
+              "name": "roll",
+              "value" : -1.0
             }
           ]
         }
