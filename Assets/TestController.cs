@@ -137,7 +137,8 @@ public class TestController : MonoBehaviour
             _done = true;
             _logger.SaveLog();
         }
-        _logger.Log();
+
+        _logger?.Log();
     }
 
     private void ResetActionCar()
