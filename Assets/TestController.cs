@@ -35,7 +35,7 @@ public class TestController : MonoBehaviour
     private void GetInputManager()
     {
         _inputManager = GetComponentsInChildren<InputManager>().Where(x => x.tag == "ControllableCar").FirstOrDefault();
-        _inputManager.isAgent = true;
+        if (_inputManager != null) _inputManager.isAgent = true;
     }
 
     private void SetupCar(Scenario scenario)
@@ -98,7 +98,7 @@ public class TestController : MonoBehaviour
                 _inputManager.throttleInput = input.value;
                 break;
             default:
-                Debug.LogWarning("Input could not be mapped");
+                Debug.LogError("Input could not be mapped");
                 break;
         }
     }
@@ -116,7 +116,7 @@ public class TestController : MonoBehaviour
             if (_actions.Count > 0)
             {
                 ResetActionCar();
-                _currentAction = _actions[0];
+                _currentAction = _actions.First();
                 _nextActionTime = Time.time + _currentAction.duration;
                 _actions.RemoveAt(0);
                 ApplyActionOnCar(_currentAction);

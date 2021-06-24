@@ -15,7 +15,7 @@ namespace JsonObjects
     }
 
     [Serializable]
-    public class StartValue
+    public class GameObjectValue
     {
         public string gameObject;
         public SetupPoint position;
@@ -46,7 +46,7 @@ namespace JsonObjects
     [Serializable]
     public class Scenario
     {
-        public List<StartValue> startValues;
+        public List<GameObjectValue> startValues;
         public List<Action> actions;
         public float time;
         public string name;

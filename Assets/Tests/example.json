@@ -2,25 +2,25 @@
   "scenarios": [
     {
       "time" : 0.0,
-      "name" : "First Test",
-      "startValues": [
-        {
-          "gameObject": "car",
-          "position": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
-          },
-          "velocity": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
-          },
-          "angularVelocity": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
-          },
+          "name" : "First Test",
+          "startValues": [
+            {
+              "gameObject": "car",
+              "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              },
+              "velocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              },
+              "angularVelocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              },
           "rotation": {
             "x": 0.0,
             "y": 0.0,
