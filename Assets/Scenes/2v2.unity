@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paused: 0
-  matchTimeSeconds: 300
+  matchTimeSeconds: 15
 --- !u!1001 &442866905
 PrefabInstance:
   m_ObjectHideFlags: 0
