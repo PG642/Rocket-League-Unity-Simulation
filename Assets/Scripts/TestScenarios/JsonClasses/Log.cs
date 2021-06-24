@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace JsonObjects
+namespace TestScenarios.JsonClasses
 {
     [Serializable]
     public class Log
@@ -25,5 +25,11 @@ namespace JsonObjects
         public SetupPoint velocity;
         public SetupPoint angularVelocity;
         public SetupPoint rotation;
+        public bool hasWheelContact;
+        public bool jumped;
+        public bool doubleJumped;
+        public bool boost;
     }
+    
+    
 }

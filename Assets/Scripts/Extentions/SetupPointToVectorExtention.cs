@@ -1,7 +1,7 @@
-﻿using JsonObjects;
+﻿using TestScenarios.JsonClasses;
 using UnityEngine;
 
-namespace DefaultNamespace
+namespace Extentions
 {
     public static class SetupPointToVectorExtention
     {

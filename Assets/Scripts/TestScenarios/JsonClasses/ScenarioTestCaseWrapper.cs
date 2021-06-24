@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
-using UnityEngine;
-using Vector3 = System.Numerics.Vector3;
 
-namespace JsonObjects
+namespace TestScenarios.JsonClasses
 {
     [Serializable]
     public class SetupPoint
@@ -37,12 +34,7 @@ namespace JsonObjects
         public string name;
         public float value;
     }
-
-    [Serializable]
-    public class RootJson
-    {
-        public List<Scenario> scenarios;
-    }
+    
     [Serializable]
     public class Scenario
     {

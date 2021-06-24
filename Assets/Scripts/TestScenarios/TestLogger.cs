@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using JsonObjects;
+using Extentions;
+using TestScenarios.JsonClasses;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
-namespace DefaultNamespace
+namespace TestScenarios
 {
     public class TestLogger
     {
         private Rigidbody _rigidbodyCar;
+        private readonly InputManager _inputManager;
         private Log _currentLog;
 
-        public TestLogger(Rigidbody rigidbodyCar, Scenario scenario)
+        public TestLogger(Rigidbody rigidbodyCar, JsonClasses.Scenario scenario, InputManager inputManager)
         {
             _rigidbodyCar = rigidbodyCar;
+            _inputManager = inputManager;
 
             StartNewLogging(scenario.name);
         }
@@ -39,7 +39,9 @@ namespace DefaultNamespace
                     gameObject = "car",
                     position = _rigidbodyCar.position.ToVector(),
                     velocity = _rigidbodyCar.velocity.ToVector(),
+                    rotation = _rigidbodyCar.rotation.ToVector(),
                 }
+                
             };
             _currentLog.logValues.Add(logValue);
         }
