@@ -17,19 +17,25 @@ public class TestController : MonoBehaviour
     private List<Action> _actions;
     private InputManager _inputManager;
     private Action _currentAction;
+    private Scenario _currentScenario;
 
     private float _nextActionTime;
+    private bool _done = false;
+    private TestLogger _logger;
 
     // Start is called before the first frame update
     void Start()
     {
         var fromJson = JsonUtility.FromJson<RootJson>(jsonFile.text);
-        var firstScenario = fromJson.scenarios[0];
-        SetupCar(firstScenario);
-        SetupBall(firstScenario);
-        _actions = firstScenario.actions;
+        _currentScenario = fromJson.scenarios[0];
+        SetupCar(_currentScenario);
+        SetupBall(_currentScenario);
+        _actions = _currentScenario.actions;
         _nextActionTime = 1.0f;
         GetInputManager();
+        var car_rb = GetComponentsInChildren<Rigidbody>().Where(x => x.tag == "ControllableCar").FirstOrDefault();
+
+        _logger = new TestLogger(car_rb,_currentScenario);
     }
 
     private void GetInputManager()
@@ -41,25 +47,23 @@ public class TestController : MonoBehaviour
     private void SetupCar(Scenario scenario)
     {
         var carStartValue = scenario.startValues.Find(x => x.gameObject == "car");
-        var rotation = Quaternion.Euler(carStartValue.rotation.x + 0.55f, carStartValue.rotation.y,
-            carStartValue.rotation.z);
-        var position = new Vector3(carStartValue.position.x, carStartValue.position.y + 0.1701f,
-            carStartValue.position.z);
         var car_rb = GetComponentsInChildren<Rigidbody>().Where(x => x.tag == "ControllableCar").FirstOrDefault();
-        car_rb.position = carStartValue.position.ToVector( offsetY:0.1701f);
-        car_rb.rotation = carStartValue.rotation.ToQuaternion();
-        car_rb.velocity = carStartValue.velocity.ToVector();
-        car_rb.angularVelocity = carStartValue.angularVelocity.ToVector();
+        SetupObject(carStartValue,car_rb,0.1701f);
     }
 
     private void SetupBall(Scenario scenario)
     {
         var ballStartValue = scenario.startValues.Find(x => x.gameObject == "ball");
         var ball_rb = GetComponentsInChildren<Rigidbody>().Where(x => x.tag == "Ball").FirstOrDefault();
-        ball_rb.position = ballStartValue.position.ToVector(offsetY:0.9275f);
-        ball_rb.rotation = ballStartValue.rotation.ToQuaternion();
-        ball_rb.velocity = ballStartValue.velocity.ToVector();
-        ball_rb.angularVelocity = ballStartValue.angularVelocity.ToVector();
+        SetupObject(ballStartValue,ball_rb,0.9275f);
+    }
+
+    private void SetupObject(GameObjectValue gameObjectValue, Rigidbody rigidbody, float offsetY = 0.0f)
+    {
+        rigidbody.position = gameObjectValue.position.ToVector(offsetY:offsetY);
+        rigidbody.rotation = gameObjectValue.rotation.ToQuaternion();
+        rigidbody.velocity = gameObjectValue.velocity.ToVector();
+        rigidbody.angularVelocity = gameObjectValue.angularVelocity.ToVector();
     }
     private void ApplyActionOnCar(Action nextAction)
     {
@@ -125,7 +129,15 @@ public class TestController : MonoBehaviour
             {
                 ResetActionCar();
             }
+            
         }
+
+        if (Time.time > _currentScenario.time && !_done)
+        {
+            _done = true;
+            _logger.SaveLog();
+        }
+        _logger.Log();
     }
 
     private void ResetActionCar()

@@ -1,8 +1,8 @@
 ﻿{
   "scenarios": [
     {
-      "time" : 0.0,
-          "name" : "First Test",
+      "time" : 15.0,
+          "name" : "First_Test",
           "startValues": [
             {
               "gameObject": "car",
