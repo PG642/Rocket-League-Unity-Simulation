@@ -10,15 +10,18 @@ namespace TestScenarios
     {
         private Rigidbody _rigidbodyCar;
         private readonly InputManager _inputManager;
+        private readonly string _loggingPath;
         private Log _currentLog;
         private readonly Rigidbody _rigidbodyBall;
+        
 
         public TestLogger(Rigidbody rigidbodyCar, Rigidbody rigidbodyBall, JsonClasses.Scenario scenario,
-            InputManager inputManager)
+            InputManager inputManager, string loggingPath)
         {
             _rigidbodyCar = rigidbodyCar;
             _rigidbodyBall = rigidbodyBall;
             _inputManager = inputManager;
+            _loggingPath = $@"{loggingPath}Ergebnisse\RoboLeague\";
 
             StartNewLogging(scenario.name);
         }
@@ -74,7 +77,7 @@ namespace TestScenarios
         private void SaveAsJson(Log log)
         {
             string json = JsonUtility.ToJson(log);
-            string path = Application.persistentDataPath + $"/{log.name}.json";
+            string path = _loggingPath + $"{log.name}.json";
             using (StreamWriter file = new StreamWriter(path))
             {
                 string msg = JsonUtility.ToJson(log, true);

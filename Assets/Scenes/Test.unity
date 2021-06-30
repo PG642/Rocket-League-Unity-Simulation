@@ -392,6 +392,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jsonFile: {fileID: 4900000, guid: c405dc22e3464fc883d6ce347ddd46d2, type: 3}
+  filePath: C:\Users\oliht\Documents\Uni\SOSE21\Projektgruppe\Physikabgleich
+  subdir: \Szenarien\
+  fileName: Test.json
 --- !u!114 &799813833
 MonoBehaviour:
   m_ObjectHideFlags: 0

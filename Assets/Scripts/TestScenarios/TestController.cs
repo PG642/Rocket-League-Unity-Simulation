@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Extentions;
 using TestScenarios.JsonClasses;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using Action = TestScenarios.JsonClasses.Action;
+using File = UnityEngine.Windows.File;
 using Input = TestScenarios.JsonClasses.Input;
 using Scenario = TestScenarios.JsonClasses.Scenario;
 
@@ -14,37 +18,46 @@ namespace TestScenarios
     {
         public TextAsset jsonFile;
 
+        public string filePath =
+            @"paht\to\roboleague\dir";
+
+        public string subdir = @"Szenarien\";
+        public string fileName = "Test.json";
+
         private List<Action> _actions;
         private InputManager _inputManager;
         private Action _currentAction;
         private Scenario _currentScenario;
         private List<Scenario> _scenarios;
-
         private float _nextActionTime;
         private bool _done = false;
         private TestLogger _logger;
 
         private GameInformationController _gameInformationController;
-        // Start is called before the first frame update
+
         void Start()
         {
-
             _gameInformationController = GetComponent<GameInformationController>();
-            
-            var fromJson = JsonUtility.FromJson<Scenario>(jsonFile.text);
+            if (!System.IO.File.Exists(filePath + subdir + fileName))
+            {
+                return;
+            }
+
+            var test = System.IO.File.ReadAllText(filePath + subdir + fileName);
+
+            var fromJson = JsonUtility.FromJson<Scenario>(test);
             _currentScenario = fromJson;
             var carRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar"));
             var ballRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("Ball"));
             SetupCar(_currentScenario, carRb);
-            SetupBall(_currentScenario,  ballRb);
+            SetupBall(_currentScenario, ballRb);
+            GetInputManager();
             _actions = _currentScenario.actions;
             _nextActionTime = 1.0f;
-            GetInputManager();
-            
             _gameInformationController.SetStartValues(_currentScenario.boost);
 
 
-            _logger = new TestLogger(carRb, ballRb,_currentScenario,_inputManager);
+            _logger = new TestLogger(carRb, ballRb, _currentScenario, _inputManager, filePath);
         }
 
         private void GetInputManager()
@@ -121,7 +134,6 @@ namespace TestScenarios
         {
             ExecutedScenario();
         }
-
 
 
         private void ExecutedScenario()
