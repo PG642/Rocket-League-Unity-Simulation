@@ -11,10 +11,12 @@ namespace TestScenarios
         private Rigidbody _rigidbodyCar;
         private readonly InputManager _inputManager;
         private Log _currentLog;
+        private readonly Rigidbody _rigidbodyBall;
 
-        public TestLogger(Rigidbody rigidbodyCar, JsonClasses.Scenario scenario, InputManager inputManager)
+        public TestLogger(Rigidbody rigidbodyCar,Rigidbody rigidbodyBall, JsonClasses.Scenario scenario, InputManager inputManager)
         {
             _rigidbodyCar = rigidbodyCar;
+            _rigidbodyBall = rigidbodyBall;
             _inputManager = inputManager;
 
             StartNewLogging(scenario.name);
@@ -25,25 +27,33 @@ namespace TestScenarios
             _currentLog = new Log()
             {
                 name = scenarioName,
-                logValues = new List<LogValue>()
+                frames = new List<LogValue>()
             };
         }
         
-        public void Log()
+        public void Log(float boost, bool wheelsOnGround)
         {
             var logValue = new LogValue()
             {
                 time = Time.time,
-                gameObjectValue = new GameObjectSaveValue()
+                carValue = new GameCar()
                 {
-                    gameObject = "car",
-                    position = _rigidbodyCar.position.ToVector(),
+                    position = _rigidbodyCar.position.ToVector(-0.1700f),
                     velocity = _rigidbodyCar.velocity.ToVector(),
                     rotation = _rigidbodyCar.rotation.ToVector(),
+                    boost = boost,
+                    hasWheelContact = wheelsOnGround,
+                },
+                ballValue = new BallValues()
+                {
+                    position = _rigidbodyBall.position.ToVector(-0.9275f),
+                    velocity =  _rigidbodyBall.velocity.ToVector(),
+                    rotation = _rigidbodyBall.rotation.ToVector(),
                 }
                 
+
             };
-            _currentLog.logValues.Add(logValue);
+            _currentLog.frames.Add(logValue);
         }
 
         public void SaveLog()

@@ -5,25 +5,25 @@ namespace Extentions
 {
     public static class VectorToSetupPointExtention
     {
-        public static SetupPoint ToVector(this Vector3 point)
+        public static SetupPoint ToVector(this Vector3 point, float offsetY=0.0f)
         {
             return new SetupPoint()
             {
                 x = point.x, 
-                y = point.y, 
+                y = point.y + offsetY, 
                 z = point.z
             };
         }
         
-        public static SetupPoint ToVector(this Quaternion quaternion)
+        public static Rotation ToVector(this Quaternion quaternion)
         {
             var angles = quaternion.eulerAngles;
 
-            return new SetupPoint()
+            return new Rotation()
             {
-                x = angles.x,
-                y = angles.y, 
-                z = angles.z
+                pitch = angles.x,
+                roll = angles.y, 
+                yaw = angles.z
             };
         }
     }

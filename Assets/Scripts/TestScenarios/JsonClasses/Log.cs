@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 namespace TestScenarios.JsonClasses
 {
     [Serializable]
     public class Log
     {
-        public List<LogValue> logValues;
+        public List<LogValue> frames;
         public string name;
     }
 
@@ -14,22 +15,44 @@ namespace TestScenarios.JsonClasses
     public class LogValue
     {
         public float time;
-        public GameObjectSaveValue gameObjectValue;
+        public GameCar carValue;
+        public GameObjectSaveValue ballValue;
     }
 
     [Serializable]
     public class GameObjectSaveValue
     {
-        public string gameObject;
         public SetupPoint position;
         public SetupPoint velocity;
         public SetupPoint angularVelocity;
-        public SetupPoint rotation;
+        public Rotation rotation;
+        
+    }
+
+    [Serializable]
+    public class BallValues : GameObjectSaveValue
+    {
+        
+    }
+    
+    [Serializable]
+    public class GameCar: GameObjectSaveValue
+    {
         public bool hasWheelContact;
         public bool jumped;
         public bool doubleJumped;
-        public bool boost;
+        public float boost;
     }
+
+    [Serializable]
+    public class Rotation
+    {
+        public float pitch;
+        public float roll;
+        public float yaw;
+    }
+    
+        
     
     
 }

@@ -24,48 +24,52 @@ namespace TestScenarios
         private bool _done = false;
         private TestLogger _logger;
 
+        private GameInformationController _gameInformationController;
         // Start is called before the first frame update
         void Start()
         {
+
+            _gameInformationController = GetComponent<GameInformationController>();
+            
             var fromJson = JsonUtility.FromJson<Scenario>(jsonFile.text);
             _currentScenario = fromJson;
-            SetupCar(_currentScenario);
-            SetupBall(_currentScenario);
+            var carRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar"));
+            var ballRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("Ball"));
+            SetupCar(_currentScenario, carRb);
+            SetupBall(_currentScenario,  ballRb);
             _actions = _currentScenario.actions;
             _nextActionTime = 1.0f;
             GetInputManager();
-            var car_rb = GetComponentsInChildren<Rigidbody>().Where(x => x.tag == "ControllableCar").FirstOrDefault();
 
-            _logger = new TestLogger(car_rb, _currentScenario,_inputManager);
+
+            _logger = new TestLogger(carRb, ballRb,_currentScenario,_inputManager);
         }
 
         private void GetInputManager()
         {
-            _inputManager = GetComponentsInChildren<InputManager>().Where(x => x.tag == "ControllableCar")
-                .FirstOrDefault();
+            _inputManager = GetComponentsInChildren<InputManager>()
+                .FirstOrDefault(x => x.CompareTag("ControllableCar"));
             if (_inputManager != null) _inputManager.isAgent = true;
         }
 
-        private void SetupCar(Scenario scenario)
+        private void SetupCar(Scenario scenario, Rigidbody carRb)
         {
             var carStartValue = scenario.startValues.Find(x => x.gameObject == "car");
-            var car_rb = GetComponentsInChildren<Rigidbody>().Where(x => x.tag == "ControllableCar").FirstOrDefault();
-            SetupObject(carStartValue, car_rb, 0.1701f);
+            SetupObject(carStartValue, carRb, 0.1700f);
         }
 
-        private void SetupBall(Scenario scenario)
+        private void SetupBall(Scenario scenario, Rigidbody ballRb)
         {
             var ballStartValue = scenario.startValues.Find(x => x.gameObject == "ball");
-            var ball_rb = GetComponentsInChildren<Rigidbody>().Where(x => x.tag == "Ball").FirstOrDefault();
-            SetupObject(ballStartValue, ball_rb, 0.9275f);
+            SetupObject(ballStartValue, ballRb, 0.9275f);
         }
 
-        private void SetupObject(GameObjectValue gameObjectValue, Rigidbody rigidbody, float offsetY = 0.0f)
+        private void SetupObject(GameObjectValue gameObjectValue, Rigidbody rigidBody, float offsetY = 0.0f)
         {
-            rigidbody.position = gameObjectValue.position.ToVector(offsetY: offsetY);
-            rigidbody.rotation = gameObjectValue.rotation.ToQuaternion();
-            rigidbody.velocity = gameObjectValue.velocity.ToVector();
-            rigidbody.angularVelocity = gameObjectValue.angularVelocity.ToVector();
+            rigidBody.position = gameObjectValue.position.ToVector(offsetY: offsetY);
+            rigidBody.rotation = gameObjectValue.rotation.ToQuaternion();
+            rigidBody.velocity = gameObjectValue.velocity.ToVector();
+            rigidBody.angularVelocity = gameObjectValue.angularVelocity.ToVector();
         }
 
         private void ApplyActionOnCar(Action nextAction)
@@ -147,7 +151,7 @@ namespace TestScenarios
                 _logger.SaveLog();
             }
 
-            _logger?.Log();
+            _logger?.Log(_gameInformationController.boost, _gameInformationController.wheelsOnGround);
         }
 
         private void ResetActionCar()
