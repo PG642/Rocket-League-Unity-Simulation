@@ -42,5 +42,6 @@ namespace TestScenarios.JsonClasses
         public List<Action> actions;
         public float time;
         public string name;
+        public int boost;
     }
 }

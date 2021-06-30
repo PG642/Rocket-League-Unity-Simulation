@@ -40,6 +40,8 @@ namespace TestScenarios
             _actions = _currentScenario.actions;
             _nextActionTime = 1.0f;
             GetInputManager();
+            
+            _gameInformationController.SetStartValues(_currentScenario.boost);
 
 
             _logger = new TestLogger(carRb, ballRb,_currentScenario,_inputManager);

@@ -29,6 +29,9 @@ public class GameInformationController : MonoBehaviour
 
     public void SetStartValues(float boostAmount)
     {
-        _cubeBoosting._boostAmount = boostAmount;
+        if (boostAmount > 0)
+        GetComponentInChildren<CubeBoosting>()._boostAmount = boostAmount;
+
+        GetComponentInChildren<CubeBoosting>()._infiniteBoosting = boostAmount < 0;
     }
 }

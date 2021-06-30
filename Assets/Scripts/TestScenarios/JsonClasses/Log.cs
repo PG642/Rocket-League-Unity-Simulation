@@ -15,30 +15,32 @@ namespace TestScenarios.JsonClasses
     public class LogValue
     {
         public float time;
-        public GameCar carValue;
-        public GameObjectSaveValue ballValue;
+        public List<GameCar> game_cars;
+        public BallValues game_ball;
     }
 
     [Serializable]
     public class GameObjectSaveValue
     {
-        public SetupPoint position;
+        public SetupPoint location;
         public SetupPoint velocity;
-        public SetupPoint angularVelocity;
-        public Rotation rotation;
+        public SetupPoint angular_velocity;
+        public SetupPoint rotation;
         
     }
 
+    
     [Serializable]
-    public class BallValues : GameObjectSaveValue
+    public class BallValues
     {
-        
+        public GameObjectSaveValue physics;
     }
     
     [Serializable]
-    public class GameCar: GameObjectSaveValue
+    public class GameCar
     {
-        public bool hasWheelContact;
+        public GameObjectSaveValue physics;
+        public bool has_wheel_contact;
         public bool jumped;
         public float boost;
     }

@@ -1,6 +1,7 @@
 ﻿{
   "time": 12.0,
   "name": "Neuer_Test",
+  "boost": -1,
   "startValues": [
     {
       "gameObject": "car",

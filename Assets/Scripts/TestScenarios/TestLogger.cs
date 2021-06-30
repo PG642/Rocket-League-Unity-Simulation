@@ -13,7 +13,8 @@ namespace TestScenarios
         private Log _currentLog;
         private readonly Rigidbody _rigidbodyBall;
 
-        public TestLogger(Rigidbody rigidbodyCar,Rigidbody rigidbodyBall, JsonClasses.Scenario scenario, InputManager inputManager)
+        public TestLogger(Rigidbody rigidbodyCar, Rigidbody rigidbodyBall, JsonClasses.Scenario scenario,
+            InputManager inputManager)
         {
             _rigidbodyCar = rigidbodyCar;
             _rigidbodyBall = rigidbodyBall;
@@ -30,29 +31,37 @@ namespace TestScenarios
                 frames = new List<LogValue>()
             };
         }
-        
+
         public void Log(float boost, bool wheelsOnGround, bool jumped)
         {
             var logValue = new LogValue()
             {
                 time = Time.time,
-                carValue = new GameCar()
+                game_cars = new List<GameCar>()
                 {
-                    position = _rigidbodyCar.position.ToVector(-0.1700f),
-                    velocity = _rigidbodyCar.velocity.ToVector(),
-                    rotation = _rigidbodyCar.rotation.ToVector(),
-                    boost = boost,
-                    hasWheelContact = wheelsOnGround,
-                    jumped = jumped,
-                },
-                ballValue = new BallValues()
-                {
-                    position = _rigidbodyBall.position.ToVector(-0.9275f),
-                    velocity =  _rigidbodyBall.velocity.ToVector(),
-                    rotation = _rigidbodyBall.rotation.ToVector(),
-                }
-                
+                    new GameCar()
+                    {
+                        physics = new GameObjectSaveValue()
+                        {
+                            location = _rigidbodyCar.position.ToVector(),
+                            velocity = _rigidbodyCar.velocity.ToVector(),
+                            rotation = _rigidbodyCar.rotation.ToVector(),
+                        },
 
+                        boost = boost,
+                        has_wheel_contact = wheelsOnGround,
+                        jumped = jumped,
+                    }
+                },
+                game_ball = new BallValues()
+                {
+                    physics = new GameObjectSaveValue()
+                    {
+                        location = _rigidbodyBall.position.ToVector(),
+                        velocity = _rigidbodyBall.velocity.ToVector(),
+                        rotation = _rigidbodyBall.rotation.ToVector(),
+                    }
+                }
             };
             _currentLog.frames.Add(logValue);
         }
@@ -61,6 +70,7 @@ namespace TestScenarios
         {
             SaveAsJson(_currentLog);
         }
+
         private void SaveAsJson(Log log)
         {
             string json = JsonUtility.ToJson(log);
