@@ -22,8 +22,8 @@ namespace Extentions
             return new Rotation()
             {
                 pitch = angles.x,
-                roll = angles.y, 
-                yaw = angles.z
+                yaw = angles.y, 
+                roll = angles.z
             };
         }
     }

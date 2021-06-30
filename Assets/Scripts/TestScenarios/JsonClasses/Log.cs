@@ -40,7 +40,6 @@ namespace TestScenarios.JsonClasses
     {
         public bool hasWheelContact;
         public bool jumped;
-        public bool doubleJumped;
         public float boost;
     }
 

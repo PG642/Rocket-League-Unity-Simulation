@@ -31,7 +31,7 @@ namespace TestScenarios
             };
         }
         
-        public void Log(float boost, bool wheelsOnGround)
+        public void Log(float boost, bool wheelsOnGround, bool jumped)
         {
             var logValue = new LogValue()
             {
@@ -43,6 +43,7 @@ namespace TestScenarios
                     rotation = _rigidbodyCar.rotation.ToVector(),
                     boost = boost,
                     hasWheelContact = wheelsOnGround,
+                    jumped = jumped,
                 },
                 ballValue = new BallValues()
                 {

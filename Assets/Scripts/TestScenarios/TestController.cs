@@ -151,7 +151,8 @@ namespace TestScenarios
                 _logger.SaveLog();
             }
 
-            _logger?.Log(_gameInformationController.boost, _gameInformationController.wheelsOnGround);
+            _logger?.Log(_gameInformationController.boost, _gameInformationController.wheelsOnGround,
+                _gameInformationController.jumped);
         }
 
         private void ResetActionCar()
