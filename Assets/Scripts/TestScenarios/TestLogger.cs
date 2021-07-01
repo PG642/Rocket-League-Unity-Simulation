@@ -21,7 +21,7 @@ namespace TestScenarios
             _rigidbodyCar = rigidbodyCar;
             _rigidbodyBall = rigidbodyBall;
             _inputManager = inputManager;
-            _loggingPath = $@"{loggingPath}Ergebnisse\RoboLeague\";
+            _loggingPath = loggingPath;
 
             StartNewLogging(scenario.name);
         }
