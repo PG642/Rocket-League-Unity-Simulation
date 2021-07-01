@@ -16,13 +16,7 @@ namespace TestScenarios
 {
     public class TestController : MonoBehaviour
     {
-        public TextAsset jsonFile;
-
-        public string filePath =
-            @"paht\to\roboleague\dir";
-
-        public string subdir = @"Szenarien\";
-        public string fileName = "Test.json";
+        public TextAsset settingJson;
 
         private List<Action> _actions;
         private InputManager _inputManager;
@@ -38,12 +32,12 @@ namespace TestScenarios
         void Start()
         {
             _gameInformationController = GetComponent<GameInformationController>();
-            if (!System.IO.File.Exists(filePath + subdir + fileName))
-            {
-                return;
-            }
 
-            var test = System.IO.File.ReadAllText(filePath + subdir + fileName);
+
+            var settings = JsonUtility.FromJson<SafeSettings>(settingJson.text);
+            var jsonScenarioPath = settings.szenario_path + settings.file_name;
+            
+            var test = System.IO.File.ReadAllText(jsonScenarioPath);
 
             var fromJson = JsonUtility.FromJson<Scenario>(test);
             _currentScenario = fromJson;
@@ -57,7 +51,7 @@ namespace TestScenarios
             _gameInformationController.SetStartValues(_currentScenario.boost);
 
 
-            _logger = new TestLogger(carRb, ballRb, _currentScenario, _inputManager, filePath);
+            _logger = new TestLogger(carRb, ballRb, _currentScenario, _inputManager, settings.results_path);
         }
 
         private void GetInputManager()
@@ -180,5 +174,13 @@ namespace TestScenarios
             _inputManager.rollInput = 0.0f;
             _inputManager.throttleInput = 0.0f;
         }
+    }
+
+    [Serializable]
+    internal class SafeSettings
+    {
+        public string results_path;
+        public string szenario_path;
+        public string file_name;
     }
 }
