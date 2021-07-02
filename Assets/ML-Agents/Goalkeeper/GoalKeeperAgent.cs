@@ -72,13 +72,30 @@ public class GoalKeeperAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.localPosition);
+        //Car position
+        var carXNormalized = (transform.localPosition.x + 60f) / 120f;
+        var carYNormalized = transform.localPosition.y / 20f;
+        var carZNormalized = (transform.localPosition.z + 41f) / 82f;
+        sensor.AddObservation(new Vector3(carXNormalized, carYNormalized, carZNormalized));
+
+        //Car rotation, already normalized
         sensor.AddObservation(transform.rotation);
-        sensor.AddObservation(_rb.velocity);
-        sensor.AddObservation(_rb.angularVelocity);
-        //Ball
-        sensor.AddObservation(_ball.localPosition);
-        sensor.AddObservation(_rbBall.velocity);
+
+        //Car velocity
+        sensor.AddObservation(_rb.velocity / 23f);
+
+        //Car angular velocity
+        var norm = _rb.angularVelocity / 23f;
+        sensor.AddObservation(_rb.angularVelocity / 20f);
+
+        //Ball position
+        var ballXNormalized = (transform.localPosition.x + 60f) / 120f;
+        var ballYNormalized = transform.localPosition.y / 20f;
+        var ballZNormalized = (transform.localPosition.z + 41f) / 82f;
+        sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
+
+        //Ball velocity
+        sensor.AddObservation(_rbBall.velocity / 60f);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
