@@ -85,13 +85,12 @@ public class GoalKeeperAgent : Agent
         sensor.AddObservation(_rb.velocity / 23f);
 
         //Car angular velocity
-        var norm = _rb.angularVelocity / 23f;
-        sensor.AddObservation(_rb.angularVelocity / 20f);
+        sensor.AddObservation(_rb.angularVelocity / 5.5f);
 
         //Ball position
-        var ballXNormalized = (transform.localPosition.x + 60f) / 120f;
-        var ballYNormalized = transform.localPosition.y / 20f;
-        var ballZNormalized = (transform.localPosition.z + 41f) / 82f;
+        var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
+        var ballYNormalized = _ball.localPosition.y / 20f;
+        var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
         sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
 
         //Ball velocity
