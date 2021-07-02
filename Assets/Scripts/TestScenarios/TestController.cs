@@ -47,7 +47,7 @@ namespace TestScenarios
             SetupBall(_currentScenario, ballRb);
             GetInputManager();
             _actions = _currentScenario.actions;
-            _nextActionTime = 0.0f;
+            _nextActionTime = -0.1f;
             _gameInformationController.SetStartValues(_currentScenario.boost);
 
 
