@@ -14,7 +14,7 @@ public class Ball : MonoBehaviour
     public float _maxAngluarVelocity = 6.0f;
     public  float _maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
-    private bool isTouchedGround = false;
+    public bool isTouchedGround = false;
     
     Rigidbody _rb;
     Transform _transform;
@@ -93,13 +93,12 @@ public class Ball : MonoBehaviour
             _rb.AddForce(CalculatePsyonixImpulse(col), ForceMode.Impulse);
             _rb.AddForce(dir.normalized * force);
             Debug.Log($" Force : {dir.normalized * force}");
-            
-            
         }
 
-
         if (col.gameObject.CompareTag("Ground"))
+        {
             isTouchedGround = true;
+        }
 
         //if (col.gameObject.tag == "Ground")
         //    if (rb.velocity.y > 3)
@@ -107,6 +106,14 @@ public class Ball : MonoBehaviour
         //    //rb.AddForce(Vector3.up * -downForce);
         //        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - SlowVelocityGround, rb.velocity.z);
         //    }
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            isTouchedGround = false;
+        }
     }
 
     Vector3 CalculatePsyonixImpulse(Collision col)
