@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 3199678786225046927}
   m_Layer: 0
   m_Name: SmallBoostpad
-  m_TagString: Untagged
+  m_TagString: Boostpad
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

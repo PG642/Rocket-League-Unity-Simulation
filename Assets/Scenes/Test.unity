@@ -278,19 +278,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -47.75
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.48
+      value: 0.1701
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -13.97
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalRotation.x
@@ -298,7 +298,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalRotation.z
@@ -310,7 +310,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -332,6 +332,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ControllableCar
       objectReference: {fileID: 0}
+    - target: {fileID: 6116194479964122941, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: m_TagString
+      value: ControllableCar
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
 --- !u!4 &704843408 stripped
@@ -348,9 +352,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 799813831}
+  - component: {fileID: 799813832}
   m_Layer: 0
   m_Name: env
-  m_TagString: Untagged
+  m_TagString: Environment
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -373,6 +378,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &799813832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799813830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ce1f62beadbf93428f9b19b8d722ab6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  decimalsPosition: 4
+  decimalsVelocity: 4
+  decimalsAngularVelocity: 4
+  decimalsRotation: 4
 --- !u!1 &1392052111
 GameObject:
   m_ObjectHideFlags: 0
@@ -955,15 +976,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.2
+      value: 0.9275
       objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 9.021405
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_LocalRotation.w
