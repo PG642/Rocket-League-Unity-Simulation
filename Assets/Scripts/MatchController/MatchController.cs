@@ -32,7 +32,7 @@ namespace MatchController
 
         void Update()
         {
-            if (_matchTimeController.MatchTimer < 1.0f)
+            if (_matchTimeController.MatchTimer < 1.0f && !_matchTimeController.Overtime)
             {
                 _matchTimeController.paused = !_b.isTouchedGround;
             }
