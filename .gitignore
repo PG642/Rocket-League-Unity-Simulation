@@ -77,3 +77,4 @@ InitTestScene*.unity
 .idea/
 settings.json
 
+Assets/Scripts/TestScenarios/settings.json
