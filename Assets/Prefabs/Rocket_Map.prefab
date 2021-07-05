@@ -1552,7 +1552,7 @@ GameObject:
   - component: {fileID: 776106570799442610}
   m_Layer: 0
   m_Name: Rocket_Map
-  m_TagString: Untagged
+  m_TagString: Map
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
