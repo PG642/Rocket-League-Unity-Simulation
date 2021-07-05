@@ -32,14 +32,18 @@ namespace TestScenarios
         void Start()
         {
             _gameInformationController = GetComponent<GameInformationController>();
+            
+            var settingsToSettings = JsonUtility.FromJson<ToSettings>(settingJson.text);
+            var jsonSettingsPath = settingsToSettings.settings_path;
 
+            var jsonSettings = System.IO.File.ReadAllText(jsonSettingsPath);
 
-            var settings = JsonUtility.FromJson<SafeSettings>(settingJson.text);
+            var settings = JsonUtility.FromJson<SafeSettings>(jsonSettings);
             var jsonScenarioPath = settings.szenario_path + settings.file_name;
             
-            var test = System.IO.File.ReadAllText(jsonScenarioPath);
+            var scenario = System.IO.File.ReadAllText(jsonScenarioPath);
 
-            var fromJson = JsonUtility.FromJson<Scenario>(test);
+            var fromJson = JsonUtility.FromJson<Scenario>(scenario);
             _currentScenario = fromJson;
             var carRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar"));
             var ballRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("Ball"));
@@ -51,7 +55,7 @@ namespace TestScenarios
             _gameInformationController.SetStartValues(_currentScenario.boost);
 
 
-            _logger = new TestLogger(carRb, ballRb, _currentScenario, _inputManager, settings.results_path);
+            _logger = new TestLogger(carRb, ballRb, _currentScenario, _inputManager, settings.results_path_robo_league);
         }
 
         private void GetInputManager()
@@ -177,9 +181,14 @@ namespace TestScenarios
     }
 
     [Serializable]
+    internal class ToSettings
+    {
+        public string settings_path;
+    }
+
     internal class SafeSettings
     {
-        public string results_path;
+        public string results_path_robo_league;
         public string szenario_path;
         public string file_name;
     }

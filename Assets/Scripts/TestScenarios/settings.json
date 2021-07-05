@@ -1,5 +1,3 @@
 {
-  "results_path": "PATH/TO/FILE/Physikabgleich/Ergebnisse/RoboLeague/",
-  "szenario_path":"PATH/TO/FILE/Physikabgleich/Szenarien/",
-  "file_name":"Test.json"
+  "settings_path": "D:\\GitHub\\Physikabgleich\\settings.json"
 }
