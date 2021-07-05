@@ -60,7 +60,7 @@ public class MapData : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(Screen.width / 2 - 75 - 15, 0f, 150, 130), $"{blueScore:D2}", _styleBlueLabel);
-        GUI.Label(new Rect(Screen.width / 2 - 75 + 15, 0f, 150, 130), $"{orangeScore:D2}", _styleOrangeLabel);
+        GUI.Label(new Rect(Screen.width / 2 - 75 - 55, 0f, 150, 130), $"{blueScore:D2}", _styleBlueLabel);
+        GUI.Label(new Rect(Screen.width / 2 - 75 + 55, 0f, 150, 130), $"{orangeScore:D2}", _styleOrangeLabel);
     }
 }

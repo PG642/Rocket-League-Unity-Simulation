@@ -105,8 +105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3199678786225046926}
-  - component: {fileID: 3199678786225046928}
-  - component: {fileID: 3199678786225046927}
+  - component: {fileID: 1552186393681501274}
   m_Layer: 0
   m_Name: SmallBoostpad
   m_TagString: Boostpad
@@ -129,21 +128,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &3199678786225046928
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3199678786225046925}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 1.04
-  m_Height: 3.36
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3199678786225046927
+--- !u!114 &1552186393681501274
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -155,4 +140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59e7c195c80f12e4e97e7fb2f7f774a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  refreshTime: 4
+  boostAmount: 12
+  height: 1.65
+  radius: 1.44
   isBig: 0
