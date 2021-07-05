@@ -420,9 +420,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ce1f62beadbf93428f9b19b8d722ab6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roundPosition: 1
   decimalsPosition: 4
+  roundVelocity: 1
   decimalsVelocity: 4
+  roundAngularVelocity: 1
   decimalsAngularVelocity: 4
+  roundRotation: 0
   decimalsRotation: 4
 --- !u!1 &1392052111
 GameObject:
