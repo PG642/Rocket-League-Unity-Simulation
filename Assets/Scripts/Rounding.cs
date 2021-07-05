@@ -10,11 +10,19 @@ public class Rounding : MonoBehaviour
 
     Rigidbody[] cars;
 
+    public bool roundPosition = true;
+
     public int decimalsPosition = 4;
+
+    public bool roundVelocity = true;
 
     public int decimalsVelocity = 4;
 
+    public bool roundAngularVelocity = true;
+
     public int decimalsAngularVelocity = 4;
+
+    public bool roundRotation = false;
 
     public int decimalsRotation = 4;
     
@@ -40,11 +48,17 @@ public class Rounding : MonoBehaviour
 
     void roundRigidbody(Rigidbody rb)
     {
-        rb.transform.position = roundToDecimals(decimalsPosition, rb.transform.position);
-        rb.velocity = roundToDecimals(decimalsVelocity, rb.velocity);
-        rb.angularVelocity = roundToDecimals(decimalsAngularVelocity, rb.angularVelocity);
-        Vector3 eulerRotation = roundToDecimals(decimalsRotation, rb.rotation.eulerAngles);
-        rb.rotation.eulerAngles.Set(eulerRotation.x, eulerRotation.y, eulerRotation.z);
+        if(roundPosition)
+            rb.transform.position = roundToDecimals(decimalsPosition, rb.transform.position);
+        if(roundVelocity)
+            rb.velocity = roundToDecimals(decimalsVelocity, rb.velocity);
+        if (roundAngularVelocity)
+            rb.angularVelocity = roundToDecimals(decimalsAngularVelocity, rb.angularVelocity);
+        if (roundRotation)
+        {
+            Vector3 eulerRotation = roundToDecimals(decimalsRotation, rb.rotation.eulerAngles);
+            rb.rotation.eulerAngles.Set(eulerRotation.x, eulerRotation.y, eulerRotation.z);
+        }
     }
 
     Vector3 roundToDecimals(int decimalPlaces, Vector3 toRound)
