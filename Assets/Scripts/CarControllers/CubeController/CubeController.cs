@@ -37,7 +37,7 @@ public class CubeController : MonoBehaviour
     {
         _rb = GetComponentInParent<Rigidbody>();
         _rb.centerOfMass = cogLow.localPosition;
-        _rb.maxAngularVelocity = 5.5f;
+        _rb.maxAngularVelocity = 7f;
 
         _sphereColliders = GetComponentsInChildren<CubeSphereCollider>();
         

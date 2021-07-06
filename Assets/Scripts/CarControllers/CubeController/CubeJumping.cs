@@ -25,12 +25,14 @@ public class CubeJumping : MonoBehaviour
     Rigidbody _rb;
     InputManager _inputManager;
     CubeController _controller;
+    private Transform _cogLow;
 
     void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _inputManager = GetComponentInParent<InputManager>();
         _controller = GetComponent<CubeController>();
+        _cogLow = transform.Find("cogLow");
     }
 
     private void FixedUpdate()
@@ -60,6 +62,17 @@ public class CubeJumping : MonoBehaviour
         {
             _timerJumpButtonHeld -= Time.deltaTime;
         }
+
+        /*
+        if (_rb.velocity.y > 2.6 && _rb.velocity.y < 2.8)
+        {
+            Debug.Log("------------------------");
+            Debug.Log(_rb.velocity.y);
+            Debug.Log(IsFirstJump);
+            Debug.Log(_inputManager.isJump);
+            Debug.Log(_timerJumpButtonHeld);
+        }
+        */
         
         if(IsFirstJump && (_timerJumpButtonHeld <= 0f || !_inputManager.isJump))
         {
@@ -105,13 +118,14 @@ public class CubeJumping : MonoBehaviour
             if(_isFirstJumpPress)
             {
                 _isFirstJumpPress = false;
-                _rb.AddForce(transform.up * 2.92f, ForceMode.VelocityChange);
+                _rb.AddForce(_cogLow.up * 2.99f, ForceMode.VelocityChange);
             }
             else
             {
-                _rb.AddForce(transform.up * 14.58f, ForceMode.Acceleration);
+                _rb.AddForce(_cogLow.up * 13.9f, ForceMode.Acceleration);
             }
         }
+        
 
         //Second Jump
         if(IsSecondJump)
@@ -149,7 +163,7 @@ public class CubeJumping : MonoBehaviour
             else
             { 
                 IsSecondJump = false;
-                _rb.AddForce(transform.up * 2.92f, ForceMode.VelocityChange);
+                _rb.AddForce(_cogLow.up * 2.92f, ForceMode.VelocityChange);
             }
             _isSecondJumpUsed = true;
         }
@@ -159,9 +173,9 @@ public class CubeJumping : MonoBehaviour
     {
         if (!IsCancelled)
         {
-            _rb.AddTorque(_rb.transform.right * (220.0f * _pitch), ForceMode.Acceleration);
+            _rb.AddTorque(_cogLow.right * (220.0f * _pitch), ForceMode.Acceleration);
         }
-        _rb.AddTorque(-_rb.transform.forward * (220.0f * _yaw), ForceMode.Acceleration);
+        _rb.AddTorque(-_cogLow.forward * (220.0f * _yaw), ForceMode.Acceleration);
     }
     
     private void AddDodgeVelocity()
@@ -172,7 +186,7 @@ public class CubeJumping : MonoBehaviour
         Vector3 forwardDirection = forwardVelocity.normalized;
         Vector3 sidewardDirection = (Quaternion.Euler(0.0f, 90.0f, 0.0f) * forwardVelocity).normalized;
 
-        Vector3 carForwardDirection = transform.forward;
+        Vector3 carForwardDirection = _cogLow.forward;
         carForwardDirection.y = 0;
 
         if (forwardVelocity.magnitude == 0.0f)

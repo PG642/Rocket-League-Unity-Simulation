@@ -26,7 +26,7 @@ public class CubeSphereCollider : MonoBehaviour
             ApplyStickyForces(StickyForceConstant*5, _rayContactPoint, -_rayContactNormal);
     }
 
-    const int StickyForceConstant = 325 / 100;
+    const int StickyForceConstant = 0 / 100;
     private void ApplyStickyForces(float stickyForce, Vector3 position, Vector3 dir)
     {
         var force = stickyForce / 4 * dir;
