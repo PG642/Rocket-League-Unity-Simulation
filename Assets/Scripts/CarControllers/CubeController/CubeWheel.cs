@@ -9,6 +9,9 @@ public class CubeWheel : MonoBehaviour
   //  public float steerAngle;
   //  public float Fx;
     float Fy;
+
+    private AnimationCurve _curve;
+    private AnimationCurve _curve2;
     
     public bool wheelFL, wheelFR, wheelRL, wheelRR;
     
@@ -30,6 +33,9 @@ public class CubeWheel : MonoBehaviour
 
     void Start()
     {
+        var wheels = GetComponentInParent<CubeWheels>();
+        _curve = wheels.Curve;
+        _curve2 = wheels.Curve2;
         _rb = GetComponentInParent<Rigidbody>();
         _c = GetComponentInParent<CubeController>();
         _inputManager = GetComponentInParent<InputManager>();
@@ -77,11 +83,11 @@ public class CubeWheel : MonoBehaviour
     {
         if(Mathf.Abs(_wheelLateralVelocity) > 0.001f) { 
             var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) / (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
-            var slideFriction = Curve.Evaluate(ratio);
-            var groundFriction = Curve2.Evaluate(-_c.transform.up.y);
+            var slideFriction = _curve.Evaluate(ratio);
+            var groundFriction = _curve2.Evaluate(-_c.transform.up.y);
             var friction = slideFriction * groundFriction;
             var constraint = -_wheelLateralVelocity;
-            var impulse = constraint * friction;
+            var impulse = constraint * friction * 4.53f;
             _lateralForcePosition = transform.position;
             _lateralForcePosition.y = _c.cogLow.position.y;
             //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
@@ -89,14 +95,14 @@ public class CubeWheel : MonoBehaviour
         }
         
         Fy = _wheelLateralVelocity * _groundControl.currentWheelSideFriction;
-        _lateralForcePosition = transform.localPosition;
-        _lateralForcePosition.y = _c.cogLow.localPosition.y;
-        _lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
+        //_lateralForcePosition = transform.localPosition;
+        //_lateralForcePosition.y = _c.cogLow.localPosition.y;
+        //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
         //_rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
         
         //Fy = _wheelLateralVelocity * _groundControl.currentWheelSideFriction ;
-        //_lateralForcePosition = transform.position;
-        //_lateralForcePosition.y = _c.cogLow.position.y;
+        _lateralForcePosition = transform.position;
+        _lateralForcePosition.y = _c.cogLow.position.y;
         //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
         //_rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
