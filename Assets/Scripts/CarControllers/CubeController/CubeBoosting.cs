@@ -7,7 +7,7 @@ public class CubeBoosting : MonoBehaviour
     const float BoostForce = 991 / 100;
 
     public bool isBoosting = false;
-    private float _boostAmount = 32f;
+    public float _boostAmount = 32f;
     private int _boostCountdown = 13;
     public bool _infiniteBoosting = false;
     CubeController _c;

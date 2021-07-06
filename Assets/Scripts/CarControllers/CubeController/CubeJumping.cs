@@ -4,13 +4,12 @@ using UnityEngine;
 [RequireComponent(typeof(CubeController))]
 public class CubeJumping : MonoBehaviour
 {
-
     float _timerJumpButtonHeld = 0;
     float _timerSecondJump = 0;
 
     bool _isFirstJumpPress = false;
-    bool _isFirstJump = false;
-    bool _isSecondJump = false;
+    public bool IsFirstJump = false;
+    public bool IsSecondJump = false;
     bool _isSecondJumpUsed = false;
     bool _lowerSecondJumpTimer = false;
     bool _lastFrameNoButton = true;
@@ -57,28 +56,28 @@ public class CubeJumping : MonoBehaviour
         }
 
 
-        if(_isFirstJump)
+        if(IsFirstJump)
         {
             _timerJumpButtonHeld -= Time.deltaTime;
         }
         
-        if(_isFirstJump && (_timerJumpButtonHeld <= 0f || !_inputManager.isJump))
+        if(IsFirstJump && (_timerJumpButtonHeld <= 0f || !_inputManager.isJump))
         {
-            _isFirstJump = false;
+            IsFirstJump = false;
             _lowerSecondJumpTimer = true;
             _timerSecondJump = 1.25f;
         }
 
-        if (!_isFirstJump && carIsGrounded && _inputManager.isJump && _lastFrameNoButton)
+        if (!IsFirstJump && carIsGrounded && _inputManager.isJump && _lastFrameNoButton)
         {
             _isFirstJumpPress = true;
-            _isFirstJump = true;
+            IsFirstJump = true;
             _timerJumpButtonHeld = 0.2f;
         }
 
-        if(!_isFirstJump && !carIsGrounded && _inputManager.isJump && !_isSecondJumpUsed && _timerSecondJump > 0f && _lastFrameNoButton)
+        if(!IsFirstJump && !carIsGrounded && _inputManager.isJump && !_isSecondJumpUsed && _timerSecondJump > 0f && _lastFrameNoButton)
         {
-            _isSecondJump = true;
+            IsSecondJump = true;
             if(Mathf.Abs(_inputManager.yawInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.rollInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.pitchInput) > _dodgeDeadzone)
             {
                 IsDodge = true;
@@ -101,7 +100,7 @@ public class CubeJumping : MonoBehaviour
     private void Jump()
     {
         //First Jump
-        if(_isFirstJump)
+        if(IsFirstJump)
         {
             if(_isFirstJumpPress)
             {
@@ -115,7 +114,7 @@ public class CubeJumping : MonoBehaviour
         }
 
         //Second Jump
-        if(_isSecondJump)
+        if(IsSecondJump)
         {
             if (IsDodge)
             {   
@@ -143,13 +142,13 @@ public class CubeJumping : MonoBehaviour
                 if(TimerDodge >= 0.65f)
                 {
                     IsDodge = false;
-                    _isSecondJump = false; 
+                    IsSecondJump = false; 
                 }
                 TimerDodge += Time.deltaTime;
             }
             else
             { 
-                _isSecondJump = false;
+                IsSecondJump = false;
                 _rb.AddForce(transform.up * 2.92f, ForceMode.VelocityChange);
             }
             _isSecondJumpUsed = true;

@@ -191,7 +191,7 @@ Transform:
   m_GameObject: {fileID: 2532842153302682341}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.865, y: 1.865, z: 1.865}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2532842153811578196}
   m_RootOrder: 2
@@ -256,7 +256,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.9275
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2532842153811578195
 GameObject:
@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 2532842153811578201}
   m_Layer: 0
   m_Name: Ball
-  m_TagString: Untagged
+  m_TagString: Ball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -325,8 +325,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   randomSpeed: 40
-  initialForce: 400
-  hitMultiplier: 50
+  initialForce: 0
+  hitMultiplier: 1
+  _maxAngluarVelocity: 6
+  _maxVelocity: 60
+  pysionixImpulseCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &2532842153811578200
 MonoBehaviour:
   m_ObjectHideFlags: 0
