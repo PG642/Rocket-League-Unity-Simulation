@@ -24,6 +24,9 @@ public class CameraController : MonoBehaviour
     float _tmpRotationY = 0f;
 
     Transform _ball, _car;
+    List<Transform> _allCars = new List<Transform>();
+    int _actualCarIndex = 0;
+
     Vector3 _checkVelocity;
     Vector3 _prevPosistion;
 
@@ -33,7 +36,15 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         _ball = transform.parent.Find("Ball");
-        _car = transform.parent.Find("ControllableCar");
+        for(int i = 0; i < transform.parent.childCount; i++)
+        {
+            Transform childOfParent = transform.parent.GetChild(i);
+            if (childOfParent.tag == "ControllableCar")
+            {
+                _allCars.Add(childOfParent);
+            }
+        }
+        _car = _allCars[_actualCarIndex];
         _pivotPosition = _car.position + Vector3.up * cameraHeight;
         _checkVelocity = Vector3.zero;
         _prevPosistion = _car.position;
@@ -43,6 +54,11 @@ public class CameraController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("X"))
             _isBallCam = !_isBallCam;
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            _actualCarIndex = (++_actualCarIndex) % _allCars.Count;
+            _car = _allCars[_actualCarIndex];
+        }
     }
 
     private void FixedUpdate()

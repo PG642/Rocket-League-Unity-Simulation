@@ -32,7 +32,7 @@ public class CubeWheel : MonoBehaviour
     {
         _rb = GetComponentInParent<Rigidbody>();
         _c = GetComponentInParent<CubeController>();
-        _inputManager = transform.parent.parent.GetComponentInParent<InputManager>();
+        _inputManager = GetComponentInParent<InputManager>();
         _groundControl= GetComponentInParent<CubeGroundControl>();
         _wheelRadius = transform.localScale.z / 2;
     }
@@ -76,9 +76,9 @@ public class CubeWheel : MonoBehaviour
     private void ApplyLateralForce()
     {
         Fy = _wheelLateralVelocity * _groundControl.currentWheelSideFriction ;
-        _lateralForcePosition = transform.localPosition;
-        _lateralForcePosition.y = _c.cogLow.localPosition.y;
-        _lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
+        _lateralForcePosition = transform.position;
+        _lateralForcePosition.y = _c.cogLow.position.y;
+        //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
         _rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
     
