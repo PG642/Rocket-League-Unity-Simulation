@@ -13,7 +13,7 @@ public class CubeJumping : MonoBehaviour
     float _jumpTimer = 0;
     [SerializeField]
     bool _isCanFirstJump = false;
-    bool _isJumping = false;
+    public bool _isJumping = false;
     [SerializeField]
     bool _isCanKeepJumping = false;
 

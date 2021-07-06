@@ -75,3 +75,7 @@ InitTestScene*.unity
 /Lido/airdribble.log
 
 .idea/
+settings.json
+
+Assets/Scripts/TestScenarios/settings.json
+Assets/Scripts/TestScenarios/settings.json.meta

@@ -72,34 +72,53 @@ public class GoalKeeperAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.localPosition);
+        //Car position
+        var carXNormalized = (transform.localPosition.x + 60f) / 120f;
+        var carYNormalized = transform.localPosition.y / 20f;
+        var carZNormalized = (transform.localPosition.z + 41f) / 82f;
+        sensor.AddObservation(new Vector3(carXNormalized, carYNormalized, carZNormalized));
+
+        //Car rotation, already normalized
         sensor.AddObservation(transform.rotation);
-        sensor.AddObservation(_rb.velocity);
-        sensor.AddObservation(_rb.angularVelocity);
-        //Ball
-        sensor.AddObservation(_ball.localPosition);
-        sensor.AddObservation(_rbBall.velocity);
+
+        //Car velocity
+        sensor.AddObservation(_rb.velocity / 23f);
+
+        //Car angular velocity
+        sensor.AddObservation(_rb.angularVelocity / 5.5f);
+
+        //Ball position
+        var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
+        var ballYNormalized = _ball.localPosition.y / 20f;
+        var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
+        sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
+
+        //Ball velocity
+        sensor.AddObservation(_rbBall.velocity / 60f);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        // set inputs
-        InputManager.throttleInput = actionBuffers.ContinuousActions[0];
-        InputManager.steerInput = actionBuffers.ContinuousActions[1];
-        InputManager.yawInput = actionBuffers.ContinuousActions[1];
-        InputManager.pitchInput = actionBuffers.ContinuousActions[2];
-        InputManager.rollInput = 0;
-        if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
-        if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
+        if (InputManager.isAgent)
+        {
+            // set inputs
+            InputManager.throttleInput = actionBuffers.ContinuousActions[0];
+            InputManager.steerInput = actionBuffers.ContinuousActions[1];
+            InputManager.yawInput = actionBuffers.ContinuousActions[1];
+            InputManager.pitchInput = actionBuffers.ContinuousActions[2];
+            InputManager.rollInput = 0;
+            if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
+            if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
 
-        InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
-        InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
-        InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
+            InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
+            InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
+            InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
 
-        InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
-        InputManager.isJumpUp = actionBuffers.ContinuousActions[8] > 0;
-        InputManager.isJumpDown = actionBuffers.ContinuousActions[9] > 0;
-        
+            InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
+            InputManager.isJumpUp = actionBuffers.ContinuousActions[8] > 0;
+            InputManager.isJumpDown = actionBuffers.ContinuousActions[9] > 0;
+        }
+
         float ballDistanceReward = 0.01f * (1-(Vector3.Distance(_ball.position,transform.position)/_mapData.diag));
         AddReward(ballDistanceReward);
     }

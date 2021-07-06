@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Boostpad : MonoBehaviour
 {
-    public bool isBig = true;
-
     private bool _isActive = true;
     private float _lastPickup;
+   
+    //Default small boost pad
+    public float refreshTime = 4f;
+    public float boostAmount = 12;
+    public float height = 1.65f;
+    public float radius = 1.44f;
 
-    private const float _SmallRefresh = 4f;
-    private const int _SmallBoostAmount = 12;
-
-    private const float _BigRefresh = 10f;
-    private const int _BigBoostAmount = 100;
+    public bool isBig = false;
 
     private Renderer _rend;
 
@@ -33,7 +33,7 @@ public class Boostpad : MonoBehaviour
                 transform.GetChild(1).gameObject.SetActive(false);
             }
 
-            if ((!isBig && Time.time - _lastPickup >= _SmallRefresh) || (isBig && Time.time - _lastPickup >= _BigRefresh))
+            if (Time.time - _lastPickup >= refreshTime)
             {
                 _isActive = true;
             }
@@ -45,22 +45,28 @@ public class Boostpad : MonoBehaviour
             {
                 transform.GetChild(1).gameObject.SetActive(true);
             }
-        }
-    }
-    void OnTriggerStay(Collider other)
-    {
-        if (other.gameObject.tag.Equals("BodyCollider"))
-        {
-            if (_isActive)
+
+            GameObject[] cars = GameObject.FindGameObjectsWithTag("ControllableCar");
+            
+            foreach (GameObject car in cars)
             {
-                var cube =other.gameObject.GetComponentInParent<CubeBoosting>();
-                Debug.Log(cube);
-                bool isBoostFull = cube.IncreaseBoost(isBig ? _BigBoostAmount : _SmallBoostAmount); //IncreaseBoost returns true, if boost was already at 100
-                if (!isBoostFull)
+                Vector3 relativePosition = gameObject.transform.position - car.transform.position;
+                float dist = new Vector2(relativePosition.x, relativePosition.z).magnitude;
+                float relativeHeight = Mathf.Abs(relativePosition.y);
+                if (relativeHeight <= height && dist <= radius)
                 {
-                    PickUpBoost();
+                    if (_isActive) {
+                        var cube = car.GetComponentInChildren<CubeBoosting>();
+                        Debug.Log(cube);
+                        bool isBoostFull = cube.IncreaseBoost(boostAmount); //IncreaseBoost returns true, if boost was already at 100
+                        if (!isBoostFull)
+                        {
+                            PickUpBoost();
+                        }
+                    }
                 }
             }
+            
         }
     }
 

@@ -1,26 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEditor;
 using UnityEngine;
-using Quaternion = UnityEngine.Quaternion;
-using Vector3 = UnityEngine.Vector3;
 
 public class CubeWheel : MonoBehaviour
 {
-    //  public float steerAngle;
-    //  public float Fx;
+  //  public float steerAngle;
+  //  public float Fx;
     float Fy;
-
-    public AnimationCurve Curve;
-    public AnimationCurve Curve2;
-
+    
     public bool wheelFL, wheelFR, wheelRL, wheelRR;
-
+    
     public Transform wheelMesh;
     private float _meshRevolutionAngle;
-
+    
     Rigidbody _rb;
     CubeController _c;
     CubeGroundControl _groundControl;
@@ -28,10 +22,9 @@ public class CubeWheel : MonoBehaviour
 
     float _wheelRadius, _wheelForwardVelocity, _wheelLateralVelocity;
     Vector3 _wheelVelocity, _lastWheelVelocity, _wheelAcceleration, _wheelContactPoint, _lateralForcePosition = Vector3.zero;
-
-    private const float ForwardDragWheels = 5.25f;
-    private const float ForwardDragRoof = 2.5f;
-
+    
+    const float AutoBrakeAcceleration = 5.25f;
+    
     //[HideInInspector]
     public bool isDrawWheelVelocities, isDrawWheelDisc, isDrawForces;
 
@@ -39,16 +32,16 @@ public class CubeWheel : MonoBehaviour
     {
         _rb = GetComponentInParent<Rigidbody>();
         _c = GetComponentInParent<CubeController>();
-        _inputManager = transform.parent.parent.GetComponentInParent<InputManager>();
-        _groundControl = GetComponentInParent<CubeGroundControl>();
+        _inputManager = GetComponentInParent<InputManager>();
+        _groundControl= GetComponentInParent<CubeGroundControl>();
         _wheelRadius = transform.localScale.z / 2;
     }
-
+    
     public void RotateWheels(float steerAngle)
     {
-        if (wheelFL || wheelFR)
+        if(wheelFL || wheelFR)
             transform.localRotation = Quaternion.Euler(Vector3.up * steerAngle);
-
+        
         // Update mesh rotations of the wheel
         if (wheelMesh)
         {
@@ -65,22 +58,21 @@ public class CubeWheel : MonoBehaviour
     {
         UpdateWheelState();
 
+        if (!_c.isCanDrive) return;
         //ApplyForwardForce();
-        if(_c.isCanDrive)
-            ApplyLateralForce();
-        if (_c.carState == CubeController.CarStates.Air) return;
+        ApplyLateralForce();
         SimulateDrag();
     }
-
+    
     public void ApplyForwardForce(float force)
     {
         _rb.AddForce(force * transform.forward, ForceMode.Acceleration);
-
+        
         // Kill velocity to 0 for small car velocities
         if (force == 0 && _c.forwardSpeedAbs < 0.1)
             _rb.velocity = new Vector3(_rb.velocity.x, _rb.velocity.y, 0);
     }
-
+    
     private void ApplyLateralForce()
     {
         if(Mathf.Abs(_wheelLateralVelocity) > 0.001f) { 
@@ -90,9 +82,9 @@ public class CubeWheel : MonoBehaviour
             var friction = slideFriction * groundFriction;
             var constraint = -_wheelLateralVelocity;
             var impulse = constraint * friction;
-            _lateralForcePosition = transform.localPosition;
-            _lateralForcePosition.y = _c.cogLow.localPosition.y;
-            _lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
+            _lateralForcePosition = transform.position;
+            _lateralForcePosition.y = _c.cogLow.position.y;
+            //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
             _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
         }
         
@@ -101,16 +93,21 @@ public class CubeWheel : MonoBehaviour
         _lateralForcePosition.y = _c.cogLow.localPosition.y;
         _lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
         //_rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
+        
+        //Fy = _wheelLateralVelocity * _groundControl.currentWheelSideFriction ;
+        //_lateralForcePosition = transform.position;
+        //_lateralForcePosition.y = _c.cogLow.position.y;
+        //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
+        //_rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
-
-
+    
     private void SimulateDrag()
     {
         //Applies auto braking if no input, simulates air and ground drag
         if (!(_c.forwardSpeedAbs >= 0.1)) return;
         
-        var dragForce = (_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4 * _c.forwardSpeedSign * 
-                        (1 - Mathf.Abs(_inputManager.throttleInput));
+        //TODO Make a separate function
+        var dragForce = AutoBrakeAcceleration / 4 * _c.forwardSpeedSign * (1 - Mathf.Abs(_inputManager.throttleInput));
         _rb.AddForce(-dragForce * transform.forward, ForceMode.Acceleration);
     }
 
@@ -120,7 +117,7 @@ public class CubeWheel : MonoBehaviour
         _wheelVelocity = _rb.GetPointVelocity(_wheelContactPoint);
         _wheelForwardVelocity = Vector3.Dot(_wheelVelocity, transform.forward);
         _wheelLateralVelocity = Vector3.Dot(_wheelVelocity, transform.right);
-        
+
         _wheelAcceleration = (_wheelVelocity - _lastWheelVelocity) * Time.fixedTime;
         _lastWheelVelocity = _wheelVelocity;
     }
@@ -164,8 +161,8 @@ public class CubeWheel : MonoBehaviour
     private void DrawWheelVelocities()
     {
         if (_rb == null) return;
-        if (_c.isCanDrive != true) return;
-
+        if (_c.isCanDrive != true) return;   
+        
         var offset = 0.05f * transform.up;
         RoboUtils.DrawRay(_wheelContactPoint + offset, _wheelVelocity * 0.1f, Color.black);
         RoboUtils.DrawRay(_wheelContactPoint + offset, (_wheelForwardVelocity * 0.1f) * transform.forward, Color.blue);
@@ -174,14 +171,14 @@ public class CubeWheel : MonoBehaviour
 
     private void DrawForces()
     {
-        if (_c.isCanDrive != true) return;
-
+        if (_c.isCanDrive != true) return;   
+        
         // Draw induced lateral friction Fy
         RoboUtils.DrawRay(_lateralForcePosition, 0.3f * -Fy * transform.right, Color.magenta);
 
         // Draw observed forces
         RoboUtils.DrawLocalRay(transform, transform.up, _wheelAcceleration.z, transform.forward, Color.gray);
     }
-
+    
     #endregion
 }

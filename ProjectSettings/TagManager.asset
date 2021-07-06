@@ -17,8 +17,8 @@ TagManager:
   - SpawnPosition
   - RespawnPosition
   - ControllableCar
-  - Wall
-  - Ceiling
+  - Boostpad
+  - Environment
   layers:
   - Default
   - TransparentFX
