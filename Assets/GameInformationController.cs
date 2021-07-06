@@ -24,7 +24,7 @@ public class GameInformationController : MonoBehaviour
     {
         boost = _cubeBoosting._boostAmount;
         wheelsOnGround = _cubeController.isAllWheelsSurface;
-        jumped = _jumpController._isJumping;
+        jumped = _jumpController.IsFirstJump || _jumpController.IsSecondJump;
     }
 
     public void SetStartValues(float boostAmount)
