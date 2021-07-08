@@ -16,7 +16,7 @@ public class Ball : MonoBehaviour
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     public bool isTouchedGround = false;
     private float _minVelocity = 0.4f;
-    private float _minAngularVelocity = 10f;
+    private float _minAngularVelocity = 1.047f;
     private float _lastStoppedTime;
 
     Rigidbody _rb;
