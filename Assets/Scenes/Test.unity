@@ -332,6 +332,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.x
       value: -0.55
       objectReference: {fileID: 0}
+    - target: {fileID: 4238853727992996331, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: Curve2.m_Curve.Array.data[0].inSlope
+      value: -2.543653
+      objectReference: {fileID: 0}
+    - target: {fileID: 4238853727992996331, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: Curve2.m_Curve.Array.data[1].inSlope
+      value: -0.21011166
+      objectReference: {fileID: 0}
+    - target: {fileID: 4238853727992996331, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: Curve2.m_Curve.Array.data[0].outSlope
+      value: -2.543653
+      objectReference: {fileID: 0}
+    - target: {fileID: 4238853727992996331, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: Curve2.m_Curve.Array.data[1].inWeight
+      value: 0.09954232
+      objectReference: {fileID: 0}
+    - target: {fileID: 4238853727992996331, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: Curve2.m_Curve.Array.data[1].outSlope
+      value: -0.21011166
+      objectReference: {fileID: 0}
+    - target: {fileID: 4238853727992996331, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: Curve2.m_Curve.Array.data[0].outWeight
+      value: 0.041297197
+      objectReference: {fileID: 0}
+    - target: {fileID: 4263712239713247992, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: upForce
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 4263712239713247992, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: upTorque
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 6116194479964122941, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_Name
       value: ControllableCar

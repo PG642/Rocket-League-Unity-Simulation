@@ -7,8 +7,8 @@ public class CubeJumping : MonoBehaviour
     [Range(0.25f,4)]
     // default 1
     public float jumpForceMultiplier = 1f;
-    public int upForce = 2;
-    public int upTorque = 125;
+    public float upForce = 0.03f;
+    public int upTorque = 100;
     
     float _jumpTimer = 0;
     [SerializeField]
@@ -20,6 +20,9 @@ public class CubeJumping : MonoBehaviour
     Rigidbody _rb;
     InputManager _inputManager;
     CubeController _controller;
+
+    private bool _unflip = false;
+    private float _unflipStart;
 
     void Start()
     {
@@ -79,13 +82,28 @@ public class CubeJumping : MonoBehaviour
     void JumpBackToTheFeet()
     {
         //_rb.maxAngularVelocity = 7;
-        if (_controller.carState != CubeController.CarStates.BodyGroundDead) return;
         
-        if (_inputManager.isJumpDown || Input.GetButtonDown("A"))
+        if (_controller.carState == CubeController.CarStates.BodyGroundDead && (_inputManager.isJumpDown || Input.GetButtonDown("A")))
         {
             //_rb.maxAngularVelocity = 50;
             _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
             _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
+            _unflip = true;
+            _unflipStart = 0.0f;
+        }
+
+        if (_unflip)
+        {
+            if (_unflipStart + Time.deltaTime < 0.37f)
+            {
+                _unflipStart += Time.deltaTime;
+                _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
+            }
+            else
+            {
+                _unflip = false;
+                _unflipStart = 0.0f;
+            }
         }
     }
 }

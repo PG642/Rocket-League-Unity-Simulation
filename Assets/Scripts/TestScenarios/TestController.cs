@@ -46,6 +46,9 @@ namespace TestScenarios
 
             var fromJson = JsonUtility.FromJson<Scenario>(scenario);
             _currentScenario = fromJson;
+            //var cc = GetComponentInChildren<CubeController>();
+            //cc.isCanDrive = false;
+            //cc.carState = CubeController.CarStates.Air;
             _carRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar"));
             var ballRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("Ball"));
             SetupCar(_currentScenario);
@@ -80,7 +83,7 @@ namespace TestScenarios
 
         private void SetupObject(GameObjectValue gameObjectValue, Rigidbody rigidBody, float offsetY = 0.0f)
         {
-            rigidBody.position = gameObjectValue.position.ToVector(offsetY: offsetY);
+            rigidBody.position = gameObjectValue.position.ToVector();
             rigidBody.rotation = gameObjectValue.rotation.ToQuaternion();
             rigidBody.freezeRotation = true;
             rigidBody.velocity = gameObjectValue.velocity.ToVector();
@@ -100,7 +103,7 @@ namespace TestScenarios
             switch (input.name)
             {
                 case "jump":
-                    _inputManager.isJump = Convert.ToBoolean(input.value);
+                    _inputManager.isJumpDown = Convert.ToBoolean(input.value);
                     break;
                 case "boost":
                     _inputManager.isBoost = Convert.ToBoolean(input.value);
