@@ -36,7 +36,7 @@ public class CubeJumping : MonoBehaviour
         Jump();
         JumpBackToTheFeet();
     }
-
+    
     private void Jump()
     {
         // Do initial jump impulse only once
@@ -78,14 +78,14 @@ public class CubeJumping : MonoBehaviour
             _isCanFirstJump = false;
     }
 
-    //Auto jump and rotate when the car is on the roof
+    /// <summary>
+    /// Turns the car back on it's "feet" if the car is currently laying on it's roof.
+    /// Unflipping is done by applying a max. torque for 0.37 seconds and then letting it fall off afterwards.
+    /// </summary>
     void JumpBackToTheFeet()
     {
-        //_rb.maxAngularVelocity = 7;
-        
         if (_controller.carState == CubeController.CarStates.BodyGroundDead && (_inputManager.isJumpDown || Input.GetButtonDown("A")))
         {
-            //_rb.maxAngularVelocity = 50;
             _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
             _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
             _unflip = true;
