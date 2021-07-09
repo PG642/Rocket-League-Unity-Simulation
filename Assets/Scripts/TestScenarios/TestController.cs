@@ -68,13 +68,13 @@ namespace TestScenarios
         private void SetupCar(Scenario scenario, Rigidbody carRb)
         {
             var carStartValue = scenario.startValues.Find(x => x.gameObject == "car");
-            SetupObject(carStartValue, carRb, 0.1700f);
+            SetupObject(carStartValue, carRb);
         }
 
         private void SetupBall(Scenario scenario, Rigidbody ballRb)
         {
             var ballStartValue = scenario.startValues.Find(x => x.gameObject == "ball");
-            SetupObject(ballStartValue, ballRb, 0.9275f);
+            SetupObject(ballStartValue, ballRb);
         }
 
         private void SetupObject(GameObjectValue gameObjectValue, Rigidbody rigidBody, float offsetY = 0.0f)

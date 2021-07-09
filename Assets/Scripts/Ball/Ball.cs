@@ -8,16 +8,20 @@ using Random = UnityEngine.Random;
 
 public class Ball : MonoBehaviour
 {
-    [SerializeField] [Range(10,80)] float randomSpeed = 40;
-    [SerializeField] float initialForce = 4000;
-    [SerializeField] float hitMultiplier = 200;
+    [SerializeField] [Range(10, 80)] float randomSpeed = 40;
+    [SerializeField] float initialForce;
+    [SerializeField] float hitMultiplier;
     public float _maxAngluarVelocity = 6.0f;
-    public  float _maxVelocity = 60.0f;
+    public float _maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     public bool isTouchedGround = false;
-    
+    private float _minVelocity = 0.4f;
+    private float _minAngularVelocity = 1.047f;
+    private float _lastStoppedTime;
+
     Rigidbody _rb;
     Transform _transform;
+    private float _timeWindowToStop = 2.0f;
 
     void Start()
     {
@@ -26,24 +30,23 @@ public class Ball : MonoBehaviour
         isTouchedGround = false;
         _rb.maxAngularVelocity = _maxAngluarVelocity;
         _rb.maxDepenetrationVelocity = _maxVelocity;
-        
     }
-    
+
     void Update()
     {
         //TODO: move inputs to the InputController
         if (Input.GetKeyDown(KeyCode.T))
             ShootInRandomDirection(randomSpeed);
-        
+
         if (Input.GetKeyDown(KeyCode.R))
             ResetBall();
-        
+
         if (Input.GetButtonDown("Select"))
             ResetShot(new Vector3(7.76f, 2.98f, 0f));
         _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _maxVelocity);
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         if (_rb.velocity.magnitude > _maxVelocity)
         {
@@ -54,6 +57,8 @@ public class Ball : MonoBehaviour
         {
             _rb.angularVelocity = _rb.angularVelocity.normalized * _maxVelocity;
         }
+
+        StopBallIfTooSlow();
     }
 
     private void ResetShot(Vector3 pos)
@@ -81,12 +86,31 @@ public class Ball : MonoBehaviour
         _rb.velocity = direction * speedRange;
     }
 
+    private void StopBallIfTooSlow()
+    {
+        if (_rb.velocity.magnitude <= _minVelocity && _rb.angularVelocity.magnitude <= _minAngularVelocity)
+        {
+            if (_lastStoppedTime == 0.0f)
+            {
+                _lastStoppedTime = Time.time;
+            }
+
+            if (_lastStoppedTime < Time.time - _timeWindowToStop && _lastStoppedTime > 0.0f)
+            {
+                _rb.velocity = Vector3.zero;
+                _rb.angularVelocity = Vector3.zero;
+            }
+        }
+        else
+        {
+            _lastStoppedTime = 0.0f;
+        }
+    }
+
     private void OnCollisionEnter(Collision col)
     {
-
         if (col.gameObject.CompareTag("Player"))
         {
-            
             float force = initialForce + col.relativeVelocity.magnitude * hitMultiplier;
             //Vector3 dir = transform.position - col.contacts[0].point;
             var dir = _rb.position - col.transform.position;
@@ -123,17 +147,18 @@ public class Ball : MonoBehaviour
         var f = col.transform.forward;
         var dot = Vector3.Dot(n, f);
         n = Vector3.Normalize(n - 0.35f * dot * f);
-        var impulse = _rb.mass * Math.Abs(col.relativeVelocity.magnitude) * scaling(col.relativeVelocity.magnitude) * n; // TODO scaling
+        var impulse = _rb.mass * Math.Abs(col.relativeVelocity.magnitude) * scaling(col.relativeVelocity.magnitude) *
+                      n; // TODO scaling
         //Debug.Log(impulse);
         //Debug.Log(col.relativeVelocity.magnitude);
-        return impulse ;
+        return impulse;
     }
 
     float scaling(float magninute)
     {
         var test = pysionixImpulseCurve.Evaluate(magninute);
-        
+
         Debug.Log($"{Time.time}: Curve {test} : Value {magninute}");
-        return test ;
+        return test;
     }
 }
