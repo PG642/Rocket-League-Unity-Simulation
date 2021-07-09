@@ -8,7 +8,7 @@
  * Name des auszuführenden Szenarios
  
  Diese Json muss in Unity unter Im Testszenario unter env beim Test Controller hinzugefügt werden.
- ![image info](./TestController.png)
+ ![image info](./Pictures/TestController.png)
  
  Zum Ausführen den TestController aktivieren und die Szene starten.
  In der Konsole warten, bis die json gespeichert worden ist.
