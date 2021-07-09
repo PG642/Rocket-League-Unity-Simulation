@@ -39,10 +39,10 @@ public class CubeSphereCollider : MonoBehaviour
     // Does a wheel touches the ground? Using raycasts, not sphere collider contact point, since no suspension
     bool IsRayContact()
     {
-        var isHit = Physics.Raycast(_rb.position, -_rb.transform.up, out var hit, _rayLen);
+        var isHit = Physics.Raycast(transform.position, -transform.up, out var hit, _rayLen);
         _rayContactPoint = hit.point;
         _rayContactNormal = hit.normal;
-        return isHit;
+        return false || isHit;
     }
 
     bool _isColliderContact;
@@ -56,7 +56,7 @@ public class CubeSphereCollider : MonoBehaviour
         _isColliderContact = false;
     }
 
-    public bool isDrawContactLines = true;
+    public bool isDrawContactLines = false;
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR

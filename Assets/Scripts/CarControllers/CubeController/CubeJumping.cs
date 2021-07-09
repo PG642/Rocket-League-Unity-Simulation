@@ -27,9 +27,6 @@ public class CubeJumping : MonoBehaviour
     CubeController _controller;
     private Transform _cogLow;
 
-    private bool _unflip = false;
-    private float _unflipStart;
-
     void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
@@ -112,7 +109,7 @@ public class CubeJumping : MonoBehaviour
 
         _lastFrameNoButton = !_inputManager.isJump;
     }
-    
+
     private void Jump()
     {
         //First Jump
@@ -258,32 +255,15 @@ public class CubeJumping : MonoBehaviour
             _isCanFirstJump = false;
     }
 
-    /// <summary>
-    /// Turns the car back on it's "feet" if the car is currently laying on it's roof.
-    /// Unflipping is done by applying a max. torque for 0.37 seconds and then letting it fall off afterwards.
-    /// </summary>
+    //Auto jump and rotate when the car is on the roof
     void JumpBackToTheFeet()
     {
-        if (_controller.carState == CubeController.CarStates.BodyGroundDead && (_inputManager.isJumpDown || Input.GetButtonDown("A")))
+        if (_controller.carState != CubeController.CarStates.BodyGroundDead) return;
+        
+        if (_inputManager.isJumpDown || Input.GetButtonDown("A"))
         {
             _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
             _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
-            _unflip = true;
-            _unflipStart = 0.0f;
-        }
-
-        if (_unflip)
-        {
-            if (_unflipStart + Time.deltaTime < 0.37f)
-            {
-                _unflipStart += Time.deltaTime;
-                _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
-            }
-            else
-            {
-                _unflip = false;
-                _unflipStart = 0.0f;
-            }
         }
     }*/
 }
