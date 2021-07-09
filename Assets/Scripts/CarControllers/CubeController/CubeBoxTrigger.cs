@@ -17,7 +17,7 @@ public class CubeBoxTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Ground"))
+        if (other.CompareTag("Map"))
         {
             controller.isBodySurface = true;
             //isTouchingSurface = true;
@@ -28,7 +28,7 @@ public class CubeBoxTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Ground"))
+        if (other.CompareTag("Map"))
         {
             controller.isBodySurface = false;
             //isTouchingSurface = false;
