@@ -81,30 +81,16 @@ public class CubeWheel : MonoBehaviour
     
     private void ApplyLateralForce()
     {
-        if(Mathf.Abs(_wheelLateralVelocity) > 0.001f) { 
-            var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) / (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
-            var slideFriction = _curve.Evaluate(ratio);
-            var groundFriction = _curve2.Evaluate(RoboUtils.Scale(-1, 1, 0, 1, -_c.transform.up.y));
-            var friction = slideFriction * groundFriction;
-            var constraint = -_wheelLateralVelocity;
-            var impulse = constraint * friction * 4.7f;
-            _lateralForcePosition = transform.position;
-            _lateralForcePosition.y = _c.cogLow.position.y;
-            //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
-            //_rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
-        }
-        
-        Fy = _wheelLateralVelocity * _groundControl.currentWheelSideFriction;
-        //_lateralForcePosition = transform.localPosition;
-        //_lateralForcePosition.y = _c.cogLow.localPosition.y;
-        //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
-        //_rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
-        
-        //Fy = _wheelLateralVelocity * _groundControl.currentWheelSideFriction ;
+        if (!(Mathf.Abs(_wheelLateralVelocity) > 0.001f)) return;
+        var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) / (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
+        var slideFriction = _curve.Evaluate(ratio);
+        var groundFriction = _curve2.Evaluate(RoboUtils.Scale(-1, 1, 0, 1, -_c.transform.up.y));
+        var friction = slideFriction * groundFriction;
+        var constraint = -_wheelLateralVelocity;
+        var impulse = constraint * friction * 4.7f;
         _lateralForcePosition = transform.position;
         _lateralForcePosition.y = _c.cogLow.position.y;
-        //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
-        _rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
+        _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
     
     private void SimulateDrag()
