@@ -8,9 +8,9 @@ using Random = UnityEngine.Random;
 
 public class Ball : MonoBehaviour
 {
-    [SerializeField] [Range(10, 80)] float randomSpeed = 40;
-    [SerializeField] float initialForce;
-    [SerializeField] float hitMultiplier;
+    [SerializeField] [Range(10,80)] float randomSpeed = 40;
+    [SerializeField] float initialForce = 4000;
+    [SerializeField] float hitMultiplier = 200;
     public float _maxAngluarVelocity = 6.0f;
     public float _maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
@@ -22,6 +22,7 @@ public class Ball : MonoBehaviour
     Rigidbody _rb;
     Transform _transform;
     private float _timeWindowToStop = 2.0f;
+
 
     void Start()
     {
@@ -57,7 +58,6 @@ public class Ball : MonoBehaviour
         {
             _rb.angularVelocity = _rb.angularVelocity.normalized * _maxVelocity;
         }
-
         StopBallIfTooSlow();
     }
 
@@ -111,6 +111,7 @@ public class Ball : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Player"))
         {
+
             float force = initialForce + col.relativeVelocity.magnitude * hitMultiplier;
             //Vector3 dir = transform.position - col.contacts[0].point;
             var dir = _rb.position - col.transform.position;
@@ -147,8 +148,7 @@ public class Ball : MonoBehaviour
         var f = col.transform.forward;
         var dot = Vector3.Dot(n, f);
         n = Vector3.Normalize(n - 0.35f * dot * f);
-        var impulse = _rb.mass * Math.Abs(col.relativeVelocity.magnitude) * scaling(col.relativeVelocity.magnitude) *
-                      n; // TODO scaling
+        var impulse = _rb.mass * Math.Abs(col.relativeVelocity.magnitude) * scaling(col.relativeVelocity.magnitude) * n; // TODO scaling
         //Debug.Log(impulse);
         //Debug.Log(col.relativeVelocity.magnitude);
         return impulse;
@@ -156,9 +156,9 @@ public class Ball : MonoBehaviour
 
     float scaling(float magninute)
     {
-        var test = pysionixImpulseCurve.Evaluate(magninute);
-
+        var test = pysionixImpulseCurve.Evaluate(magninute);       
         Debug.Log($"{Time.time}: Curve {test} : Value {magninute}");
-        return test;
+        return test ;
     }
 }
+
