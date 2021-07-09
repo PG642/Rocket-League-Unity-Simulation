@@ -81,6 +81,7 @@ namespace TestScenarios
         {
             rigidBody.position = gameObjectValue.position.ToVector(offsetY: offsetY);
             rigidBody.rotation = gameObjectValue.rotation.ToQuaternion();
+            rigidBody.freezeRotation = true;
             rigidBody.velocity = gameObjectValue.velocity.ToVector();
             rigidBody.angularVelocity = gameObjectValue.angularVelocity.ToVector();
         }
@@ -130,6 +131,7 @@ namespace TestScenarios
         // Update is called once per frame
         void FixedUpdate()
         {
+            GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar")).freezeRotation = false;
             ExecutedScenario();
         }
 
