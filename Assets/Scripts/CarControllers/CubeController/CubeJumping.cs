@@ -173,7 +173,7 @@ public class CubeJumping : MonoBehaviour
     {
         if (!IsCancelled)
         {
-            _rb.AddTorque(_cogLow.right * (220.0f * _pitch), ForceMode.Acceleration);
+            _rb.AddTorque(-_cogLow.right * (220.0f * _pitch), ForceMode.Acceleration);
         }
         _rb.AddTorque(-_cogLow.forward * (220.0f * _yaw), ForceMode.Acceleration);
     }
@@ -194,7 +194,7 @@ public class CubeJumping : MonoBehaviour
             forwardDirection = carForwardDirection;
             sidewardDirection = Quaternion.Euler(0.0f, 90.0f, 0.0f) * forwardDirection;
         }
-        Vector3 input = new Vector3(_pitch, 0.0f, _yaw);
+        Vector3 input = new Vector3(-_pitch, 0.0f, _yaw);
         float angle = Vector3.SignedAngle(input, new Vector3(1.0f, 0.0f, 0.0f), Vector3.up);
         Vector3 inputCarAligned = Quaternion.Euler(0.0f, angle, 0.0f) * carForwardDirection;
         float angleInputVelocity = Vector3.SignedAngle(inputCarAligned, forwardDirection, Vector3.up);

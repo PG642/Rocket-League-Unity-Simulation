@@ -49,8 +49,8 @@ public class CubeAirControl : MonoBehaviour
         if (!_cubeJumping.IsDodge || _cubeJumping.IsCancelled)
         {
             // pitch
-            _rb.AddTorque(Tp * _inputPitch * transform.right, ForceMode.Acceleration);
-            if(isUseDamperTorque) _rb.AddTorque(transform.right * (Dp * (1 - Mathf.Abs(_inputPitch)) * transform.InverseTransformDirection(_rb.angularVelocity).x), ForceMode.Acceleration);
+            _rb.AddTorque(Tp * _inputPitch * -transform.right, ForceMode.Acceleration);
+            if(isUseDamperTorque) _rb.AddTorque(-transform.right * (Dp * (1 - Mathf.Abs(_inputPitch)) * transform.InverseTransformDirection(_rb.angularVelocity).x), ForceMode.Acceleration);
         }
 
         if (!_cubeJumping.IsDodge)
