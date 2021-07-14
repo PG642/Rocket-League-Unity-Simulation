@@ -196,6 +196,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7003208987805840144}
+  - component: {fileID: 8905321169409550207}
   m_Layer: 8
   m_Name: Wheels
   m_TagString: Untagged
@@ -219,6 +220,66 @@ Transform:
   m_Father: {fileID: 5295069023348888368}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8905321169409550207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 581197293172718211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7174acf739018ee42b616f5c98c6adb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.044154964
+      outSlope: -0.044154964
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.078947365
+    - serializedVersion: 3
+      time: 1
+      value: 0.2
+      inSlope: -2.6113915
+      outSlope: -2.6113915
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.032036602
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  Curve2:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -2.9337883
+      outSlope: -2.9337883
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.030892448
+    - serializedVersion: 3
+      time: 1
+      value: 0.2
+      inSlope: -0.30456984
+      outSlope: -0.30456984
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.051443286
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &893074890267919795
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,54 +354,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55fa466cd5b3ac64aa53c43fd7de73bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  Curve2:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   wheelFL: 1
   wheelFR: 0
   wheelRL: 0
@@ -10965,6 +10978,7 @@ MonoBehaviour:
   upForce: 3
   upTorque: 50
   _isCanFirstJump: 0
+  _isJumping: 0
   _isCanKeepJumping: 0
 --- !u!114 &2116498333786674321
 MonoBehaviour:
@@ -10980,6 +10994,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoostForceMultiplier: 1
   isBoosting: 0
+  _boostAmount: 32
   _infiniteBoosting: 0
 --- !u!1 &3935954015676575273
 GameObject:
@@ -11222,54 +11237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55fa466cd5b3ac64aa53c43fd7de73bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  Curve2:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   wheelFL: 0
   wheelFR: 0
   wheelRL: 0
@@ -16573,54 +16540,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55fa466cd5b3ac64aa53c43fd7de73bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  Curve2:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   wheelFL: 0
   wheelFR: 1
   wheelRL: 0
@@ -26589,54 +26508,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55fa466cd5b3ac64aa53c43fd7de73bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  Curve2:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: -0.8
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   wheelFL: 0
   wheelFR: 0
   wheelRL: 1
