@@ -87,7 +87,7 @@ public class CubeJumping : MonoBehaviour
         if (_controller.carState == CubeController.CarStates.BodyGroundDead && (_inputManager.isJumpDown || Input.GetButtonDown("A")))
         {
             _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
-            _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
+            _rb.AddTorque(-transform.forward * upTorque, ForceMode.VelocityChange);
             _unflip = true;
             _unflipStart = 0.0f;
         }
@@ -97,7 +97,7 @@ public class CubeJumping : MonoBehaviour
             if (_unflipStart + Time.deltaTime < 0.37f)
             {
                 _unflipStart += Time.deltaTime;
-                _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
+                _rb.AddTorque(-transform.forward * upTorque, ForceMode.VelocityChange);
             }
             else
             {
