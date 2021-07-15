@@ -10993,9 +10993,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BoostForceMultiplier: 1
-  isBoosting: 0
-  _boostAmount: 32
-  _infiniteBoosting: 0
 --- !u!1 &3935954015676575273
 GameObject:
   m_ObjectHideFlags: 0

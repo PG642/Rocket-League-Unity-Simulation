@@ -26,7 +26,6 @@ namespace TestScenarios
         private float _nextActionTime;
         private bool _done = false;
         private TestLogger _logger;
-        private Rigidbody _carRb;
 
         private GameInformationController _gameInformationController;
 
@@ -46,12 +45,9 @@ namespace TestScenarios
 
             var fromJson = JsonUtility.FromJson<Scenario>(scenario);
             _currentScenario = fromJson;
-            //var cc = GetComponentInChildren<CubeController>();
-            //cc.isCanDrive = false;
-            //cc.carState = CubeController.CarStates.Air;
-            _carRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar"));
+            var carRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar"));
             var ballRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("Ball"));
-            SetupCar(_currentScenario);
+            SetupCar(_currentScenario, carRb);
             SetupBall(_currentScenario, ballRb);
             GetInputManager();
             _actions = _currentScenario.actions;
@@ -59,7 +55,7 @@ namespace TestScenarios
             _gameInformationController.SetStartValues(_currentScenario.boost);
 
 
-            _logger = new TestLogger(_carRb, ballRb, _currentScenario, _inputManager, settings.results_path_robo_league);
+            _logger = new TestLogger(carRb, ballRb, _currentScenario, _inputManager, settings.results_path_robo_league);
         }
 
         private void GetInputManager()
@@ -69,21 +65,21 @@ namespace TestScenarios
             if (_inputManager != null) _inputManager.isAgent = true;
         }
 
-        private void SetupCar(Scenario scenario)
+        private void SetupCar(Scenario scenario, Rigidbody carRb)
         {
             var carStartValue = scenario.startValues.Find(x => x.gameObject == "car");
-            SetupObject(carStartValue, _carRb, 0.1700f);
+            SetupObject(carStartValue, carRb);
         }
 
         private void SetupBall(Scenario scenario, Rigidbody ballRb)
         {
             var ballStartValue = scenario.startValues.Find(x => x.gameObject == "ball");
-            SetupObject(ballStartValue, ballRb, 0.9275f);
+            SetupObject(ballStartValue, ballRb);
         }
 
         private void SetupObject(GameObjectValue gameObjectValue, Rigidbody rigidBody, float offsetY = 0.0f)
         {
-            rigidBody.position = gameObjectValue.position.ToVector();
+            rigidBody.position = gameObjectValue.position.ToVector(offsetY: offsetY);
             rigidBody.rotation = gameObjectValue.rotation.ToQuaternion();
             rigidBody.freezeRotation = true;
             rigidBody.velocity = gameObjectValue.velocity.ToVector();
@@ -103,7 +99,7 @@ namespace TestScenarios
             switch (input.name)
             {
                 case "jump":
-                    _inputManager.isJumpDown = Convert.ToBoolean(input.value);
+                    _inputManager.isJump = Convert.ToBoolean(input.value);
                     break;
                 case "boost":
                     _inputManager.isBoost = Convert.ToBoolean(input.value);
@@ -135,7 +131,7 @@ namespace TestScenarios
         // Update is called once per frame
         void FixedUpdate()
         {
-            _carRb.freezeRotation = false;
+            GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar")).freezeRotation = false;
             ExecutedScenario();
         }
 
