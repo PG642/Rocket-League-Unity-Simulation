@@ -85,7 +85,7 @@ public class CubeJumping : MonoBehaviour
         {
             _isFirstJumpPress = true;
             IsFirstJump = true;
-            _timerJumpButtonHeld = 0.2f;
+            _timerJumpButtonHeld = 0.195f;
         }
 
         if(!IsFirstJump && !carIsGrounded && _inputManager.isJump && !_isSecondJumpUsed && _timerSecondJump > 0f && _lastFrameNoButton)
@@ -94,6 +94,7 @@ public class CubeJumping : MonoBehaviour
             if(Mathf.Abs(_inputManager.yawInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.rollInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.pitchInput) > _dodgeDeadzone)
             {
                 IsDodge = true;
+                _rb.maxAngularVelocity = 7.3f;
                 TimerDodge = 0f;
             }
         }
@@ -156,6 +157,7 @@ public class CubeJumping : MonoBehaviour
                 if(TimerDodge >= 0.65f)
                 {
                     IsDodge = false;
+                    _rb.maxAngularVelocity = 5.5f;
                     IsSecondJump = false; 
                 }
                 TimerDodge += Time.deltaTime;
@@ -189,7 +191,7 @@ public class CubeJumping : MonoBehaviour
         Vector3 carForwardDirection = _cogLow.forward;
         carForwardDirection.y = 0;
 
-        if (forwardVelocity.magnitude == 0.0f)
+        if (forwardVelocity.magnitude <= 1.0e-4)
         {
             forwardDirection = carForwardDirection;
             sidewardDirection = Quaternion.Euler(0.0f, 90.0f, 0.0f) * forwardDirection;
