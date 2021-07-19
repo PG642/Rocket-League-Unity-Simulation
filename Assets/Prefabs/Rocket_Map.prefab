@@ -4384,6 +4384,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FullRocketMapV01
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a26b66c8303d01444a4d61a019889433, type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a26b66c8303d01444a4d61a019889433, type: 3}
 --- !u!4 &6424346512137947714 stripped
