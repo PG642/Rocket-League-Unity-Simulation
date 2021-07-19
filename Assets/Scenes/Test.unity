@@ -278,7 +278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -47.75
+      value: -45.95
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
@@ -286,7 +286,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.19
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalRotation.w
@@ -387,12 +387,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799813830}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7458b430d65787345a2c76cfb03dd011, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settingJson: {fileID: 4900000, guid: 1467fdda6b1b93f449776a6d132fe3ba, type: 3}
+  settingJson: {fileID: 4900000, guid: efa453470f5b6a34d8601914592949d7, type: 3}
 --- !u!114 &799813833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -742,7 +742,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distanceToBall: -7.57
   cameraDist: 5
-  cameraHeight: 0.55
+  cameraHeight: 0.8
   cameraAngle: 0.03
   stiffnessPosition: 25
   stiffnessAngle: 50
@@ -1008,10 +1008,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 4300000, guid: 57b8bd6c400ebdc4fb90a1d842f0b417, type: 3}
-    - target: {fileID: 2532842153302682343, guid: 2946bfcea95aa1d40872741310581650, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 13400000, guid: 69c84832ed81f5b43bcf475a2ae28e08, type: 2}
     - target: {fileID: 2532842153811578195, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_Name
       value: Ball
