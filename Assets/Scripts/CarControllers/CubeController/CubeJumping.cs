@@ -263,4 +263,26 @@ public class CubeJumping : MonoBehaviour
             }
         }
     }
+
+    public void Reset()
+    {
+        // add reset logic to restore default values (e.g. OnEpisodeBegin() for training)
+        _timerJumpButtonHeld = 0;
+        _timerSecondJump = 0;
+
+        _isFirstJumpPress = false;
+        IsFirstJump = false;
+        IsSecondJump = false;
+        _isSecondJumpUsed = false;
+        _lowerSecondJumpTimer = false;
+        _lastFrameNoButton = true;
+
+        IsDodge = false;
+        TimerDodge = 0f;
+        IsCancelled = false;
+
+        _pitch = 0.0f;
+        _yaw = 0.0f;
+    }
+
 }

@@ -14,8 +14,9 @@ public class GoalKeeperAgent : Agent
     private float _episodeLength = 10f;
     private float _lastResetTime;
 
-    private Transform _ball;
-    private Transform _target;
+    private Transform _ball, _shootAt;
+    private Vector3 _startPosition;
+
 
     private CubeJumping _jumpControl;
     private CubeController _controller;
@@ -41,7 +42,9 @@ public class GoalKeeperAgent : Agent
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
 
-        _target = transform.parent.Find("World").Find("Rocket_Map").Find("Target");
+        _startPosition = transform.localPosition;
+
+        _shootAt = transform.parent.Find("ShootAt");
         _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
 
         _lastResetTime = Time.time;
@@ -50,19 +53,21 @@ public class GoalKeeperAgent : Agent
     public override void OnEpisodeBegin()
     {
         //Reset Car
-        transform.localPosition = new Vector3(-53f, 0f, 0);
+        transform.localPosition = _startPosition;
         transform.rotation = Quaternion.Euler(0f, 90f, 0f);
         _rb.velocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
+        _jumpControl.Reset();
+        _boostControl._boostAmount = 32f;
 
         //Reset Ball
-        _ball.localPosition = new Vector3(0f, 1f, Random.Range(-8f, 8f));
+        _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         // Set new Taget Position
-        _target.localPosition = new Vector3(-53f, 1f, Random.Range(-8f, 8f));
+        _shootAt.localPosition = new Vector3(-53f, Random.Range(0f, 6f), Random.Range(-8f, 8f));
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
@@ -115,19 +120,15 @@ public class GoalKeeperAgent : Agent
             InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
 
             InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
-            InputManager.isJumpUp = actionBuffers.ContinuousActions[8] > 0;
-            InputManager.isJumpDown = actionBuffers.ContinuousActions[9] > 0;
         }
 
-        float ballDistanceReward = 0.01f * (1-(Vector3.Distance(_ball.position,transform.position)/_mapData.diag));
-        AddReward(ballDistanceReward);
     }
 
     public void Update()
     {
         if (Time.time - _lastResetTime > _episodeLength)
         {
-            AddReward(0.5f);
+            AddReward(0f);
             Reset();
         }
         if(_mapData.isScoredBlue)
