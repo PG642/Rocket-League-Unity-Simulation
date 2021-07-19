@@ -241,17 +241,9 @@ public class CubeJumping : MonoBehaviour
     /// </summary>
     void JumpBackToTheFeet()
     {
-        if (_controller.carState == CubeController.CarStates.BodyGroundDead && (_inputManager.isJumpDown || Input.GetButtonDown("A")))
-        {
-            _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
-            _rb.AddTorque(-transform.forward * upTorque, ForceMode.VelocityChange);
-            _unflip = true;
-            _unflipStart = 0.0f;
-        }
-
         if (_unflip)
         {
-            if (_unflipStart + Time.deltaTime < 0.37f)
+            if (_unflipStart + Time.deltaTime < 0.33f)
             {
                 _unflipStart += Time.deltaTime;
                 _rb.AddTorque(-transform.forward * upTorque, ForceMode.VelocityChange);
@@ -261,6 +253,14 @@ public class CubeJumping : MonoBehaviour
                 _unflip = false;
                 _unflipStart = 0.0f;
             }
+        }
+        
+        if (_controller.carState == CubeController.CarStates.BodyGroundDead && (_inputManager.isJump || Input.GetButtonDown("A")))
+        {
+            _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
+            _rb.AddTorque(-transform.forward * upTorque, ForceMode.VelocityChange);
+            _unflip = true;
+            _unflipStart = 0.0f;
         }
     }
 }
