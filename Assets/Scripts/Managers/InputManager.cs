@@ -17,7 +17,7 @@ public class InputManager : MonoBehaviour
             steerInput = GetSteerInput();
 
             yawInput = Input.GetAxis("Horizontal");
-            pitchInput = Input.GetAxis("PitchAxis");
+            pitchInput = -Input.GetAxis("PitchAxis");
             rollInput = GetRollInput();
 
             isJump = Input.GetMouseButton(1) || Input.GetButton("A");
