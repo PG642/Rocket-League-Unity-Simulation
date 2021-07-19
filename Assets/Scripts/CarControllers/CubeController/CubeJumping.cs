@@ -39,12 +39,13 @@ public class CubeJumping : MonoBehaviour
     {
         UpdateJumpVariables();
         Jump();
-        //JumpBackToTheFeet();
     }
 
     private void UpdateJumpVariables()
     {
         bool carIsGrounded = _controller.carState == CubeController.CarStates.AllWheelsSurface || _controller.carState == CubeController.CarStates.AllWheelsGround;
+        
+        // reset timer and second jump if the car is grounded 
         if(carIsGrounded)
         {
             _isSecondJumpUsed = false;
@@ -52,28 +53,19 @@ public class CubeJumping : MonoBehaviour
             _timerSecondJump = 1.25f;
         }
 
+        // lower _timerSecondJump if the car is in air
         if (_lowerSecondJumpTimer)
         {
             _timerSecondJump -= Time.deltaTime;
         }
 
-
-        if(IsFirstJump)
+        // lower _timerJumpButtonHeld if the car is in air and the first jump is active
+        if (IsFirstJump)
         {
             _timerJumpButtonHeld -= Time.deltaTime;
         }
 
-        /*
-        if (_rb.velocity.y > 2.6 && _rb.velocity.y < 2.8)
-        {
-            Debug.Log("------------------------");
-            Debug.Log(_rb.velocity.y);
-            Debug.Log(IsFirstJump);
-            Debug.Log(_inputManager.isJump);
-            Debug.Log(_timerJumpButtonHeld);
-        }
-        */
-        
+        // if the interval of the first jump ended or the button was released: end first jump, start lowering the secondjumptimer from here and reset it before lowering it
         if(IsFirstJump && (_timerJumpButtonHeld <= 0f || !_inputManager.isJump))
         {
             IsFirstJump = false;
@@ -81,6 +73,7 @@ public class CubeJumping : MonoBehaviour
             _timerSecondJump = 1.25f;
         }
 
+        // if the car is grounded, is not already jumping and the jump button is pressed again: start first jump, reset _timerJumpButtonHeld
         if (!IsFirstJump && carIsGrounded && _inputManager.isJump && _lastFrameNoButton)
         {
             _isFirstJumpPress = true;
@@ -88,10 +81,12 @@ public class CubeJumping : MonoBehaviour
             _timerJumpButtonHeld = 0.195f;
         }
 
+        // if the first jump is over, the car is not grounded and has the second jump left: start second jump / dodge
         if(!IsFirstJump && !carIsGrounded && _inputManager.isJump && !_isSecondJumpUsed && _timerSecondJump > 0f && _lastFrameNoButton)
         {
             IsSecondJump = true;
-            if(Mathf.Abs(_inputManager.yawInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.rollInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.pitchInput) > _dodgeDeadzone)
+            // if the dodge deadzone is exceeded the second jump is a dodge: start dodge, reset TimerDodge and raise the maxAngularVelocity during the dodge
+            if (Mathf.Abs(_inputManager.yawInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.rollInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.pitchInput) > _dodgeDeadzone)
             {
                 IsDodge = true;
                 _rb.maxAngularVelocity = 7.3f;
@@ -99,6 +94,7 @@ public class CubeJumping : MonoBehaviour
             }
         }
 
+        // dodges can be cancelled by pulling the stick in the opposit pitch direction
         if (IsDodge && TimerDodge >= 0.04f && Math.Sign(_pitch) != Math.Sign(_inputManager.pitchInput) && Mathf.Abs(_inputManager.pitchInput) > 0.999f)
         {
             IsCancelled = true;
@@ -108,6 +104,7 @@ public class CubeJumping : MonoBehaviour
             IsCancelled = false;
         }
 
+        // track if the jump putton was pressed in the last frame
         _lastFrameNoButton = !_inputManager.isJump;
     }
 
@@ -116,11 +113,13 @@ public class CubeJumping : MonoBehaviour
         //First Jump
         if(IsFirstJump)
         {
+            // add initial forces
             if(_isFirstJumpPress)
             {
                 _isFirstJumpPress = false;
-                _rb.AddForce(_cogLow.up * 2.99f, ForceMode.VelocityChange);
+                _rb.AddForce(_rb.transform.up * 2.99f, ForceMode.VelocityChange);
             }
+            // add acceleration if the jump button is held down
             else
             {
                 _rb.AddForce(_cogLow.up * 13.9f, ForceMode.Acceleration);
@@ -131,9 +130,10 @@ public class CubeJumping : MonoBehaviour
         //Second Jump
         if(IsSecondJump)
         {
+            // start dodge routine
             if (IsDodge)
-            {   
-
+            {
+                // only if the second jump is not used in an earlier frame: get the direction of the dodge
                 if(!_isSecondJumpUsed)
                 {
                     Debug.Log("Dodge detected" );
@@ -149,11 +149,13 @@ public class CubeJumping : MonoBehaviour
                     }
                     AddDodgeVelocity();
                 }
+                // add torque over the full dodge time
                 AddTorque();
                 if (TimerDodge >= 0.15f && TimerDodge <= 0.65f )
                 {
                     _rb.velocity = Vector3.Scale(_rb.velocity, new Vector3(1f, 0.65f, 1f));
                 }
+                // stop the dodge after the dodge time was exceeded and restore the default maxAngularVelocity
                 if(TimerDodge >= 0.65f)
                 {
                     IsDodge = false;
@@ -162,10 +164,11 @@ public class CubeJumping : MonoBehaviour
                 }
                 TimerDodge += Time.deltaTime;
             }
+            // add initial forces for a non-dodge second jump
             else
             { 
                 IsSecondJump = false;
-                _rb.AddForce(_cogLow.up * 2.92f, ForceMode.VelocityChange);
+                _rb.AddForce(_rb.transform.up * 2.92f, ForceMode.VelocityChange);
             }
             _isSecondJumpUsed = true;
         }
@@ -173,10 +176,12 @@ public class CubeJumping : MonoBehaviour
 
     private void AddTorque()
     {
+        // only add pitch torque if the dodge is not cancelled
         if (!IsCancelled)
         {
             _rb.AddTorque(-_cogLow.right * (220.0f * _pitch), ForceMode.Acceleration);
         }
+        // add roll torque anyway
         _rb.AddTorque(-_cogLow.forward * (220.0f * _yaw), ForceMode.Acceleration);
     }
     
@@ -191,81 +196,36 @@ public class CubeJumping : MonoBehaviour
         Vector3 carForwardDirection = _cogLow.forward;
         carForwardDirection.y = 0;
 
+        // only differ between the orientation of the car and its velocity direction, if there is a noticeable velocity
         if (forwardVelocity.magnitude <= 1.0e-4)
         {
             forwardDirection = carForwardDirection;
             sidewardDirection = Quaternion.Euler(0.0f, 90.0f, 0.0f) * forwardDirection;
         }
+        // transform the input direction (aligned with the car) to the global space to compare it to the cars velocity directions
         Vector3 input = new Vector3(-_pitch, 0.0f, _yaw);
         float angle = Vector3.SignedAngle(input, new Vector3(1.0f, 0.0f, 0.0f), Vector3.up);
         Vector3 inputCarAligned = Quaternion.Euler(0.0f, angle, 0.0f) * carForwardDirection;
         float angleInputVelocity = Vector3.SignedAngle(inputCarAligned, forwardDirection, Vector3.up);
 
-
+        // add different dodge velocities for different kinds of dodges
+        // forward dodge
         if (Mathf.Abs(angleInputVelocity) < 90)
         {
             _rb.velocity += forwardDirection * Vector3.Dot(inputCarAligned, forwardDirection) * 5.0f;
         }
-        if (Mathf.Abs(angleInputVelocity) > 90)
+        // backward dodge
+        else
         {
             _rb.velocity += forwardDirection * Vector3.Dot(inputCarAligned, forwardDirection) * 5.33f * (1.0f + 1.5f * forwardVelocity.magnitude / 23.0f);
         }
+        // sideward dodge
         _rb.velocity += sidewardDirection * Vector3.Dot(inputCarAligned, sidewardDirection) * 5.0f * (1.0f + 0.9f * forwardVelocity.magnitude / 23.0f);
 
+        // limit the speed of the car directly after adding the velocity to keep consistency
         if (_rb.velocity.magnitude >= 23.0f)
         {
             _rb.velocity = _rb.velocity.normalized * 23.0f;
         }
     }
-
-        /*// Do initial jump impulse only once
-        // TODO: Currently bugged, should be .isJumpDown for the initial jump impulse.
-        // Right now does the whole jump impulse
-        if (_inputManager.isJump && _isCanFirstJump)
-        {
-            _rb.AddForce(transform.up * 292 / 100 * jumpForceMultiplier, ForceMode.VelocityChange);
-            _isCanKeepJumping = true;
-            _isCanFirstJump = false;
-            _isJumping = true;
-            
-            _jumpTimer += Time.fixedDeltaTime;
-        }
-        
-        // Keep jumping if the jump button is being pressed
-        if (_inputManager.isJump && _isJumping && _isCanKeepJumping && _jumpTimer <= 0.2f)
-        {
-            _rb.AddForce(transform.up * 1458f / 100 * jumpForceMultiplier, ForceMode.Acceleration);
-            _jumpTimer += Time.fixedDeltaTime;
-        }
-        
-        // If jump button was released we can't start jumping again mid air
-        if (_inputManager.isJumpUp)
-            _isCanKeepJumping = false;
-        
-        // Reset jump flags when landed
-        if (_controller.isAllWheelsSurface)
-        {
-            // Need a timer, otherwise while jumping we are setting isJumping flag to false right on the next frame 
-            if (_jumpTimer >= 0.1f)
-                _isJumping = false;
-
-            _jumpTimer = 0;
-            _isCanFirstJump = true;
-        }
-        // Cant start jumping while in the air
-        else if (!_controller.isAllWheelsSurface)
-            _isCanFirstJump = false;
-    }
-
-    //Auto jump and rotate when the car is on the roof
-    void JumpBackToTheFeet()
-    {
-        if (_controller.carState != CubeController.CarStates.BodyGroundDead) return;
-        
-        if (_inputManager.isJumpDown || Input.GetButtonDown("A"))
-        {
-            _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
-            _rb.AddTorque(transform.forward * upTorque, ForceMode.VelocityChange);
-        }
-    }*/
 }
