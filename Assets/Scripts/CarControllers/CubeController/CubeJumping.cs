@@ -21,6 +21,11 @@ public class CubeJumping : MonoBehaviour
 
     float _pitch = 0.0f;
     float _yaw = 0.0f;
+    
+    public float upForce = 0.03f;
+    public int upTorque = 100;
+    private bool _unflip = false;
+    private float _unflipStart;
 
     Rigidbody _rb;
     InputManager _inputManager;
@@ -39,6 +44,7 @@ public class CubeJumping : MonoBehaviour
     {
         UpdateJumpVariables();
         Jump();
+        JumpBackToTheFeet();
     }
 
     private void UpdateJumpVariables()
@@ -226,6 +232,35 @@ public class CubeJumping : MonoBehaviour
         if (_rb.velocity.magnitude >= 23.0f)
         {
             _rb.velocity = _rb.velocity.normalized * 23.0f;
+        }
+    }
+
+    /// <summary>
+    /// Turns the car back on it's "feet" if the car is currently laying on it's roof.
+    /// Unflipping is done by applying a max. torque for 0.37 seconds and then letting it fall off afterwards.
+    /// </summary>
+    void JumpBackToTheFeet()
+    {
+        if (_controller.carState == CubeController.CarStates.BodyGroundDead && (_inputManager.isJumpDown || Input.GetButtonDown("A")))
+        {
+            _rb.AddForce(Vector3.up * upForce, ForceMode.VelocityChange);
+            _rb.AddTorque(-transform.forward * upTorque, ForceMode.VelocityChange);
+            _unflip = true;
+            _unflipStart = 0.0f;
+        }
+
+        if (_unflip)
+        {
+            if (_unflipStart + Time.deltaTime < 0.37f)
+            {
+                _unflipStart += Time.deltaTime;
+                _rb.AddTorque(-transform.forward * upTorque, ForceMode.VelocityChange);
+            }
+            else
+            {
+                _unflip = false;
+                _unflipStart = 0.0f;
+            }
         }
     }
 }

@@ -69,6 +69,7 @@ namespace TestScenarios
         {
             var carStartValue = scenario.startValues.Find(x => x.gameObject == "car");
             SetupObject(carStartValue, carRb);
+            carRb.freezeRotation = true;
         }
 
         private void SetupBall(Scenario scenario, Rigidbody ballRb)
@@ -81,7 +82,6 @@ namespace TestScenarios
         {
             rigidBody.position = gameObjectValue.position.ToVector(offsetY: offsetY);
             rigidBody.rotation = gameObjectValue.rotation.ToQuaternion();
-            rigidBody.freezeRotation = true;
             rigidBody.velocity = gameObjectValue.velocity.ToVector();
             rigidBody.angularVelocity = gameObjectValue.angularVelocity.ToVector();
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using CarControllers.CubeController;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,6 +10,9 @@ public class CubeWheel : MonoBehaviour
   //  public float steerAngle;
   //  public float Fx;
     float Fy;
+
+    private AnimationCurve _curve;
+    private AnimationCurve _curve2;
     
     public bool wheelFL, wheelFR, wheelRL, wheelRR;
     
@@ -23,13 +27,17 @@ public class CubeWheel : MonoBehaviour
     float _wheelRadius, _wheelForwardVelocity, _wheelLateralVelocity;
     Vector3 _wheelVelocity, _lastWheelVelocity, _wheelAcceleration, _wheelContactPoint, _lateralForcePosition = Vector3.zero;
     
-    const float AutoBrakeAcceleration = 5.25f;
+    private const float ForwardDragWheels = 5.25f;
+    private const float ForwardDragRoof = 2.5f;
     
     //[HideInInspector]
     public bool isDrawWheelVelocities, isDrawWheelDisc, isDrawForces;
 
     void Start()
     {
+        var wheels = GetComponentInParent<CubeWheels>();
+        _curve = wheels.Curve;
+        _curve2 = wheels.Curve2;
         _rb = GetComponentInParent<Rigidbody>();
         _c = GetComponentInParent<CubeController>();
         _inputManager = GetComponentInParent<InputManager>();
@@ -58,10 +66,10 @@ public class CubeWheel : MonoBehaviour
     {
         UpdateWheelState();
 
-        if (!_c.isCanDrive) return;
-        //ApplyForwardForce();
-        ApplyLateralForce();
-        SimulateDrag();
+        if(_c.isCanDrive)
+            ApplyLateralForce();
+        if(_c.carState != CubeController.CarStates.Air)
+            SimulateDrag();
     }
     
     public void ApplyForwardForce(float force)
@@ -75,11 +83,16 @@ public class CubeWheel : MonoBehaviour
     
     private void ApplyLateralForce()
     {
-        Fy = _wheelLateralVelocity * _groundControl.currentWheelSideFriction ;
+        if (!(Mathf.Abs(_wheelLateralVelocity) > 0.001f)) return;
+        var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) / (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
+        var slideFriction = _curve.Evaluate(ratio);
+        var groundFriction = _curve2.Evaluate(RoboUtils.Scale(-1, 1, 0, 1, -_c.transform.up.y));
+        var friction = slideFriction * groundFriction;
+        var constraint = -_wheelLateralVelocity;
+        var impulse = constraint * friction * 4.7f;
         _lateralForcePosition = transform.position;
         _lateralForcePosition.y = _c.cogLow.position.y;
-        //_lateralForcePosition = _c.transform.TransformPoint(_lateralForcePosition);
-        _rb.AddForceAtPosition(-Fy * transform.right, _lateralForcePosition, ForceMode.Acceleration);
+        _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
     
     private void SimulateDrag()
@@ -87,8 +100,8 @@ public class CubeWheel : MonoBehaviour
         //Applies auto braking if no input, simulates air and ground drag
         if (!(_c.forwardSpeedAbs >= 0.1)) return;
         
-        //TODO Make a separate function
-        var dragForce = AutoBrakeAcceleration / 4 * _c.forwardSpeedSign * (1 - Mathf.Abs(_inputManager.throttleInput));
+        var dragForce = (_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4 * _c.forwardSpeedSign * 
+                        (1 - Mathf.Abs(_inputManager.throttleInput));
         _rb.AddForce(-dragForce * transform.forward, ForceMode.Acceleration);
     }
 
