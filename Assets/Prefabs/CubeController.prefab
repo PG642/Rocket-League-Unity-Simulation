@@ -233,53 +233,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: -0.044154964
-        outSlope: -0.044154964
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.078947365
-      - serializedVersion: 3
-        time: 1
-        value: 0.2
-        inSlope: -2.6113915
-        outSlope: -2.6113915
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.032036602
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    Curve2:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: -2.9337883
-        outSlope: -2.9337883
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.030892448
-      - serializedVersion: 3
-        time: 1
-        value: 0.2
-        inSlope: -0.30456984
-        outSlope: -0.30456984
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.051443286
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.044154964
+      outSlope: -0.044154964
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.078947365
+    - serializedVersion: 3
+      time: 1
+      value: 0.2
+      inSlope: -2.6113915
+      outSlope: -2.6113915
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.032036602
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  Curve2:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -2.9337883
+      outSlope: -2.9337883
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.030892448
+    - serializedVersion: 3
+      time: 1
+      value: 0.2
+      inSlope: -0.30456984
+      outSlope: -0.30456984
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.051443286
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &893074890267919795
 GameObject:
   m_ObjectHideFlags: 0
@@ -10979,8 +10979,8 @@ MonoBehaviour:
   IsDodge: 0
   TimerDodge: 0
   IsCancelled: 0
-  upForce: 3
-  upTorque: 50
+  upForce: 0.03
+  upTorque: 100
 --- !u!114 &2116498333786674321
 MonoBehaviour:
   m_ObjectHideFlags: 0
