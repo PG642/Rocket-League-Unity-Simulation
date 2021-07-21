@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Extentions;
 using TestScenarios.JsonClasses;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 using Action = TestScenarios.JsonClasses.Action;
-using File = UnityEngine.Windows.File;
 using Input = TestScenarios.JsonClasses.Input;
 using Scenario = TestScenarios.JsonClasses.Scenario;
 
