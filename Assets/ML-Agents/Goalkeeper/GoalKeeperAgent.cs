@@ -100,6 +100,9 @@ public class GoalKeeperAgent : Agent
 
         //Ball velocity
         sensor.AddObservation(_rbBall.velocity / 60f);
+
+        // Boost amount
+        sensor.AddObservation(_boostControl._boostAmount / 100f);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
