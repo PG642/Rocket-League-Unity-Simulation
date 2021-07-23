@@ -136,12 +136,14 @@ public class GoalKeeperAgent : Agent
         }
         if(_mapData.isScoredBlue)
         {
-            AddReward(-1f);
+            // Agent scored a goal
+            AddReward(1f);
             Reset();
         }
         if (_mapData.isScoredOrange)
         {
-            AddReward(1f);
+            // Agent got scored on
+            AddReward(-1f);
             Reset();
         }
     }
