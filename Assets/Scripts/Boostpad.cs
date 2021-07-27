@@ -17,14 +17,39 @@ public class Boostpad : MonoBehaviour
 
     private Renderer _rend;
 
+    private BoxCollider _hitbox;
+
+    private Dictionary<GameObject, float> _carsInRadius;
+
     void Start()
     {
         _rend = transform.GetChild(0).GetComponent<Renderer>();
+        _hitbox = transform.GetComponent<BoxCollider>();
+        _carsInRadius = new Dictionary<GameObject, float>();
     }
 
 
     void Update()
     {
+        GameObject[] cars = GameObject.FindGameObjectsWithTag("ControllableCar");
+        foreach (GameObject car in cars)
+        {
+            Vector3 relativePosition = gameObject.transform.position - car.transform.position;
+            float dist = new Vector2(relativePosition.x, relativePosition.z).magnitude;
+            float relativeHeight = Mathf.Abs(relativePosition.y);
+            if (_carsInRadius.ContainsKey(car))
+            {
+                _carsInRadius[car] = dist;
+            }
+            else
+            {
+                if (relativeHeight <= height && dist <= radius)
+                {
+                    _carsInRadius.Add(car, dist);
+                }
+            }
+        }
+
         if (!_isActive)
         {
             _rend.material.SetColor("_Color", Color.black);
@@ -45,34 +70,45 @@ public class Boostpad : MonoBehaviour
             {
                 transform.GetChild(1).gameObject.SetActive(true);
             }
-
-            GameObject[] cars = GameObject.FindGameObjectsWithTag("ControllableCar");
-            
-            foreach (GameObject car in cars)
+            if (_carsInRadius.Keys.Count > 0)
             {
-                Vector3 relativePosition = gameObject.transform.position - car.transform.position;
-                float dist = new Vector2(relativePosition.x, relativePosition.z).magnitude;
-                float relativeHeight = Mathf.Abs(relativePosition.y);
-                if (relativeHeight <= height && dist <= radius)
-                {
-                    if (_isActive) {
-                        var cube = car.GetComponentInChildren<CubeBoosting>();
-                        Debug.Log(cube);
-                        bool isBoostFull = cube.IncreaseBoost(boostAmount); //IncreaseBoost returns true, if boost was already at 100
-                        if (!isBoostFull)
-                        {
-                            PickUpBoost();
-                        }
-                    }
-                }
+                PickUpBoost(getFurthestCarInRadius());
             }
-            
         }
     }
 
-    private void PickUpBoost()
+    private void OnTriggerExit(Collider other)
     {
-        _lastPickup = Time.time;
-        _isActive = false;
+        if (other.gameObject.CompareTag("BodyCollider"))
+        {
+            _carsInRadius.Remove(other.GetComponentInParent<Rigidbody>().gameObject);
+        }
+    }
+
+    private GameObject getFurthestCarInRadius()
+    {
+        GameObject furthestCar = null;
+        float maxDist = 0f;
+        foreach (KeyValuePair<GameObject, float> carDist in _carsInRadius)
+        {
+            if (carDist.Value > maxDist)
+            {
+                furthestCar = carDist.Key;
+                maxDist = carDist.Value;
+            }
+        }
+        return furthestCar;
+    }
+
+    private void PickUpBoost(GameObject car)
+    {
+        var cube = car.GetComponentInChildren<CubeBoosting>();
+        bool isBoostFull = cube.IncreaseBoost(boostAmount); //IncreaseBoost returns true, if boost was already at 100
+        if (!isBoostFull)
+        {
+            _lastPickup = Time.time;
+            _isActive = false;
+        }
+       
     }
 }

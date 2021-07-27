@@ -94,4 +94,5 @@ public class CubeSphereCollider : MonoBehaviour
         // Draw vertical line as ground hit indicators         
         Gizmos.DrawLine(transform.position, transform.position + transform.up * 0.5f);
     }
+    
 }
