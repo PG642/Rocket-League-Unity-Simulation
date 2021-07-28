@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Extentions;
 using TestScenarios.JsonClasses;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 using Action = TestScenarios.JsonClasses.Action;
-using File = UnityEngine.Windows.File;
 using Input = TestScenarios.JsonClasses.Input;
 using Scenario = TestScenarios.JsonClasses.Scenario;
 
@@ -48,6 +44,16 @@ namespace TestScenarios
             var carRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar"));
             var ballRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("Ball"));
             SetupCar(_currentScenario, carRb);
+            
+            if (carRb.position.y > 0.1701f && Mathf.Abs(carRb.rotation.x) < 0.001f)
+            {
+                var cc = GetComponentInChildren<CubeController>();
+                cc.isCanDrive = false;
+                cc.carState = CubeController.CarStates.Air;
+                cc.isAllWheelsSurface = false;
+                cc.numWheelsSurface = 0;
+            }
+            
             SetupBall(_currentScenario, ballRb);
             GetInputManager();
             _actions = _currentScenario.actions;

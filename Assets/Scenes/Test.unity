@@ -399,7 +399,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -47.75
+      value: -45.95
       objectReference: {fileID: 0}
     - target: {fileID: 1733474344396911142, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
@@ -601,7 +601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7458b430d65787345a2c76cfb03dd011, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settingJson: {fileID: 4900000, guid: ec824160651d4ff1b81472f51c879d09, type: 3}
+  settingJson: {fileID: 4900000, guid: 87e363e6954508e4eb2d99246dea9ef7, type: 3}
 --- !u!114 &799813833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -728,7 +728,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5044392351187916662, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.5045934
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5044392351187916662, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
       propertyPath: m_LocalPosition.z
@@ -986,7 +986,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distanceToBall: -7.57
   cameraDist: 5
-  cameraHeight: 0.55
+  cameraHeight: 0.8
   cameraAngle: 0.03
   stiffnessPosition: 25
   stiffnessAngle: 50
@@ -1411,6 +1411,10 @@ PrefabInstance:
     - target: {fileID: 2532842153811578197, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: pysionixImpulseCurve.m_Curve.Array.data[3].tangentMode
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2532842153811578198, guid: 2946bfcea95aa1d40872741310581650, type: 3}
+      propertyPath: m_Drag
+      value: 0.03
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2946bfcea95aa1d40872741310581650, type: 3}
