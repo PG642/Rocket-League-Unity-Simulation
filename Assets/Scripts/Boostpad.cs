@@ -15,6 +15,8 @@ public class Boostpad : MonoBehaviour
 
     public bool isBig = false;
 
+    private GameObject[] _cars;
+
     private Renderer _rend;
 
     private BoxCollider _hitbox;
@@ -26,13 +28,14 @@ public class Boostpad : MonoBehaviour
         _rend = transform.GetChild(0).GetComponent<Renderer>();
         _hitbox = transform.GetComponent<BoxCollider>();
         _carsInRadius = new Dictionary<GameObject, float>();
+        _cars = GameObject.FindGameObjectsWithTag("ControllableCar");
     }
 
 
     void Update()
     {
-        GameObject[] cars = GameObject.FindGameObjectsWithTag("ControllableCar");
-        foreach (GameObject car in cars)
+        
+        foreach (GameObject car in _cars)
         {
             Vector3 relativePosition = gameObject.transform.position - car.transform.position;
             float dist = new Vector2(relativePosition.x, relativePosition.z).magnitude;
