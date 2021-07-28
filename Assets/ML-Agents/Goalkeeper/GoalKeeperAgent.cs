@@ -55,6 +55,7 @@ public class GoalKeeperAgent : Agent
         //Reset Car
         transform.localPosition = _startPosition;
         transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
         _rb.velocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
         _jumpControl.Reset();
@@ -67,7 +68,7 @@ public class GoalKeeperAgent : Agent
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         // Set new Taget Position
-        _shootAt.localPosition = new Vector3(-53f, Random.Range(0f, 6f), Random.Range(-8f, 8f));
+        _shootAt.localPosition = new Vector3(-53f, Random.Range(3f, 3f), Random.Range(-7f, 7f));
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
@@ -85,7 +86,6 @@ public class GoalKeeperAgent : Agent
 
         //Car rotation, already normalized
         sensor.AddObservation(transform.rotation);
-
         //Car velocity
         sensor.AddObservation(_rb.velocity / 23f);
 
@@ -131,7 +131,8 @@ public class GoalKeeperAgent : Agent
     {
         if (Time.time - _lastResetTime > _episodeLength)
         {
-            AddReward(0f);
+            AddReward(0.5f);
+            AddReward((_ball.localPosition.x / 53f) / 2f);
             Reset();
         }
         if(_mapData.isScoredBlue)
