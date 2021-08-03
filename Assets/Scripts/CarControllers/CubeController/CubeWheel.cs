@@ -80,7 +80,7 @@ public class CubeWheel : MonoBehaviour
         
         // Kill velocity to 0 for small car velocities
         if (force == 0 && _c.forwardSpeedAbs < 0.1)
-            _rb.velocity = new Vector3(_rb.velocity.x, _rb.velocity.y, 0);
+            _rb.velocity -= _c.forwardSpeed * transform.forward;
     }
     
     private void ApplyLateralForce()
