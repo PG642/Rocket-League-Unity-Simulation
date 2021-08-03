@@ -29,6 +29,8 @@ public class CubeWheel : MonoBehaviour
     
     private const float ForwardDragWheels = 5.25f;
     private const float ForwardDragRoof = 2.5f;
+
+    private Vector3 _currentDriftForce = Vector3.zero;
     
     //[HideInInspector]
     public bool isDrawWheelVelocities, isDrawWheelDisc, isDrawForces;
@@ -91,16 +93,22 @@ public class CubeWheel : MonoBehaviour
         var constraint = -_wheelLateralVelocity;
 
         const float impulseMult = 4.7f;
-        const float driftImpulseMult = 0.27f;
+        const float driftImpulseMult = 0.335f;
         var impulse = constraint * friction * (_inputManager.isDrift ? driftImpulseMult : impulseMult);
         _lateralForcePosition = transform.position;
         _lateralForcePosition.y = _c.cogLow.position.y;
-        if (_inputManager.isDrift)
-        {
-            _lateralForcePosition.z += 0.0875f / 4.4f;
-        }
 
-        _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
+        _lateralForcePosition.z += 0.0875f / 4.6f;
+
+        var t = 0.05f;
+        var targetDriftForce = impulse * transform.right;
+        if(_currentDriftForce.magnitude == 0)
+        {
+            _currentDriftForce = targetDriftForce;
+        }
+        _currentDriftForce = Vector3.Lerp(_currentDriftForce, targetDriftForce, t);
+
+        _rb.AddForceAtPosition((_inputManager.isDrift ? _currentDriftForce : impulse * transform.right), _lateralForcePosition, ForceMode.Acceleration);
     }
     
     private void SimulateDrag()
