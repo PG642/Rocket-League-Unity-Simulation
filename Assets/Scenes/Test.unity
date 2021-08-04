@@ -208,7 +208,7 @@ WheelCollider:
     spring: 10
     damper: 1
     targetPosition: 0.8
-  m_SuspensionDistance: 0.15
+  m_SuspensionDistance: 0
   m_ForceAppPointDistance: 0
   m_Mass: 0.0001
   m_WheelDampingRate: 0.25
@@ -243,7 +243,7 @@ WheelCollider:
     spring: 10
     damper: 1
     targetPosition: 0.8
-  m_SuspensionDistance: 0.15
+  m_SuspensionDistance: 0
   m_ForceAppPointDistance: 0
   m_Mass: 0.0001
   m_WheelDampingRate: 0.25
@@ -283,7 +283,7 @@ WheelCollider:
     spring: 10
     damper: 1
     targetPosition: 0.8
-  m_SuspensionDistance: 0.15
+  m_SuspensionDistance: 0
   m_ForceAppPointDistance: 0
   m_Mass: 0.0001
   m_WheelDampingRate: 0.25
@@ -534,7 +534,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2293903894711678292, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.03
+      value: 0.019659206
       objectReference: {fileID: 0}
     - target: {fileID: 2340987456835614143, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalScale.x
@@ -582,11 +582,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5553207836794857244, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.02
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5831759126091075869, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.03
+      value: 0.01981772
       objectReference: {fileID: 0}
     - target: {fileID: 6049778683575397382, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalScale.x
@@ -602,7 +602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6054340260397473392, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.02
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6116194479964122941, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_Name
@@ -614,11 +614,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6336914821679892673, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.02
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6355576958075890258, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.02
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6377371183482648276, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_Enabled
@@ -751,7 +751,7 @@ WheelCollider:
     spring: 10
     damper: 1
     targetPosition: 0.8
-  m_SuspensionDistance: 0.15
+  m_SuspensionDistance: 0
   m_ForceAppPointDistance: 0
   m_Mass: 0.0001
   m_WheelDampingRate: 0.25
@@ -896,13 +896,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 0.0001
   wheelDampingRate: 0.25
-  suspensionDistance: 0.15
-  spring: 100
+  suspensionDistance: 0
+  spring: 14818.099
   damper: 10
   targetPosition: 0.8
   sprungMass: 45
   updateEveryFrame: 1
-  useSprungMass: 1
+  useSprungMass: 0
 --- !u!1 &1693715324
 GameObject:
   m_ObjectHideFlags: 0
