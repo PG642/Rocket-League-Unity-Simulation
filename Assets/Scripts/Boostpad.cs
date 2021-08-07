@@ -57,7 +57,7 @@ public class Boostpad : MonoBehaviour
                 {
                     if (_isActive) {
                         var cube = car.GetComponentInChildren<CubeBoosting>();
-                        Debug.Log(cube);
+
                         bool isBoostFull = cube.IncreaseBoost(boostAmount); //IncreaseBoost returns true, if boost was already at 100
                         if (!isBoostFull)
                         {

@@ -53,13 +53,7 @@ public class GoalKeeperAgent : Agent
     public override void OnEpisodeBegin()
     {
         //Reset Car
-        transform.localPosition = _startPosition;
-        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-
-        _rb.velocity = Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
-        _jumpControl.Reset();
-        _boostControl._boostAmount = 32f;
+        _controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 
         //Reset Ball
         _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
