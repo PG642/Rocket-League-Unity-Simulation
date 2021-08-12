@@ -205,10 +205,10 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.125
   m_SuspensionSpring:
-    spring: 10
-    damper: 1
+    spring: 16040.747
+    damper: 1000
     targetPosition: 0.8
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.15
   m_ForceAppPointDistance: 0
   m_Mass: 0.0001
   m_WheelDampingRate: 0.25
@@ -240,10 +240,10 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.15
   m_SuspensionSpring:
-    spring: 10
-    damper: 1
+    spring: 13585.594
+    damper: 1000
     targetPosition: 0.8
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.15
   m_ForceAppPointDistance: 0
   m_Mass: 0.0001
   m_WheelDampingRate: 0.25
@@ -280,10 +280,10 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.125
   m_SuspensionSpring:
-    spring: 10
-    damper: 1
+    spring: 16040.747
+    damper: 1000
     targetPosition: 0.8
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.15
   m_ForceAppPointDistance: 0
   m_Mass: 0.0001
   m_WheelDampingRate: 0.25
@@ -534,7 +534,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2293903894711678292, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.019659206
+      value: 0.010340793
       objectReference: {fileID: 0}
     - target: {fileID: 2340987456835614143, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalScale.x
@@ -586,7 +586,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5831759126091075869, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.01981772
+      value: 0.01018228
       objectReference: {fileID: 0}
     - target: {fileID: 6049778683575397382, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_LocalScale.x
@@ -627,6 +627,10 @@ PrefabInstance:
     - target: {fileID: 6617304920371891337, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7579293457156114425, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.06
       objectReference: {fileID: 0}
     - target: {fileID: 8191655260608614094, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_Enabled
@@ -748,10 +752,10 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.15
   m_SuspensionSpring:
-    spring: 10
-    damper: 1
+    spring: 13585.594
+    damper: 1000
     targetPosition: 0.8
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.15
   m_ForceAppPointDistance: 0
   m_Mass: 0.0001
   m_WheelDampingRate: 0.25
@@ -877,6 +881,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
   m_PrefabInstance: {fileID: 2120564385}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1555868691 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1369483712940535692, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+  m_PrefabInstance: {fileID: 704843407}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1579472744 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1690370570883371196, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
@@ -897,10 +906,13 @@ MonoBehaviour:
   mass: 0.0001
   wheelDampingRate: 0.25
   suspensionDistance: 0
-  spring: 14818.099
-  damper: 10
+  spring: 13585.594
+  damper: 100
   targetPosition: 0.8
+  frontBackSpring: 1.1807173
   sprungMass: 45
+  frontAxle: {fileID: 1855835916}
+  backAxle: {fileID: 1555868691}
   updateEveryFrame: 1
   useSprungMass: 0
 --- !u!1 &1693715324
@@ -1265,6 +1277,11 @@ MonoBehaviour:
   stiffnessPosition: 25
   stiffnessAngle: 50
   keyBoardControl: 1
+--- !u!1 &1855835916 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2119159245189555641, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+  m_PrefabInstance: {fileID: 704843407}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1986005271
 GameObject:
   m_ObjectHideFlags: 3

@@ -16,9 +16,19 @@ public class Suspension : MonoBehaviour
 
     public float targetPosition;
 
+    public float frontBackSpring;
+
     public float sprungMass;
 
     private WheelCollider[] _wheels;
+
+    private WheelCollider[] _wheelsFront;
+
+    private WheelCollider[] _wheelsBack;
+
+    public GameObject frontAxle;
+
+    public GameObject backAxle;
 
     public bool updateEveryFrame = false;
 
@@ -27,7 +37,9 @@ public class Suspension : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-         _wheels = GetComponentsInChildren<WheelCollider>();
+        _wheels = GetComponentsInChildren<WheelCollider>();
+        _wheelsFront = frontAxle.GetComponentsInChildren<WheelCollider>();
+        _wheelsBack = backAxle.GetComponentsInChildren<WheelCollider>();
         foreach (WheelCollider wheel in _wheels)
         {
             wheel.mass = mass;
@@ -38,7 +50,19 @@ public class Suspension : MonoBehaviour
             suspensionSpring.damper = damper;
             suspensionSpring.targetPosition = targetPosition;
             wheel.suspensionSpring = suspensionSpring;
-            wheel.sprungMass = sprungMass;
+            if (useSprungMass)
+            {
+                wheel.sprungMass = sprungMass;
+            }
+        }
+
+        foreach (WheelCollider wheel in _wheelsFront)
+        {
+            JointSpring suspensionSpring = new JointSpring();
+            suspensionSpring.spring = spring * frontBackSpring;
+            suspensionSpring.damper = damper;
+            suspensionSpring.targetPosition = targetPosition;
+            wheel.suspensionSpring = suspensionSpring;
         }
     }
 
@@ -54,6 +78,19 @@ public class Suspension : MonoBehaviour
                 wheel.suspensionDistance = suspensionDistance;
                 JointSpring suspensionSpring = new JointSpring();
                 suspensionSpring.spring = spring;
+                suspensionSpring.damper = damper;
+                suspensionSpring.targetPosition = targetPosition;
+                wheel.suspensionSpring = suspensionSpring;
+                if (useSprungMass)
+                {
+                    wheel.sprungMass = sprungMass;
+                }
+            }
+
+            foreach (WheelCollider wheel in _wheelsFront)
+            {
+                JointSpring suspensionSpring = new JointSpring();
+                suspensionSpring.spring = spring * frontBackSpring;
                 suspensionSpring.damper = damper;
                 suspensionSpring.targetPosition = targetPosition;
                 wheel.suspensionSpring = suspensionSpring;
