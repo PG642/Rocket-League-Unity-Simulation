@@ -49,12 +49,16 @@ public class CubeGroundControl : MonoBehaviour
 
     private void ApplyStabilization()
     {
+        if (_inputManager.throttleInput <= 0.0001f)
+        {
+            return;
+        }
         if (_controller.carState == CubeController.CarStates.Air
             || _controller.numWheelsSurface >= 3)
         {
             return;
         }
-        if (_controller.carState == CubeController.CarStates.BodyGroundDead && _inputManager.throttleInput <= 0.0001f)
+        if (_controller.carState == CubeController.CarStates.BodyGroundDead)
         {
             return;
         }
@@ -62,8 +66,14 @@ public class CubeGroundControl : MonoBehaviour
         {
             return;
         }
+        Debug.Log(Vector3.SignedAngle(_carCollision.surfaceNormal, _rb.transform.up, _controller.cogLow.transform.forward));
         var torqueDirection = -Mathf.Sign(Vector3.SignedAngle(_carCollision.surfaceNormal, _rb.transform.up, _controller.cogLow.transform.forward));
-        _rb.AddTorque(_controller.cogLow.transform.forward * 15 * torqueDirection, ForceMode.Acceleration);
+        ForceMode torqueForceMode = ForceMode.Acceleration;
+        if (_controller.carState == CubeController.CarStates.BodyGroundDead)
+        {
+            torqueForceMode = ForceMode.VelocityChange;
+        }
+        _rb.AddTorque(_controller.cogLow.transform.forward * 15 * torqueDirection, torqueForceMode);
         if (_controller.carState == CubeController.CarStates.SomeWheelsSurface)
         {
             _rb.AddForce(-_carCollision.surfaceNormal * 3.25f, ForceMode.Acceleration);
