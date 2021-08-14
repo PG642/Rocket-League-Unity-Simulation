@@ -154,6 +154,26 @@ Die Stärke des Abbruchs hängt von der Stärke des Sticks ab.
 * Räder üben keine Kraft auf Ball aus, aber der Ball übt Kraft auf die Räder aus:
 * Die Radfederungen bremsen nur die Hitbox des Autos, welche dann langsamer ist wenn sie den ball berührt, was den schuss abschwächt
 * Dadurch kann man vom Ball apprallen ohne dass sich dieser bewegt
+* 
+Y-Achsenabstand der Radachsen zu Masseschwerpunkt:
+Ohne Gravitation: 
+Hinten: -0.043
+ Vorne: -0.060
+
+Mit Gravitation auf Boden (durch Federung eingedrückt):
+Hinten: -0.02334079305
+ Vorne: -0.04018228004
+
+Absolute Stauchung:
+Hinten:  0.01965920695
+ Vorne:  0.01981771996
+
+Sprung Mass bei selber Federung auf allen Rädern bei Ruhe auf dem Boden bei Gravitation:
+Hinten: 44.81931001
+ Vorne: 45.18068999
+
+Daraus resultierende Stiffness K:
+   K: 14818.09991
 
 
 ## Body type 
