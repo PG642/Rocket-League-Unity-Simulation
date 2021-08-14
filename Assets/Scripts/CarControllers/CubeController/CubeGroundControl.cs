@@ -66,7 +66,6 @@ public class CubeGroundControl : MonoBehaviour
         {
             return;
         }
-        Debug.Log(Vector3.SignedAngle(_carCollision.surfaceNormal, _rb.transform.up, _controller.cogLow.transform.forward));
         var torqueDirection = -Mathf.Sign(Vector3.SignedAngle(_carCollision.surfaceNormal, _rb.transform.up, _controller.cogLow.transform.forward));
         ForceMode torqueForceMode = ForceMode.Acceleration;
         if (_controller.carState == CubeController.CarStates.BodyGroundDead)
