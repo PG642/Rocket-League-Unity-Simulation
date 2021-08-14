@@ -13,6 +13,8 @@ namespace MatchController
         private Ball _b;
         private GUIStyle _style;
 
+        public GameObject ExplosionParticleSystem;
+
         void Start()
         {
             _mapData = transform.Find("World").GetComponentInChildren<MapData>();
@@ -72,6 +74,24 @@ namespace MatchController
                 GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height / 2 - 75, 150, 130), "GAME OVER", _style);
             }
         }
+
+        public void HandleDemolition(GameObject demolishedCar)
+        {
+            TeamController.Team team = _teamController.GetTeamOfCar(demolishedCar);
+            StartCoroutine(CarRespawn(demolishedCar, team));
+        }
+
+        IEnumerator CarRespawn(GameObject demolishedCar, TeamController.Team team)
+        {
+            GameObject explosion = Instantiate(ExplosionParticleSystem);
+            explosion.transform.position = demolishedCar.transform.position;
+            explosion.GetComponent<ParticleSystem>().Play();
+            Destroy(explosion, 2f);
+            demolishedCar.transform.localPosition = new Vector3(0f, -5f, 0f);
+            yield return new WaitForSeconds(3f);
+            GetComponent<SpawnController>().SpawnCar(demolishedCar, team, true);
+        }
+
     }
 
 }

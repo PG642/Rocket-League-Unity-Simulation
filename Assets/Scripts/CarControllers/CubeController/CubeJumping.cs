@@ -142,8 +142,6 @@ public class CubeJumping : MonoBehaviour
                 // only if the second jump is not used in an earlier frame: get the direction of the dodge
                 if(!_isSecondJumpUsed)
                 {
-                    Debug.Log("Dodge detected" );
-
                     _pitch = _inputManager.pitchInput;
                     if(Mathf.Abs(_inputManager.rollInput) < Mathf.Abs(_inputManager.yawInput))
                     {
