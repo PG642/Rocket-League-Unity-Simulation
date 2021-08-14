@@ -50,8 +50,7 @@ public class CubeGroundControl : MonoBehaviour
     private void ApplyStabilization()
     {
         if (_controller.carState == CubeController.CarStates.Air
-            || _controller.carState == CubeController.CarStates.AllWheelsSurface
-            || _controller.carState == CubeController.CarStates.AllWheelsGround)
+            || _controller.numWheelsSurface >= 3)
         {
             return;
         }
