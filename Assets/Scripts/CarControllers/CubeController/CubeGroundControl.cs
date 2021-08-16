@@ -83,9 +83,11 @@ public class CubeGroundControl : MonoBehaviour
         else
             forwardAcceleration = throttleInput * GetForwardAcceleration(_controller.forwardSpeedAbs);
 
-        // Braking
-        if (_controller.forwardSpeedSign != Mathf.Sign(throttleInput) && throttleInput != 0)
-            forwardAcceleration += -1 * _controller.forwardSpeedSign * 35;
+        if (_inputManager.isDrift)
+            forwardAcceleration *= 0.5f;
+        else 
+            if (_controller.forwardSpeedSign != Mathf.Sign(throttleInput) && throttleInput != 0)
+                forwardAcceleration += -1 * _controller.forwardSpeedSign * 35; // Braking
         return forwardAcceleration;
     }
 

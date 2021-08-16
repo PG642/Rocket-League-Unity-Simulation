@@ -79,38 +79,33 @@ public class CubeWheel : MonoBehaviour
         _rb.AddForce(force * transform.forward, ForceMode.Acceleration);
         
         // Kill velocity to 0 for small car velocities
-        if (force == 0 && _c.forwardSpeedAbs < 0.1)
-            _rb.velocity -= _c.forwardSpeed * transform.forward;
+        if (force == 0 && _c.forwardSpeedAbs < 0.1 && !_inputManager.isDrift)
+            _rb.velocity -= Vector3.Dot(_rb.velocity, transform.forward) * transform.forward;
     }
-    
+
     private void ApplyLateralForce()
     {
         if (!(Mathf.Abs(_wheelLateralVelocity) > 0.001f)) return;
-        var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) / (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
-        var slideFriction = _curve.Evaluate(ratio);
-        var groundFriction = _curve2.Evaluate(RoboUtils.Scale(-1, 1, 0, 1, -_c.transform.up.y));
+
+        const float impulseMult = 5.0f;
+        const float driftImpulseMult = 0.5f;
+
+        var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) /
+                                  (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
+        float slideFriction = (_inputManager.isDrift ? driftImpulseMult : impulseMult) * _curve.Evaluate(ratio);
+        // var groundFriction = _curve2.Evaluate(RoboUtils.Scale(-1, 1, 0, 1, -_c.transform.up.y));
+        var groundFriction = 1.0f;
         var friction = slideFriction * groundFriction;
         var constraint = -_wheelLateralVelocity;
 
-        const float impulseMult = 4.7f;
-        const float driftImpulseMult = 0.335f;
-        var impulse = constraint * friction * (_inputManager.isDrift ? driftImpulseMult : impulseMult);
         _lateralForcePosition = transform.position;
         _lateralForcePosition.y = _c.cogLow.position.y;
 
-        _lateralForcePosition.z += 0.0875f / 4.6f;
-
-        var t = 0.05f;
-        var targetDriftForce = impulse * transform.right;
-        if(_currentDriftForce.magnitude == 0)
-        {
-            _currentDriftForce = targetDriftForce;
-        }
-        _currentDriftForce = Vector3.Lerp(_currentDriftForce, targetDriftForce, t);
-
-        _rb.AddForceAtPosition((_inputManager.isDrift ? _currentDriftForce : impulse * transform.right), _lateralForcePosition, ForceMode.Acceleration);
+        _lateralForcePosition += (_inputManager.isDrift ? 0.0195f : 0.0f) * transform.forward;
+        var impulse = constraint * friction;
+        _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
-    
+
     private void SimulateDrag()
     {
         //Applies auto braking if no input, simulates air and ground drag
