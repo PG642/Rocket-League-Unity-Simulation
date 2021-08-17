@@ -1,12 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-public class CubeSphereCollider : MonoBehaviour
+public class GroundTrigger : MonoBehaviour
 {
     public bool isTouchingSurface = false;
     
     //Raycast options
-    float _rayLen, _rayOffset = 0.05f;
+    float _rayLen, _rayOffset = 0f;
     Vector3 _rayContactPoint, _rayContactNormal;
     
     Rigidbody _rb;
@@ -14,7 +14,7 @@ public class CubeSphereCollider : MonoBehaviour
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
-        _rayLen = transform.localScale.x / 2 + _rayOffset;
+        _rayLen = GetComponent<WheelCollider>().radius + _rayOffset;
     }
     
     private void FixedUpdate()
@@ -39,7 +39,7 @@ public class CubeSphereCollider : MonoBehaviour
     // Does a wheel touches the ground? Using raycasts, not sphere collider contact point, since no suspension
     bool IsRayContact()
     {
-        var isHit = Physics.Raycast(_rb.position, -_rb.transform.up, out var hit, _rayLen);
+        var isHit = Physics.Raycast(transform.position, -_rb.transform.up, out var hit, _rayLen);
         _rayContactPoint = hit.point;
         _rayContactNormal = hit.normal;
         return false || isHit;

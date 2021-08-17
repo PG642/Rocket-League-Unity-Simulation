@@ -42,7 +42,7 @@ public class CubeWheel : MonoBehaviour
         _c = GetComponentInParent<CubeController>();
         _inputManager = GetComponentInParent<InputManager>();
         _groundControl= GetComponentInParent<CubeGroundControl>();
-        _wheelRadius = transform.localScale.z / 2;
+        _wheelRadius = GetComponentInParent<WheelSuspension>().radius;
     }
     
     public void RotateWheels(float steerAngle)

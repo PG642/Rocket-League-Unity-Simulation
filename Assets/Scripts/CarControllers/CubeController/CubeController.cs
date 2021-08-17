@@ -22,7 +22,7 @@ public class CubeController : MonoBehaviour
 
     Rigidbody _rb;
     GUIStyle _style;
-    CubeSphereCollider[] _sphereColliders;
+    GroundTrigger[] _sphereColliders;
     
     public enum CarStates
     {
@@ -40,7 +40,7 @@ public class CubeController : MonoBehaviour
         _rb.centerOfMass = cogLow.localPosition;
         _rb.maxAngularVelocity = 5.5f;
 
-        _sphereColliders = GetComponentsInChildren<CubeSphereCollider>();
+        _sphereColliders = GetComponentsInChildren<GroundTrigger>();
         
         // GUI stuff
         _style = new GUIStyle();
