@@ -27,11 +27,7 @@ public class WheelSuspension : MonoBehaviour
     [Range(0, float.MaxValue)]
     public float compressionDistance;
     
-    private float _sprungMass { get; set; } //How much weight the wheel has to support
-    private float _contactDepth { get; set; } //How much the suspension is compressed
-    private float _contactSpeed { get; set; } //How fast the suspension moves
-    private Vector3 _contactVelocity { get; set; } //Velocity Vector of colliding object
-    private float _suspensionForce { get; set; } //How much force the suspension applies to the car
+    
 
     private Rigidbody _carRb;
 
@@ -39,13 +35,21 @@ public class WheelSuspension : MonoBehaviour
     public GameObject suspensionTrigger;
     public GameObject displacementTrigger;
 
+    public float sprungMass; //How much weight the wheel has to support
+    public float contactDepth; //How much the suspension is compressed/extended
+    public float contactSpeed; //How fast the suspension moves
+    public Vector3 contactVelocity; //Velocity Vector of colliding object
+    public float suspensionForce; //How much force the suspension applies to the car
+
+    private WheelCollider[] _colliders;
+
     void Start()
     {
         _carRb = GetComponentInParent<Rigidbody>();
-        WheelCollider[] colliders = GetComponentsInChildren<WheelCollider>();
+        _colliders = GetComponentsInChildren<WheelCollider>();
         CubeWheel cb = GetComponentInChildren<CubeWheel>();
 
-        foreach (WheelCollider collider in colliders)
+        foreach (WheelCollider collider in _colliders)
         {
             collider.isTrigger = true;
             collider.radius = radius;
@@ -63,13 +67,27 @@ public class WheelSuspension : MonoBehaviour
         displacementTrigger.transform.localPosition = new Vector3(0, compressionDistance, 0);
 
         //Für testzwecke, nicht final
-        groundTrigger.GetComponent<WheelCollider>().isTrigger = false;
+        displacementTrigger.GetComponent<WheelCollider>().isTrigger = false;
 
     }
     
-    void Update()
+    void LateUpdate()
     {
+        foreach (WheelCollider collider in _colliders)
+        {
+            collider.isTrigger = true;
+            collider.radius = radius;
+            collider.suspensionDistance = 0;
+            WheelFrictionCurve f = collider.forwardFriction;
+            f.stiffness = 0;
+            collider.forwardFriction = f;
 
+            f = collider.sidewaysFriction;
+            f.stiffness = 0;
+            collider.sidewaysFriction = f;
+        }
+        displacementTrigger.GetComponent<WheelCollider>().isTrigger = false;
+        Debug.Log(groundTrigger.GetComponent<WheelCollider>().isTrigger);
     }
     
 }
