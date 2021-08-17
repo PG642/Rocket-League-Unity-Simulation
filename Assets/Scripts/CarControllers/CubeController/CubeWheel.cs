@@ -14,7 +14,7 @@ public class CubeWheel : MonoBehaviour
     private AnimationCurve _curve;
     private AnimationCurve _curve2;
     
-    public bool wheelFL, wheelFR, wheelRL, wheelRR;
+    public bool isFrontWheel;
     
     public Transform wheelMesh;
     private float _meshRevolutionAngle;
@@ -47,7 +47,7 @@ public class CubeWheel : MonoBehaviour
     
     public void RotateWheels(float steerAngle)
     {
-        if(wheelFL || wheelFR)
+        if(isFrontWheel)
             transform.localRotation = Quaternion.Euler(Vector3.up * steerAngle);
         
         // Update mesh rotations of the wheel
