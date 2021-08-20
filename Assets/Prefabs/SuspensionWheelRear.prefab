@@ -56,6 +56,11 @@ MonoBehaviour:
   groundTrigger: {fileID: 5807247670935706000}
   suspensionTrigger: {fileID: 8730838846684197166}
   displacementTrigger: {fileID: 7040720487928633914}
+  sprungMass: 0
+  contactDepth: 0
+  contactSpeed: 0
+  contactVelocity: {x: 0, y: 0, z: 0}
+  suspensionForce: 0
 --- !u!1 &1632853296537920463
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,6 +120,7 @@ GameObject:
   - component: {fileID: 4498279667685522230}
   - component: {fileID: 2513983875924766620}
   - component: {fileID: 6048186244665832204}
+  - component: {fileID: 635422580872672098}
   m_Layer: 8
   m_Name: GroundTrigger
   m_TagString: SphereCollider
@@ -179,7 +185,20 @@ WheelCollider:
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
     m_Stiffness: 0
+  m_Enabled: 0
+--- !u!65 &635422580872672098
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5807247670935706000}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
   m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.001, y: 0.25, z: 0.25}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7040720487928633914
 GameObject:
   m_ObjectHideFlags: 0
