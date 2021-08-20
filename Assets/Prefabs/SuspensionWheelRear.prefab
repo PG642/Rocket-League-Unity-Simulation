@@ -56,6 +56,11 @@ MonoBehaviour:
   groundTrigger: {fileID: 5807247670935706000}
   suspensionTrigger: {fileID: 8730838846684197166}
   displacementTrigger: {fileID: 7040720487928633914}
+  sprungMass: 0
+  contactDepth: 0
+  contactSpeed: 0
+  contactVelocity: {x: 0, y: 0, z: 0}
+  suspensionForce: 0
 --- !u!1 &1632853296537920463
 GameObject:
   m_ObjectHideFlags: 0
