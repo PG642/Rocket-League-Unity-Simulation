@@ -66,7 +66,7 @@ public class WheelSuspension : MonoBehaviour
         groundTrigger.transform.localPosition = new Vector3(0, -extensionDistance, 0);
         displacementTrigger.transform.localPosition = new Vector3(0, compressionDistance, 0);
 
-        //Für testzwecke, nicht final
+        //FÃ¼r testzwecke, nicht final
         displacementTrigger.GetComponent<WheelCollider>().isTrigger = false;
 
     }

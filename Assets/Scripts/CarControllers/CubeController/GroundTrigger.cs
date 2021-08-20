@@ -14,7 +14,7 @@ public class GroundTrigger : MonoBehaviour
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
-        _rayLen = GetComponent<WheelCollider>().radius + _rayOffset;
+        _rayLen = GetComponent<BoxCollider>().size.y / 2 + _rayOffset;
     }
     
     private void FixedUpdate()
