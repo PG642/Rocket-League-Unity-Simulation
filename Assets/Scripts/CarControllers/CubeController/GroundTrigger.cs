@@ -8,13 +8,15 @@ public class GroundTrigger : MonoBehaviour
     //Raycast options
     float _rayLen, _rayOffset = 0f;
     Vector3 _rayContactPoint, _rayContactNormal;
+    WheelSuspension _ws;
     
     Rigidbody _rb;
     
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
-        _rayLen = GetComponent<BoxCollider>().size.y / 2 + _rayOffset;
+        _ws = GetComponentInParent<WheelSuspension>();
+        _rayLen = _ws.radius / 2 + _rayOffset;
     }
     
     private void FixedUpdate()
@@ -48,9 +50,14 @@ public class GroundTrigger : MonoBehaviour
     bool _isColliderContact;
     private void OnTriggerEnter(Collider other)
     {
-        _isColliderContact = true;
+        _isColliderContact = other.ClosestPoint(transform.position).magnitude <= _ws.radius;
     }
-    
+
+    private void OnTriggerStay(Collider other)
+    {
+        _isColliderContact = other.ClosestPoint(transform.position).magnitude <= _ws.radius;
+    }
+
     private void OnTriggerExit(Collider other)
     {
         _isColliderContact = false;
