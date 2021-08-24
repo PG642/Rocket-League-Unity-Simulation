@@ -4,35 +4,36 @@ using UnityEngine;
 public class GroundTrigger : MonoBehaviour
 {
     public bool isTouchingSurface = false;
-    
+
     //Raycast options
     float _rayLen, _rayOffset = 0f;
     Vector3 _rayContactPoint, _rayContactNormal;
     WheelSuspension _ws;
-    
+
     Rigidbody _rb;
-    
+
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _ws = GetComponentInParent<WheelSuspension>();
         _rayLen = _ws.radius / 2 + _rayOffset;
     }
-    
+
     private void FixedUpdate()
     {
         isTouchingSurface = IsRayContact() || _isColliderContact;
-        
+
         //TODO: this class should only do raycasts and sphere collider ground detection. Move to CubeWheel or CubeController
         if (isTouchingSurface)
-            ApplyStickyForces(StickyForceConstant*5, _rayContactPoint, -_rayContactNormal);
+            ApplyStickyForces(StickyForceConstant * 5, _rayContactPoint, -_rayContactNormal);
     }
 
     const int StickyForceConstant = 0 / 100;
+
     private void ApplyStickyForces(float stickyForce, Vector3 position, Vector3 dir)
     {
         var force = stickyForce / 4 * dir;
-        
+
         //_rb.AddForceAtPosition(stickyForce, _contactPoint, ForceMode.Acceleration);
         _rb.AddForceAtPosition(force, position, ForceMode.Acceleration);
         //Debug.DrawRay(position, force, Color.blue, 0, true);
@@ -48,14 +49,39 @@ public class GroundTrigger : MonoBehaviour
     }
 
     bool _isColliderContact;
+
     private void OnTriggerEnter(Collider other)
     {
-        _isColliderContact = other.ClosestPoint(transform.position).magnitude <= _ws.radius;
+        _isColliderContact = (transform.position - other.ClosestPointOnBounds(transform.position)).magnitude <= _ws.radius;
+      
+        if (other.tag != "Ground")
+        {
+            return;
+        }
+        Debug.Log((transform.position - other.ClosestPointOnBounds(transform.position)).magnitude);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        _isColliderContact = other.ClosestPoint(transform.position).magnitude <= _ws.radius;
+        if (other.tag != "Ground")
+        {
+            return;
+        }
+        Debug.Log((transform.position - other.ClosestPointOnBounds(transform.position)).magnitude);
+        
+        _isColliderContact = (transform.position - other.ClosestPointOnBounds(transform.position)).magnitude <= _ws.radius;
+        // if (_isColliderContact)
+        // {
+        //     var position = transform.position;
+        //     var depth = _ws.radius - other.ClosestPoint(position).magnitude + 0.2f;
+        //
+        //     var vec = (position - other.ClosestPoint(position)).normalized * depth;
+        //     var up = transform.up;
+        //     var verschiebung = Vector3.Dot(vec, up);
+        //     Debug.Log(verschiebung);
+        //     position += up * verschiebung;
+        //     transform.position = position;
+        // }
     }
 
     private void OnTriggerExit(Collider other)
@@ -64,18 +90,19 @@ public class GroundTrigger : MonoBehaviour
     }
 
     public bool isDrawContactLines = false;
+
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
-        if(isDrawContactLines)
+        if (isDrawContactLines)
             DrawContactLines();
 #endif
         // Sticky forces
         //Debug.DrawRay(_contactPoint, _contactNormal);
         //Gizmos.DrawSphere(_rayContactPoint, 0.02f);
     }
-    
-    public void DrawContactLines()    // Draw vertical lines for ground contact for visual feedback
+
+    public void DrawContactLines() // Draw vertical lines for ground contact for visual feedback
     {
         _rayLen = transform.localScale.x / 2 + _rayOffset;
         var rayEndPoint = transform.position - (transform.up * _rayLen);
@@ -94,12 +121,11 @@ public class GroundTrigger : MonoBehaviour
             sphereContactPoint = _rayContactPoint;
         }
         else sphereContactPoint = rayEndPoint;
-        
+
         // Draw Raycast ray
         Gizmos.DrawLine(transform.position, rayEndPoint);
         Gizmos.DrawSphere(sphereContactPoint, 0.03f);
         // Draw vertical line as ground hit indicators         
         Gizmos.DrawLine(transform.position, transform.position + transform.up * 0.5f);
     }
-    
 }
