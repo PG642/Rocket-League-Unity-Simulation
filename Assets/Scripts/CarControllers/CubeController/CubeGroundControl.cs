@@ -58,10 +58,6 @@ public class CubeGroundControl : MonoBehaviour
         {
             return;
         }
-        if (_controller.carState == CubeController.CarStates.BodyGroundDead)
-        {
-            return;
-        }
         if (_carCollision == null || _carCollision.surfaceNormal == null)
         {
             return;
