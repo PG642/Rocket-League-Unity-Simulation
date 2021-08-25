@@ -49,7 +49,7 @@ public class CubeGroundControl : MonoBehaviour
 
     private void ApplyStabilization()
     {
-        if (_inputManager.throttleInput <= 0.0001f)
+        if (Mathf.Abs(_inputManager.throttleInput) <= 0.0001f)
         {
             return;
         }
