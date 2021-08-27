@@ -30,10 +30,9 @@ public class WheelSuspension : MonoBehaviour
     
 
     private Rigidbody _carRb;
-
-    public GameObject groundTrigger;
-    public GameObject suspensionTrigger;
-    public GameObject displacementTrigger;
+    
+    public GameObject suspensionCollider;
+    public GameObject displacementCollider;
 
     public float sprungMass; //How much weight the wheel has to support
     public float contactDepth; //How much the suspension is compressed/extended
@@ -41,56 +40,27 @@ public class WheelSuspension : MonoBehaviour
     public Vector3 contactVelocity; //Velocity Vector of colliding object
     public float suspensionForce; //How much force the suspension applies to the car
 
-    private WheelCollider[] _colliders;
+    private WheelCollider _displacementCollider;
 
     void Start()
     {
         _carRb = GetComponentInParent<Rigidbody>();
-        _colliders = GetComponentsInChildren<WheelCollider>();
+        suspensionCollider.transform.localScale = new Vector3(2 * radius, 0, 2 * radius);
+        displacementCollider.transform.localPosition = new Vector3(0, compressionDistance, 0);
+        _displacementCollider = displacementCollider.GetComponent<WheelCollider>();
+        _displacementCollider.radius = radius;
+        _displacementCollider.suspensionDistance = 0;
+        WheelFrictionCurve f = _displacementCollider.forwardFriction;
+        f.stiffness = 0;
+        _displacementCollider.forwardFriction = f;
+        f = _displacementCollider.sidewaysFriction;
+        f.stiffness = 0;
+        _displacementCollider.sidewaysFriction = f;
+
         CubeWheel cb = GetComponentInChildren<CubeWheel>();
 
-        foreach (WheelCollider collider in _colliders)
-        {
-            collider.isTrigger = true;
-            collider.radius = radius;
-            collider.suspensionDistance = 0;
-            WheelFrictionCurve f = collider.forwardFriction;
-            f.stiffness = 0;
-            collider.forwardFriction = f;
-
-            f = collider.sidewaysFriction;
-            f.stiffness = 0;
-            collider.sidewaysFriction = f;
-        }
         cb.isFrontWheel = isFrontWheel;
-        groundTrigger.transform.localPosition = new Vector3(0, -extensionDistance, 0);
-        displacementTrigger.transform.localPosition = new Vector3(0, compressionDistance, 0);
-        float scale = (radius + extensionDistance + compressionDistance) * 2 * 121f/120f;
-        Vector3 scaleVector = new Vector3(scale, 0, scale);
-        groundTrigger.transform.localScale = scaleVector;
 
-        //Für testzwecke, nicht final
-        displacementTrigger.GetComponent<WheelCollider>().isTrigger = false;
-
-    }
-    
-    void LateUpdate()
-    {
-        foreach (WheelCollider collider in _colliders)
-        {
-            collider.isTrigger = true;
-            collider.radius = radius;
-            collider.suspensionDistance = 0;
-            WheelFrictionCurve f = collider.forwardFriction;
-            f.stiffness = 0;
-            collider.forwardFriction = f;
-
-            f = collider.sidewaysFriction;
-            f.stiffness = 0;
-            collider.sidewaysFriction = f;
-        }
-        displacementTrigger.GetComponent<WheelCollider>().isTrigger = false;
-        Debug.Log(groundTrigger.GetComponent<WheelCollider>().isTrigger);
     }
     
 }

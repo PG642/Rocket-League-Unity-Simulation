@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 202210214851680792, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
     - target: {fileID: 668547278835125606, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
       propertyPath: m_Name
       value: SuspensionWheelFront
@@ -19,6 +23,14 @@ PrefabInstance:
       propertyPath: m_Radius
       value: 0.125
       objectReference: {fileID: 0}
+    - target: {fileID: 2862093734160234307, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2862093734160234307, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 3619732651864868646, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
       propertyPath: radius
       value: 0.125
@@ -27,6 +39,10 @@ PrefabInstance:
       propertyPath: isFrontWheel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3619732651864868646, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: displacementCollider
+      value: 
+      objectReference: {fileID: 1858854219309026658}
     - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -71,6 +87,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5828193025664410003, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
     - target: {fileID: 6048186244665832204, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
       propertyPath: m_Radius
       value: 0.125
@@ -81,3 +101,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+--- !u!1 &1858854219309026658 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5546794452354070333, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+  m_PrefabInstance: {fileID: 6138923315329071711}
+  m_PrefabAsset: {fileID: 0}

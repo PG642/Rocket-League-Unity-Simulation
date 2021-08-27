@@ -16,12 +16,12 @@ public class GroundTrigger : MonoBehaviour
     {
         _rb = GetComponentInParent<Rigidbody>();
         _ws = GetComponentInParent<WheelSuspension>();
-        _rayLen = _ws.radius / 2 + _rayOffset;
+        _rayLen = _ws.radius + _rayOffset;
     }
 
     private void FixedUpdate()
     {
-        isTouchingSurface = IsRayContact() || _isColliderContact;
+        isTouchingSurface =  _isColliderContact; // || IsRayContact();
 
         //TODO: this class should only do raycasts and sphere collider ground detection. Move to CubeWheel or CubeController
         if (isTouchingSurface)
@@ -45,48 +45,24 @@ public class GroundTrigger : MonoBehaviour
         var isHit = Physics.Raycast(transform.position, -_rb.transform.up, out var hit, _rayLen);
         _rayContactPoint = hit.point;
         _rayContactNormal = hit.normal;
-        return false || isHit;
+        return isHit;
     }
 
     bool _isColliderContact;
 
-    private void OnTriggerEnter(Collider other)
+    public void OnCollisionEnter(Collision collision)
     {
-        _isColliderContact = (transform.position - other.ClosestPointOnBounds(transform.position)).magnitude <= _ws.radius;
-      
-        if (other.tag != "Ground")
-        {
-            return;
-        }
-        Debug.Log((transform.position - other.ClosestPointOnBounds(transform.position)).magnitude);
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.tag != "Ground")
-        {
-            return;
-        }
-        Debug.Log((transform.position - other.ClosestPointOnBounds(transform.position)).magnitude);
         
-        _isColliderContact = (transform.position - other.ClosestPointOnBounds(transform.position)).magnitude <= _ws.radius;
-        // if (_isColliderContact)
-        // {
-        //     var position = transform.position;
-        //     var depth = _ws.radius - other.ClosestPoint(position).magnitude + 0.2f;
-        //
-        //     var vec = (position - other.ClosestPoint(position)).normalized * depth;
-        //     var up = transform.up;
-        //     var verschiebung = Vector3.Dot(vec, up);
-        //     Debug.Log(verschiebung);
-        //     position += up * verschiebung;
-        //     transform.position = position;
-        // }
     }
 
-    private void OnTriggerExit(Collider other)
+    public void OnCollisionStay(Collision collision)
     {
-        _isColliderContact = false;
+        
+    }
+
+    public void OnCollisionExit(Collision collision)
+    {
+        
     }
 
     public bool isDrawContactLines = false;
