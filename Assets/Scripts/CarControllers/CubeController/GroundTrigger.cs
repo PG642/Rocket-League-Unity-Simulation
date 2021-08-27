@@ -50,19 +50,25 @@ public class GroundTrigger : MonoBehaviour
 
     bool _isColliderContact;
 
-    public void OnCollisionEnter(Collision collision)
+    public void CollisionEnter(Collision collision, int index)
     {
-        
+        ContactPoint contactPoint = collision.contacts[index];
+        _isColliderContact = true;
+        Debug.Log("Enter" + index);
     }
 
-    public void OnCollisionStay(Collision collision)
+    public void CollisionStay(Collision collision, int index)
     {
-        
+        ContactPoint contactPoint = collision.contacts[index];
+        _isColliderContact = true;
+        Debug.Log("Stay" + index);
     }
 
-    public void OnCollisionExit(Collision collision)
+    public void CollisionExit(Collision collision, int index)
     {
-        
+        ContactPoint contactPoint = collision.contacts[index];
+        _isColliderContact = false;
+        Debug.Log("Exit" + index);
     }
 
     public bool isDrawContactLines = false;

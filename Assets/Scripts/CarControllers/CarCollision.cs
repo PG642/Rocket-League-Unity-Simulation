@@ -22,6 +22,13 @@ public class CarCollision : MonoBehaviour
 
     private void OnCollisionEnter(Collision collisionInfo)
     {
+        for (int i = 0; i < collisionInfo.contactCount; i++)
+        {
+            if (collisionInfo.contacts[i].thisCollider.gameObject.tag.Equals("SphereCollider"))
+            {
+                collisionInfo.contacts[i].thisCollider.gameObject.GetComponent<GroundTrigger>().CollisionEnter(collisionInfo, i);
+            }
+        }
         if (!collisionInfo.gameObject.CompareTag("ControllableCar"))
             return;
         TeamController teamController = GetComponentInParent<TeamController>();
@@ -53,5 +60,26 @@ public class CarCollision : MonoBehaviour
         }
     }
 
+    private void OnCollisionStay(Collision collisionInfo)
+    {
+        for (int i = 0; i < collisionInfo.contactCount; i++)
+        {
+            if (collisionInfo.contacts[i].thisCollider.gameObject.tag.Equals("SphereCollider"))
+            {
+                collisionInfo.contacts[i].thisCollider.gameObject.GetComponent<GroundTrigger>().CollisionStay(collisionInfo, i);
+            }
+        }
+    }
+
+    private void OnCollisionExit(Collision collisionInfo)
+    {
+        for(int i=0; i<collisionInfo.contactCount; i++)
+        {
+            if (collisionInfo.contacts[i].thisCollider.gameObject.tag.Equals("SphereCollider"))
+            {
+                collisionInfo.contacts[i].thisCollider.gameObject.GetComponent<GroundTrigger>().CollisionExit(collisionInfo, i);
+            }
+        }
+    }
 
 }
