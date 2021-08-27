@@ -178,8 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2862093734160234307}
   - component: {fileID: 3294761147178174986}
-  - component: {fileID: 2894582149147791713}
-  - component: {fileID: 6016681241761854053}
+  - component: {fileID: 63829694992700801}
   m_Layer: 8
   m_Name: SuspensionCollider
   m_TagString: SphereCollider
@@ -196,7 +195,7 @@ Transform:
   m_GameObject: {fileID: 8730838846684197166}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.001, z: 0.3}
+  m_LocalScale: {x: 0.3, y: 0.0001, z: 0.3}
   m_Children: []
   m_Father: {fileID: 5086931651156209802}
   m_RootOrder: 2
@@ -215,7 +214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isTouchingSurface: 0
   isDrawContactLines: 0
---- !u!64 &2894582149147791713
+--- !u!64 &63829694992700801
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -229,16 +228,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!135 &6016681241761854053
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8730838846684197166}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
