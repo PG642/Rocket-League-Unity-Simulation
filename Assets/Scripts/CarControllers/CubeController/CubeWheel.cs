@@ -13,6 +13,7 @@ public class CubeWheel : MonoBehaviour
 
     private AnimationCurve _curve;
     private AnimationCurve _curve2;
+    private AnimationCurve _steeringCurve;
     
     public bool wheelFL, wheelFR, wheelRL, wheelRR;
     
@@ -40,6 +41,7 @@ public class CubeWheel : MonoBehaviour
         var wheels = GetComponentInParent<CubeWheels>();
         _curve = wheels.Curve;
         _curve2 = wheels.Curve2;
+        _steeringCurve = wheels.SteeringCurve;
         _rb = GetComponentInParent<Rigidbody>();
         _c = GetComponentInParent<CubeController>();
         _inputManager = GetComponentInParent<InputManager>();
@@ -102,7 +104,19 @@ public class CubeWheel : MonoBehaviour
         _lateralForcePosition.y = _c.cogLow.position.y;
 
         _lateralForcePosition += (_inputManager.isDrift ? 0.0195f : 0.0f) * transform.forward;
-        var impulse = constraint * friction;
+
+        float steeringFactor;
+        
+        if(_inputManager.isDrift && (wheelFL || wheelFR))
+        {
+            steeringFactor = _steeringCurve.Evaluate(_inputManager.steerInput);
+        }
+        else
+        {
+            steeringFactor = 1.0f;
+        }
+
+        var impulse = constraint * friction * steeringFactor;
         _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
 
