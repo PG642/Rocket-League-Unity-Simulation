@@ -58,6 +58,7 @@ public class CubeController : MonoBehaviour
         SetCarState();
         UpdateCarVariables();
     }
+    
 
     private void LateUpdate()
     {

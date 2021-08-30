@@ -5,6 +5,7 @@ public class GroundTrigger : MonoBehaviour
 {
     public bool isTouchingSurface = false;
 
+    public bool isCollisionStay;
     //Raycast options
     float _rayLen, _rayOffset = 0f;
     Vector3 _rayContactPoint, _rayContactNormal;
@@ -54,14 +55,17 @@ public class GroundTrigger : MonoBehaviour
     {
         ContactPoint contactPoint = collision.contacts[index];
         _isColliderContact = true;
-        Debug.Log("Enter" + index);
+        isCollisionStay = true;
+
+        Debug.Log("Enter" + this.transform.parent.parent.name + Time.frameCount);
+
     }
 
-    public void CollisionStay(Collision collision, int index)
+    public void CollisionStay(Collision collision)
     {
-        ContactPoint contactPoint = collision.contacts[index];
+        isCollisionStay = true;
         _isColliderContact = true;
-        Debug.Log("Stay" + index);
+        Debug.Log("Stay" + this.transform.parent.parent.name + Time.frameCount);
     }
 
     public void CollisionExit(Collision collision, int index)
@@ -69,6 +73,14 @@ public class GroundTrigger : MonoBehaviour
         ContactPoint contactPoint = collision.contacts[index];
         _isColliderContact = false;
         Debug.Log("Exit" + index);
+    }
+
+    public void CollisionExit()
+    {
+        _isColliderContact = false;
+        Debug.Log("No Contact"+ this.transform.parent.parent.name + Time.frameCount);
+
+
     }
 
     public bool isDrawContactLines = false;
