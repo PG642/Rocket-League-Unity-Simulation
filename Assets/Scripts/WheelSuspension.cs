@@ -45,11 +45,11 @@ public class WheelSuspension : MonoBehaviour
     void Start()
     {
         _carRb = GetComponentInParent<Rigidbody>();
-        suspensionCollider.transform.localScale = new Vector3(2 * radius, 0, 2 * radius);
+        // suspensionCollider.transform.localScale = new Vector3(2 * radius, 0, 2 * radius);
         displacementCollider.transform.localPosition = new Vector3(0, compressionDistance, 0);
         _displacementCollider = displacementCollider.GetComponent<WheelCollider>();
         _displacementCollider.radius = radius;
-        _displacementCollider.suspensionDistance = 0;
+         _displacementCollider.suspensionDistance = 0;
         WheelFrictionCurve f = _displacementCollider.forwardFriction;
         f.stiffness = 0;
         _displacementCollider.forwardFriction = f;
