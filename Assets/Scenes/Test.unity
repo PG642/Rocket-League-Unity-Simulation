@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -353,6 +353,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: Curve.m_Curve.Array.data[0].value
       value: 1
       objectReference: {fileID: 0}
@@ -481,6 +485,10 @@ PrefabInstance:
       value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: DriftCurve.m_Curve.Array.data[0].outSlope
       value: -0.4
       objectReference: {fileID: 0}
@@ -493,8 +501,24 @@ PrefabInstance:
       value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[1].value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: DriftCurve.m_Curve.Array.data[0].outWeight
       value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[0].inSlope
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[1].inSlope
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: DriftCurve.m_Curve.Array.data[0].tangentMode
@@ -502,6 +526,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: DriftCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[0].outSlope
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[1].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[1].outSlope
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[0].outWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220749858739062741, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: SteeringCurve.m_Curve.Array.data[1].tangentMode
       value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 6116194479964122941, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
