@@ -56,10 +56,7 @@ public class GroundTrigger : MonoBehaviour
     public void TriggerEnter()
     {
         _groundedTriggers++;
-        if (_groundedTriggers > 0)
-        {
-            _isColliderContact = true;
-        }
+        _isColliderContact = true;
     }
 
     public void TriggerExit()
