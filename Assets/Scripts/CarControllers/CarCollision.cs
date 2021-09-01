@@ -15,7 +15,6 @@ public class CarCollision : MonoBehaviour
     void Start()
     {
         _matchController = transform.GetComponentInParent<MatchController.MatchController>();
-
         _suspensionColliders = GetComponentsInChildren<SuspensionCollider>();
     }
 
@@ -23,15 +22,8 @@ public class CarCollision : MonoBehaviour
     private void FixedUpdate()
     {
         forwardSpeed = Vector3.Dot(GetComponent<Rigidbody>().velocity, transform.forward);
-
-    private void OnCollisionStay(Collision collisionInfo)
-    {
-        if (collisionInfo.gameObject.CompareTag("Ground"))
-        {
-            surfaceNormal = collisionInfo.contacts[0].normal;
-        }
     }
-
+    
     private void OnCollisionEnter(Collision collisionInfo)
     {
         //---Federung---
@@ -77,10 +69,13 @@ public class CarCollision : MonoBehaviour
 
     private void OnCollisionStay(Collision collisionInfo)
     {
-        if(collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
+        if (collisionInfo.gameObject.CompareTag("Ground"))
+        {
+            surfaceNormal = collisionInfo.contacts[0].normal;
+        }
+        if (collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
             collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>().CollisionStay(collisionInfo);
     }
-    
 
     private void OnCollisionExit(Collision collisionInfo)
     {
