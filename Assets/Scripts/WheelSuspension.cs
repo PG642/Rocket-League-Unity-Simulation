@@ -30,7 +30,6 @@ public class WheelSuspension : MonoBehaviour
     
 
     private Rigidbody _carRb;
-    private float _width = 0.0001f;
     
     public GameObject suspensionCollider;
     public GameObject displacementCollider;
@@ -51,10 +50,10 @@ public class WheelSuspension : MonoBehaviour
     {
         _carRb = GetComponentInParent<Rigidbody>();
 
-        suspensionCollider.transform.localScale = new Vector3(2 * radius, _width, 2 * radius);
-        lowerCircle.transform.localScale = new Vector3(2 * radius, _width, 2 * radius);
-        upperCircle.transform.localScale = new Vector3(2 * radius, _width, 2 * radius);
-        rectangle.transform.localScale = new Vector3(compressionDistance + extensionDistance, _width, 2*radius);
+        suspensionCollider.transform.localScale = new Vector3(2 * radius, 0.001f, 2 * radius);
+        lowerCircle.transform.localScale = new Vector3(2 * radius, 0.0001f, 2 * radius);
+        upperCircle.transform.localScale = new Vector3(2 * radius, 0.0001f, 2 * radius);
+        rectangle.transform.localScale = new Vector3(compressionDistance + extensionDistance, 0.0001f, 2*radius);
 
         lowerCircle.transform.localPosition = new Vector3(0, -extensionDistance, 0);
         upperCircle.transform.localPosition = new Vector3(0, compressionDistance, 0);
