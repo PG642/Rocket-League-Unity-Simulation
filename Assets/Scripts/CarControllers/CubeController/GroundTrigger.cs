@@ -4,7 +4,7 @@ using UnityEngine;
 public class GroundTrigger : MonoBehaviour
 {
     public bool isTouchingSurface = false;
-    
+
     //Raycast options
     float _rayLen, _rayOffset = 0f;
     Vector3 _rayContactPoint, _rayContactNormal;

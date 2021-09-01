@@ -9,6 +9,7 @@ public class CarCollision : MonoBehaviour
     private MatchController.MatchController _matchController;
     private float forwardSpeed;
     private SuspensionCollider[] _suspensionColliders;
+    public Vector3 surfaceNormal;
 
 
     void Start()
@@ -23,6 +24,12 @@ public class CarCollision : MonoBehaviour
     {
         forwardSpeed = Vector3.Dot(GetComponent<Rigidbody>().velocity, transform.forward);
 
+    private void OnCollisionStay(Collision collisionInfo)
+    {
+        if (collisionInfo.gameObject.CompareTag("Ground"))
+        {
+            surfaceNormal = collisionInfo.contacts[0].normal;
+        }
     }
 
     private void OnCollisionEnter(Collision collisionInfo)
@@ -33,14 +40,17 @@ public class CarCollision : MonoBehaviour
 
 
         //---Auto-Auto Interaktion---
+        if (collisionInfo.gameObject.CompareTag("Ground"))
+        {
+            surfaceNormal = collisionInfo.contacts[0].normal;
+        }
         if (!collisionInfo.gameObject.CompareTag("ControllableCar"))
             return;
         TeamController teamController = GetComponentInParent<TeamController>();
         if (teamController.GetTeamOfCar(collisionInfo.gameObject) == teamController.GetTeamOfCar(gameObject))
             return;
 
-        Vector3 directionToOtherCogLow = collisionInfo.transform.Find("CubeController").Find("cogLow").position -
-                                         transform.Find("CubeController").Find("cogLow").position;
+        Vector3 directionToOtherCogLow = collisionInfo.transform.Find("CubeController").Find("cogLow").position - transform.Find("CubeController").Find("cogLow").position;
 
         Vector3 horizontalDirection = Vector3.ProjectOnPlane(directionToOtherCogLow, transform.up);
         Debug.DrawRay(transform.position, horizontalDirection, Color.red, 3f);
