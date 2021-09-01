@@ -30,9 +30,14 @@ public class WheelSuspension : MonoBehaviour
     
 
     private Rigidbody _carRb;
+    private float _width = 0.0001f;
     
     public GameObject suspensionCollider;
     public GameObject displacementCollider;
+    public GameObject groundTrigger;
+    public GameObject upperCircle;
+    public GameObject lowerCircle;
+    public GameObject rectangle;
 
     public float sprungMass; //How much weight the wheel has to support
     public float contactDepth; //How much the suspension is compressed/extended
@@ -45,8 +50,17 @@ public class WheelSuspension : MonoBehaviour
     void Start()
     {
         _carRb = GetComponentInParent<Rigidbody>();
-        // suspensionCollider.transform.localScale = new Vector3(2 * radius, 0, 2 * radius);
+
+        suspensionCollider.transform.localScale = new Vector3(2 * radius, _width, 2 * radius);
+        lowerCircle.transform.localScale = new Vector3(2 * radius, _width, 2 * radius);
+        upperCircle.transform.localScale = new Vector3(2 * radius, _width, 2 * radius);
+        rectangle.transform.localScale = new Vector3(compressionDistance + extensionDistance, _width, 2*radius);
+
+        lowerCircle.transform.localPosition = new Vector3(0, -extensionDistance, 0);
+        upperCircle.transform.localPosition = new Vector3(0, compressionDistance, 0);
+        rectangle.transform.localPosition = new Vector3(0, (compressionDistance - extensionDistance)/2, 0);
         displacementCollider.transform.localPosition = new Vector3(0, compressionDistance, 0);
+
         _displacementCollider = displacementCollider.GetComponent<WheelCollider>();
         _displacementCollider.radius = radius;
          _displacementCollider.suspensionDistance = 0;
@@ -58,7 +72,6 @@ public class WheelSuspension : MonoBehaviour
         _displacementCollider.sidewaysFriction = f;
 
         CubeWheel cb = GetComponentInChildren<CubeWheel>();
-
         cb.isFrontWheel = isFrontWheel;
 
     }

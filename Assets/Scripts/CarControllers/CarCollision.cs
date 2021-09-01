@@ -8,14 +8,14 @@ public class CarCollision : MonoBehaviour
 {
     private MatchController.MatchController _matchController;
     private float forwardSpeed;
-    private GroundTrigger[] _groundTriggers;
+    private SuspensionCollider[] _suspensionColliders;
 
 
     void Start()
     {
         _matchController = transform.GetComponentInParent<MatchController.MatchController>();
 
-        _groundTriggers = GetComponentsInChildren<GroundTrigger>();
+        _suspensionColliders = GetComponentsInChildren<SuspensionCollider>();
     }
 
 
@@ -25,34 +25,14 @@ public class CarCollision : MonoBehaviour
 
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        foreach (var groundTrigger in _groundTriggers)
-        {
-            groundTrigger.isCollisionStay = false;
-            Debug.Log(Time.frameCount + "StayReset");
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        foreach (var groundTrigger in _groundTriggers)
-        {
-            groundTrigger.isCollisionStay = false;
-            Debug.Log(Time.frameCount + "StayReset");
-        }
-    }
-
     private void OnCollisionEnter(Collision collisionInfo)
     {
-        for (int i = 0; i < collisionInfo.contactCount; i++)
-        {
-            if (collisionInfo.contacts[i].thisCollider.gameObject.tag.Equals("SphereCollider"))
-            {
-                collisionInfo.contacts[i].thisCollider.gameObject.GetComponent<GroundTrigger>()
-                    .CollisionEnter(collisionInfo, i);
-            }
-        }
+        //---Federung---
+        if (collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
+            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>().CollisionEnter(collisionInfo);
 
+
+        //---Auto-Auto Interaktion---
         if (!collisionInfo.gameObject.CompareTag("ControllableCar"))
             return;
         TeamController teamController = GetComponentInParent<TeamController>();
@@ -88,28 +68,12 @@ public class CarCollision : MonoBehaviour
     private void OnCollisionStay(Collision collisionInfo)
     {
         if(collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
-            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<GroundTrigger>().CollisionStay(collisionInfo);
+            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>().CollisionStay(collisionInfo);
     }
-
-    private void LateUpdate()
-    {
-        foreach (var groundTrigger in _groundTriggers.Where(x => !x.isCollisionStay))
-        {
-            groundTrigger.CollisionExit();
-        }
-
-       
-    }
+    
 
     private void OnCollisionExit(Collision collisionInfo)
     {
-        for (int i = 0; i < collisionInfo.contactCount; i++)
-        {
-            if (collisionInfo.contacts[i].thisCollider.gameObject.tag.Equals("SphereCollider"))
-            {
-                collisionInfo.contacts[i].thisCollider.gameObject.GetComponent<GroundTrigger>()
-                    .CollisionExit(collisionInfo, i);
-            }
-        }
+
     }
 }

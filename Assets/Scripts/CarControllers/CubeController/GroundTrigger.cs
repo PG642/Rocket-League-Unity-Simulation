@@ -4,25 +4,29 @@ using UnityEngine;
 public class GroundTrigger : MonoBehaviour
 {
     public bool isTouchingSurface = false;
-
-    public bool isCollisionStay;
+    
     //Raycast options
     float _rayLen, _rayOffset = 0f;
     Vector3 _rayContactPoint, _rayContactNormal;
+
+    bool _isColliderContact;
     WheelSuspension _ws;
 
     Rigidbody _rb;
+
+    private int _groundedTriggers = 0;
 
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _ws = GetComponentInParent<WheelSuspension>();
+        _groundedTriggers = 0;
         _rayLen = _ws.radius + _rayOffset;
     }
 
     private void FixedUpdate()
     {
-        isTouchingSurface =  _isColliderContact; // || IsRayContact();
+        isTouchingSurface =  _isColliderContact;
 
         //TODO: this class should only do raycasts and sphere collider ground detection. Move to CubeWheel or CubeController
         if (isTouchingSurface)
@@ -49,38 +53,22 @@ public class GroundTrigger : MonoBehaviour
         return isHit;
     }
 
-    bool _isColliderContact;
-
-    public void CollisionEnter(Collision collision, int index)
+    public void TriggerEnter()
     {
-        ContactPoint contactPoint = collision.contacts[index];
-        _isColliderContact = true;
-        isCollisionStay = true;
-
-        Debug.Log("Enter" + this.transform.parent.parent.name + Time.frameCount);
-
+        _groundedTriggers++;
+        if (_groundedTriggers > 0)
+        {
+            _isColliderContact = true;
+        }
     }
 
-    public void CollisionStay(Collision collision)
+    public void TriggerExit()
     {
-        isCollisionStay = true;
-        _isColliderContact = true;
-        Debug.Log("Stay" + this.transform.parent.parent.name + Time.frameCount);
-    }
-
-    public void CollisionExit(Collision collision, int index)
-    {
-        ContactPoint contactPoint = collision.contacts[index];
-        _isColliderContact = false;
-        Debug.Log("Exit" + index);
-    }
-
-    public void CollisionExit()
-    {
-        _isColliderContact = false;
-        Debug.Log("No Contact"+ this.transform.parent.parent.name + Time.frameCount);
-
-
+        _groundedTriggers--;
+        if (_groundedTriggers <= 0)
+        {
+            _isColliderContact = false;
+        }
     }
 
     public bool isDrawContactLines = false;
