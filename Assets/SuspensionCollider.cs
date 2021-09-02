@@ -33,6 +33,29 @@ public class SuspensionCollider : MonoBehaviour
         _localPosition = _meshCollider.transform.localPosition;
     }
 
+    public void CalculateContactdepth(Collider other)
+    {
+        
+        contactDepth = -_wheelSuspension.extensionDistance;
+        if (other == null)
+        {
+            transform.localPosition = new Vector3(0, contactDepth, 0);
+            return;
+        }
+        bool significantOverlap;
+        do
+        {
+            significantOverlap = Physics.ComputePenetration(_meshCollider, transform.position, transform.rotation, other, other.transform.position, other.transform.rotation, out Vector3 direction, out float distance);
+            if (significantOverlap)
+            {
+                float penetration = Vector3.Dot(direction * distance, transform.up);
+                contactDepth += penetration;
+                transform.localPosition = new Vector3(0, contactDepth, 0);
+                significantOverlap = penetration > 0.0001f;
+            }
+        } while (significantOverlap);
+    }
+
     private void Update()
     {
         if (_lastFrameCollision < Time.frameCount)

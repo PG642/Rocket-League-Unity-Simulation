@@ -53,17 +53,13 @@ MonoBehaviour:
   damper: 0
   extensionDistance: 0.12
   compressionDistance: 0.03
+  _carRb: {fileID: 0}
   suspensionCollider: {fileID: 8730838846684197166}
   displacementCollider: {fileID: 5546794452354070333}
   groundTrigger: {fileID: 1960550909162703308}
   upperCircle: {fileID: 4614121281783568990}
   lowerCircle: {fileID: 7497486733883475242}
   rectangle: {fileID: 4278566537476533301}
-  sprungMass: 0
-  contactDepth: 0
-  contactSpeed: 0
-  contactVelocity: {x: 0, y: 0, z: 0}
-  suspensionForce: 0
 --- !u!1 &1632853296537920463
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,7 +430,7 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8730838846684197166}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 4
   m_Convex: 1
@@ -452,3 +448,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0436c8341b4d96e4db4100c10da3f186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasContact: 0
+  sprungMass: 0
+  contactDepth: 0
+  contactSpeed: 0
+  contactVelocity: {x: 0, y: 0, z: 0}
+  suspensionForce: 0

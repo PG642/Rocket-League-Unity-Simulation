@@ -16,10 +16,18 @@ public class GroundedTrigger : MonoBehaviour
     {
         if (!other.CompareTag("Boostpad") && !other.CompareTag("GoalLine"))
         {
-            _groundTrigger.TriggerEnter();
+            _groundTrigger.TriggerEnter(other);
         }
     }
-    
+
+    public void OnTriggerStay(Collider other)
+    {
+        if (!other.CompareTag("Boostpad") && !other.CompareTag("GoalLine"))
+        {
+            _groundTrigger.TriggerStay(other);
+        }
+    }
+
 
     public void OnTriggerExit(Collider other)
     {

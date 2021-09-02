@@ -14,23 +14,27 @@ public class GroundTrigger : MonoBehaviour
 
     Rigidbody _rb;
 
+    SuspensionCollider _sc;
+
     private int _groundedTriggers = 0;
 
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _ws = GetComponentInParent<WheelSuspension>();
+        _sc = _ws.suspensionCollider.GetComponent<SuspensionCollider>();
         _groundedTriggers = 0;
         _rayLen = _ws.radius + _rayOffset;
     }
 
     private void FixedUpdate()
     {
-        isTouchingSurface =  _isColliderContact;
+        isTouchingSurface = _isColliderContact;
 
         //TODO: this class should only do raycasts and sphere collider ground detection. Move to CubeWheel or CubeController
-        if (isTouchingSurface)
+        if (isTouchingSurface) {
             ApplyStickyForces(StickyForceConstant * 5, _rayContactPoint, -_rayContactNormal);
+        }
     }
 
     const int StickyForceConstant = 0 / 100;
@@ -53,10 +57,17 @@ public class GroundTrigger : MonoBehaviour
         return isHit;
     }
 
-    public void TriggerEnter()
+    public void TriggerEnter(Collider other)
     {
         _groundedTriggers++;
         _isColliderContact = true;
+        _sc.CalculateContactdepth(other);
+    }
+
+    public void TriggerStay(Collider other)
+    {
+        _isColliderContact = true;
+        _sc.CalculateContactdepth(other);
     }
 
     public void TriggerExit()
@@ -65,6 +76,7 @@ public class GroundTrigger : MonoBehaviour
         if (_groundedTriggers <= 0)
         {
             _isColliderContact = false;
+            _sc.CalculateContactdepth(null);
         }
     }
 
