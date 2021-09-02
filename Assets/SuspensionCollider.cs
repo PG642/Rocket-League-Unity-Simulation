@@ -1,21 +1,79 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.MLAgents.Integrations.Match3;
 using UnityEngine;
 
 public class SuspensionCollider : MonoBehaviour
 {
+    public bool hasContact;
+
+    private MeshCollider _meshCollider;
+    private Vector3 _localPosition;
+    private int _lastFrameCollision;
+    private WheelSuspension _wheelSuspension;
+
+
+    public float sprungMass; //How much weight the wheel has to support
+    public float contactDepth; //How much the suspension is compressed/extended
+    public float contactSpeed; //How fast the suspension moves
+    public Vector3 contactVelocity; //Velocity Vector of colliding object
+    public float suspensionForce; //How much force the suspension applies to the car
+
+    public SuspensionCollider()
+    {
+        _lastFrameCollision = 0;
+    }
+
+
+    private void Start()
+    {
+        _meshCollider = GetComponent<MeshCollider>();
+        _wheelSuspension = GetComponentInParent<WheelSuspension>();
+        _localPosition = _meshCollider.transform.localPosition;
+    }
+
+    private void Update()
+    {
+        if (_lastFrameCollision < Time.frameCount)
+        {
+            //_meshCollider.transform.localPosition = _localPosition;
+        }
+    }
+
     public void CollisionEnter(Collision collision)
     {
-        
+        HandleCollision(collision);
+        var localPosition = _meshCollider.transform.localPosition;
+        Debug.Log(collision.contacts[0].thisCollider.gameObject.transform.parent.parent.name + " " + localPosition +
+                  " " + collision.collider.gameObject.name + " " + Time.frameCount + " Enter");
     }
+
 
     public void CollisionStay(Collision collision)
     {
-
+        Debug.Log(_meshCollider.transform.localPosition);
+        HandleCollision(collision);
     }
 
-    public void CollisionExit(Collision collision)
+    private void HandleCollision(Collision collision)
     {
+        if (_lastFrameCollision < Time.frameCount)
+        {
+            //da gekippt anstatt up right 
+            // var velocityYAxis = Math.Abs(Vector3.Dot(collision.relativeVelocity, _meshCollider.transform.right));
+            // var movingDistance = velocityYAxis * Time.fixedDeltaTime;
+            // Debug.Log("Collision:"+ movingDistance + " " + collision.relativeVelocity + " tansfrom"+ _meshCollider.transform.right+ "// " + Time.frameCount);
+            //Change meshColliderPosition
+            // _meshCollider.transform.localPosition += new Vector3(0.0f, movingDistance, 0.0f);
+            var colA = collision.contacts[0].thisCollider;
+            var colB = collision.contacts[0].otherCollider;
 
+            Physics.ComputePenetration(colA, colA.transform.position, colA.transform.rotation, colA,
+                colA.transform.position, colA.transform.rotation, out _, out float dist);
+            _meshCollider.transform.localPosition += new Vector3(0.0f, dist, 0.0f);
+
+            _lastFrameCollision = Time.frameCount;
+        }
     }
 }

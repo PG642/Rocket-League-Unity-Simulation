@@ -26,23 +26,47 @@ public class CarCollision : MonoBehaviour
     
     private void OnCollisionEnter(Collision collisionInfo)
     {
-        //---Federung---
-        if (collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
-            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>().CollisionEnter(collisionInfo);
-
-
-        //---Auto-Auto Interaktion---
+        DoSuspension(collisionInfo);
+        DoCarCarInteraction(collisionInfo);
+    }
+    
+    private void OnCollisionStay(Collision collisionInfo)
+    {
         if (collisionInfo.gameObject.CompareTag("Ground"))
         {
             surfaceNormal = collisionInfo.contacts[0].normal;
         }
+        if (collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
+            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>().CollisionStay(collisionInfo);
+        
+    }
+
+    private void OnCollisionExit(Collision collisionInfo)
+    {
+    }
+
+    private static void DoSuspension(Collision collisionInfo)
+    {
+        if (collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
+            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>()
+                .CollisionEnter(collisionInfo);
+    }
+
+    private void DoCarCarInteraction(Collision collisionInfo)
+    {
+        if (collisionInfo.gameObject.CompareTag("Ground"))
+        {
+            surfaceNormal = collisionInfo.contacts[0].normal;
+        }
+
         if (!collisionInfo.gameObject.CompareTag("ControllableCar"))
             return;
         TeamController teamController = GetComponentInParent<TeamController>();
         if (teamController.GetTeamOfCar(collisionInfo.gameObject) == teamController.GetTeamOfCar(gameObject))
             return;
 
-        Vector3 directionToOtherCogLow = collisionInfo.transform.Find("CubeController").Find("cogLow").position - transform.Find("CubeController").Find("cogLow").position;
+        Vector3 directionToOtherCogLow = collisionInfo.transform.Find("CubeController").Find("cogLow").position -
+                                         transform.Find("CubeController").Find("cogLow").position;
 
         Vector3 horizontalDirection = Vector3.ProjectOnPlane(directionToOtherCogLow, transform.up);
         Debug.DrawRay(transform.position, horizontalDirection, Color.red, 3f);
@@ -67,18 +91,5 @@ public class CarCollision : MonoBehaviour
         }
     }
 
-    private void OnCollisionStay(Collision collisionInfo)
-    {
-        if (collisionInfo.gameObject.CompareTag("Ground"))
-        {
-            surfaceNormal = collisionInfo.contacts[0].normal;
-        }
-        if (collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
-            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>().CollisionStay(collisionInfo);
-    }
-
-    private void OnCollisionExit(Collision collisionInfo)
-    {
-
-    }
+    
 }

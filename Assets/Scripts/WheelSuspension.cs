@@ -38,11 +38,7 @@ public class WheelSuspension : MonoBehaviour
     public GameObject lowerCircle;
     public GameObject rectangle;
 
-    public float sprungMass; //How much weight the wheel has to support
-    public float contactDepth; //How much the suspension is compressed/extended
-    public float contactSpeed; //How fast the suspension moves
-    public Vector3 contactVelocity; //Velocity Vector of colliding object
-    public float suspensionForce; //How much force the suspension applies to the car
+    
 
     private WheelCollider _displacementCollider;
 

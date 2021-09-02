@@ -14,7 +14,7 @@ public class AnimateWheel : MonoBehaviour
     void Update()
     {
         Vector3 lp = GetComponentInChildren<MeshRenderer>().transform.localPosition;
-        lp = new Vector3(lp.x, GetComponentInChildren<WheelSuspension>().contactDepth, lp.z);
+        lp = new Vector3(lp.x, GetComponentInChildren<SuspensionCollider>().contactDepth, lp.z);
         GetComponentInChildren<MeshRenderer>().transform.localPosition = lp;
     }
 }
