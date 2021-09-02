@@ -29,7 +29,7 @@ public class WheelSuspension : MonoBehaviour
     
     
 
-    private Rigidbody _carRb;
+    public  Rigidbody _carRb;
     
     public GameObject suspensionCollider;
     public GameObject displacementCollider;

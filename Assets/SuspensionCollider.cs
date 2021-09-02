@@ -69,9 +69,11 @@ public class SuspensionCollider : MonoBehaviour
             var colA = collision.contacts[0].thisCollider;
             var colB = collision.contacts[0].otherCollider;
 
-            Physics.ComputePenetration(colA, colA.transform.position, colA.transform.rotation, colA,
-                colA.transform.position, colA.transform.rotation, out _, out float dist);
-            _meshCollider.transform.localPosition += new Vector3(0.0f, dist, 0.0f);
+            var colBTransform = colB.transform;
+            var colATransform = colA.transform;
+            Physics.ComputePenetration(colA, colATransform.position, colATransform.rotation, colB,
+                colBTransform.position, colBTransform.rotation, out _, out float dist);
+            _meshCollider.transform.localPosition += new Vector3(0.0f, dist + 0.0001f, 0.0f);
 
             _lastFrameCollision = Time.frameCount;
         }
