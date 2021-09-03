@@ -10,7 +10,6 @@ public class CubeGroundControl : MonoBehaviour
     
     [Header("Drift")]
     public float driftTime = 3;
-    public float currentWheelSideFriction = 10;
     public float wheelSideFriction = 8;
     public float wheelSideFrictionDrift = 0.5f;
     
@@ -33,22 +32,14 @@ public class CubeGroundControl : MonoBehaviour
     }
     
     private void FixedUpdate()
-    {
-        SetDriftFriction();
-        
+    {        
         var forwardAcceleration = CalcForwardForce(_inputManager.throttleInput);
         ApplyWheelForwardForce(forwardAcceleration);
         
         currentSteerAngle = CalculateSteerAngle();
         ApplyWheelRotation(currentSteerAngle);
     }
-    
-    private void SetDriftFriction()
-    {
-        // Sliding / drifting, lowers the wheel side friction when drifting
-        var currentDriftDrag = _inputManager.isDrift ? wheelSideFrictionDrift : wheelSideFriction;
-        currentWheelSideFriction = Mathf.MoveTowards(currentWheelSideFriction, currentDriftDrag, Time.deltaTime * driftTime);
-    }
+
 
     private void ApplyWheelForwardForce(float forwardAcceleration)
     {

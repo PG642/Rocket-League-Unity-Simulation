@@ -87,7 +87,7 @@ public class CubeWheel : MonoBehaviour
 
     private void ApplyLateralForce()
     {
-        if (!(Mathf.Abs(_wheelLateralVelocity) > 0.001f)) return;
+        if (Mathf.Abs(_wheelLateralVelocity) <= 0.001f) return;
 
         const float impulseMult = 5.0f;
         const float driftImpulseMult = 0.5f;
@@ -101,29 +101,35 @@ public class CubeWheel : MonoBehaviour
         var constraint = -_wheelLateralVelocity;
 
         _lateralForcePosition = transform.position;
+        // TODO: Behalten oder entsorgen? 
+        //_c.cogLow.localPosition = Vector3.zero + (_inputManager.isDrift ? 0.0f : 0.0875f) * new Vector3(0.0f, 0.0f, 1.0f); 
         _lateralForcePosition.y = _c.cogLow.position.y;
-
-        _lateralForcePosition += (_inputManager.isDrift ? 0.0195f : 0.0f) * transform.forward;
+        // TODO: Behalten oder entsorgen? 
+        //_lateralForcePosition += (_inputManager.isDrift ? -0.0875f : 0.0f) * transform.forward;
 
         float steeringFactor;
         
-        if(_inputManager.isDrift && (wheelFL || wheelFR))
+        steeringFactor = 0.0f;
+        if(_inputManager.isDrift)
         {
-            steeringFactor = _steeringCurve.Evaluate(_inputManager.steerInput);
+            if (wheelFL || wheelFR)
+            {
+                steeringFactor = Mathf.Sign(_inputManager.steerInput) * _steeringCurve.Evaluate(Mathf.Abs(_inputManager.steerInput));
+            }
+            else
+            {
+                steeringFactor = Mathf.Sign(_inputManager.steerInput) * 1.0f;
+            }
         }
-        else
-        {
-            steeringFactor = 1.0f;
-        }
-
-        var impulse = constraint * friction * steeringFactor;
-        _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
+        steeringFactor = steeringFactor * Mathf.Sign(_inputManager.throttleInput);
+        var impulse =  friction * constraint + steeringFactor;
+        _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Impulse);
     }
 
     private void SimulateDrag()
     {
         //Applies auto braking if no input, simulates air and ground drag
-        if (!(_c.forwardSpeedAbs >= 0.1) || _inputManager.isDrift) return;
+        if ( _c.forwardSpeedAbs < 0.1 || _inputManager.isDrift) return;
         
         var dragForce = (_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4 * _c.forwardSpeedSign * 
                         (1 - Mathf.Abs(_inputManager.throttleInput));
