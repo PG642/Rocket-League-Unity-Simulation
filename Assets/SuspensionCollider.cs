@@ -13,7 +13,6 @@ public class SuspensionCollider : MonoBehaviour
     private int _lastFrameCollision;
     private WheelSuspension _wheelSuspension;
 
-
     public float sprungMass; //How much weight the wheel has to support
     public float contactDepth; //How much the suspension is compressed/extended
     public float contactSpeed; //How fast the suspension moves
@@ -35,23 +34,26 @@ public class SuspensionCollider : MonoBehaviour
 
     public void CalculateContactdepth(Collider other)
     {
-        
-        contactDepth = -_wheelSuspension.extensionDistance;
         if (other == null)
         {
+            contactDepth = -_wheelSuspension.extensionDistance;
             transform.localPosition = new Vector3(0, contactDepth, 0);
             return;
         }
+
         bool significantOverlap;
         do
         {
-            significantOverlap = Physics.ComputePenetration(_meshCollider, transform.position, transform.rotation, other, other.transform.position, other.transform.rotation, out Vector3 direction, out float distance);
+            var ownBodyTransform = _meshCollider.transform;
+            var collisionBodyTransform = other.transform;
+            significantOverlap = Physics.ComputePenetration(_meshCollider, ownBodyTransform.position, ownBodyTransform.rotation,
+                other, collisionBodyTransform.position, collisionBodyTransform.rotation, out Vector3 direction, out float distance);
             if (significantOverlap)
             {
-                float penetration = Vector3.Dot(direction * distance, transform.up);
-                contactDepth += penetration;
-                transform.localPosition = new Vector3(0, contactDepth, 0);
-                significantOverlap = penetration > 0.0001f;
+                float penetration = Vector3.Dot(direction * distance, _meshCollider.transform.right);
+                contactDepth = Math.Min(contactDepth+penetration, _wheelSuspension.compressionDistance);
+                _meshCollider.transform.localPosition = new Vector3(0, contactDepth, 0);
+                significantOverlap = penetration > 0.0001f && _wheelSuspension.compressionDistance > contactDepth;
             }
         } while (significantOverlap);
     }
