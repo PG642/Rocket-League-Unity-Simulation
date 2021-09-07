@@ -26,7 +26,6 @@ public class CarCollision : MonoBehaviour
     
     private void OnCollisionEnter(Collision collisionInfo)
     {
-        DoSuspension(collisionInfo);
         DoCarCarInteraction(collisionInfo);
     }
     
@@ -36,21 +35,12 @@ public class CarCollision : MonoBehaviour
         {
             surfaceNormal = collisionInfo.contacts[0].normal;
         }
-        if (collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
-            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>().CollisionStay(collisionInfo);
-        
     }
 
     private void OnCollisionExit(Collision collisionInfo)
     {
     }
-
-    private static void DoSuspension(Collision collisionInfo)
-    {
-        if (collisionInfo.contacts[0].thisCollider.gameObject.CompareTag("SphereCollider"))
-            collisionInfo.contacts[0].thisCollider.gameObject.GetComponent<SuspensionCollider>()
-                .CollisionEnter(collisionInfo);
-    }
+    
 
     private void DoCarCarInteraction(Collision collisionInfo)
     {

@@ -16,7 +16,7 @@ public class GroundTrigger : MonoBehaviour
 
     SuspensionCollider _sc;
 
-    private int _groundedTriggers = 0;
+    public int _groundedTriggers = 0;
 
     private void Start()
     {
@@ -35,6 +35,7 @@ public class GroundTrigger : MonoBehaviour
         if (isTouchingSurface) {
             ApplyStickyForces(StickyForceConstant * 5, _rayContactPoint, -_rayContactNormal);
         }
+        
     }
 
     const int StickyForceConstant = 0 / 100;
