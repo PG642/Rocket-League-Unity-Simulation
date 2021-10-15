@@ -70,8 +70,12 @@ public class CubeWheel : MonoBehaviour
     {
         UpdateWheelState();
 
-        if(_c.isCanDrive)
+        if (_c.isCanDrive)
+        {
             ApplyLateralForce();
+            ApplyRotationForce();
+        }
+
         if(_c.carState != CubeController.CarStates.Air)
             SimulateDrag();
     }
@@ -107,6 +111,20 @@ public class CubeWheel : MonoBehaviour
 
         var impulse = friction * constraint; // + steeringFactor;
         _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
+    }
+
+    private void ApplyRotationForce()
+    {
+        if (Mathf.Abs(_inputManager.steerInput) <= 0.001f) return;
+        if (wheelRL || wheelRR) return;
+
+        float force = _inputManager.steerInput * 0.15f;
+        
+        _lateralForcePosition = transform.position;
+        _lateralForcePosition.y = _c.cogLow.position.y;
+        _lateralForcePosition += (_inputManager.isDrift ? 0.18f : 0.0f) * transform.forward;
+
+        _rb.AddForceAtPosition(force * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
 
     private void SimulateDrag()
