@@ -101,29 +101,12 @@ public class CubeWheel : MonoBehaviour
         var constraint = -_wheelLateralVelocity;
 
         _lateralForcePosition = transform.position;
-        // TODO: Behalten oder entsorgen? 
-        //_c.cogLow.localPosition = Vector3.zero + (_inputManager.isDrift ? 0.0f : 0.0875f) * new Vector3(0.0f, 0.0f, 1.0f); 
         _lateralForcePosition.y = _c.cogLow.position.y;
-        // TODO: Behalten oder entsorgen? 
-        //_lateralForcePosition += (_inputManager.isDrift ? -0.0875f : 0.0f) * transform.forward;
+        _lateralForcePosition += (_inputManager.isDrift ? 0.0195f : 0.0f) * transform.forward;
 
-        float steeringFactor;
-        
-        steeringFactor = 0.0f;
-        if(_inputManager.isDrift)
-        {
-            if (wheelFL || wheelFR)
-            {
-                steeringFactor = Mathf.Sign(_inputManager.steerInput) * _steeringCurve.Evaluate(Mathf.Abs(_inputManager.steerInput));
-            }
-            else
-            {
-                steeringFactor = Mathf.Sign(_inputManager.steerInput) * 1.0f;
-            }
-        }
-        steeringFactor = steeringFactor * Mathf.Sign(_inputManager.throttleInput);
-        var impulse =  friction * constraint + steeringFactor;
-        _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Impulse);
+
+        var impulse = friction * constraint; // + steeringFactor;
+        _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
 
     private void SimulateDrag()
