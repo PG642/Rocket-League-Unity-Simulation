@@ -46,9 +46,10 @@ public class SuspensionCollider : MonoBehaviour
                 ownBodyTransform.rotation,
                 other, collisionBodyTransform.position, collisionBodyTransform.rotation, out Vector3 direction,
                 out float distance);
+            Debug.Log(transform.parent.parent.name + " " + significantOverlap + " " + Time.frameCount);
             if (significantOverlap)
             {
-                Debug.Log(transform.parent.parent.name +" "+ Time.frameCount);
+                
 
                 float penetration = Vector3.Dot(direction * distance, _meshCollider.transform.right);
                 contactDepth = Math.Min(contactDepth + penetration, _wheelSuspension.compressionDistance);
