@@ -16,14 +16,14 @@ public class GroundTrigger : MonoBehaviour
 
     SuspensionCollider _sc;
 
-    public int _groundedTriggers = 0;
+    public int groundedTriggers = 0;
 
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _ws = GetComponentInParent<WheelSuspension>();
         _sc = _ws.suspensionCollider.GetComponent<SuspensionCollider>();
-        _groundedTriggers = 0;
+        groundedTriggers = 0;
         _rayLen = _ws.radius + _rayOffset;
     }
 
@@ -60,7 +60,7 @@ public class GroundTrigger : MonoBehaviour
 
     public void TriggerEnter(Collider other)
     {
-        _groundedTriggers++;
+        groundedTriggers++;
         _isColliderContact = true;
         _sc.CalculateContactdepth(other);
     }
@@ -73,8 +73,8 @@ public class GroundTrigger : MonoBehaviour
 
     public void TriggerExit()
     {
-        _groundedTriggers--;
-        if (_groundedTriggers <= 0)
+        groundedTriggers--;
+        if (groundedTriggers <= 0)
         {
             _isColliderContact = false;
             _sc.CalculateContactdepth(null);

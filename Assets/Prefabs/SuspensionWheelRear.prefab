@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isTouchingSurface: 0
+  groundedTriggers: 0
   isDrawContactLines: 0
 --- !u!1 &4278566537476533301
 GameObject:
@@ -448,9 +449,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0436c8341b4d96e4db4100c10da3f186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hasContact: 0
-  sprungMass: 0
   contactDepth: 0
-  contactSpeed: 0
-  contactVelocity: {x: 0, y: 0, z: 0}
-  suspensionForce: 0
+  stiffnes: 0
