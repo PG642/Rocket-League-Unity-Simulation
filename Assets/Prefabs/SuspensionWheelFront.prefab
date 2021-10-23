@@ -43,6 +43,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.25
       objectReference: {fileID: 0}
+    - target: {fileID: 3566522413124430381, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: penetrationTolerance
+      value: 0.001
+      objectReference: {fileID: 0}
     - target: {fileID: 3619732651864868646, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
       propertyPath: radius
       value: 0.125
