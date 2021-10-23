@@ -118,9 +118,7 @@ public class CubeWheel : MonoBehaviour
         if (Mathf.Abs(_inputManager.steerInput) <= 0.001f) return;
         if (wheelRL || wheelRR) return;
 
-        float force = Mathf.Abs(_inputManager.throttleInput) * _inputManager.steerInput * 0.45f;
-
-        // force *= Mathf.Sign(Vector3.Dot(_rb.velocity, _c.transform.forward));
+        float force = _inputManager.throttleInput * _inputManager.steerInput * 0.45f;
         
         _lateralForcePosition = transform.position;
         _lateralForcePosition.y = _c.cogLow.position.y;
