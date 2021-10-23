@@ -207,6 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57328d66b70a3d4fa10ca170bdcb747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  surfaceNormal: {x: 0, y: 0, z: 0}
 --- !u!4 &89234563 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5044392351187916662, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
@@ -386,6 +387,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 119162673780357977, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 119162673780357977, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: m_CollisionDetection
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 343948825809176287, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}

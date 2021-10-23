@@ -52,6 +52,7 @@ public class CubeWheel : MonoBehaviour
             transform.localRotation = Quaternion.Euler(Vector3.up * steerAngle);
         }
         
+        
         // Update mesh rotations of the wheel
         if (wheelMesh)
         {
