@@ -14,8 +14,8 @@ public class SuspensionCollider : MonoBehaviour
     public float lastcontactDepth;
     private Rigidbody _rb;
     public float stiffnes;
-    private float raycastOffset = 0.01f;
-    private float penetrationTolerance = 0.001f;
+    const float RaycastOffset = 0.01f;
+    const float PenetrationTolerance = 0.001f;
 
     public SuspensionCollider()
     {
@@ -80,13 +80,13 @@ public class SuspensionCollider : MonoBehaviour
 
     private bool RayCastCollision()
     {
-        var hit = Physics.Raycast(origin: _wheelSuspension.displacementCollider.transform.position +   _wheelSuspension.displacementCollider.transform.TransformDirection(new Vector3(0.0f,raycastOffset-_wheelSuspension.radius, 0.0f)),
+        var hit = Physics.Raycast(origin: _wheelSuspension.displacementCollider.transform.position +   _wheelSuspension.displacementCollider.transform.TransformDirection(new Vector3(0.0f,RaycastOffset-_wheelSuspension.radius, 0.0f)),
             direction: _wheelSuspension.displacementCollider.transform.TransformDirection(
                 new Vector3(0.0f, -1.0f, 0.0f)),
-            maxDistance: _wheelSuspension.extensionDistance + _wheelSuspension.compressionDistance + raycastOffset, hitInfo: out var hitRay);
+            maxDistance: _wheelSuspension.extensionDistance + _wheelSuspension.compressionDistance + RaycastOffset, hitInfo: out var hitRay);
         if (hit)
         {
-            var contactDepth = _wheelSuspension.compressionDistance - (hitRay.distance - raycastOffset);
+            var contactDepth = _wheelSuspension.compressionDistance - (hitRay.distance - RaycastOffset);
             MoveWheelContactDepth(contactDepth);
         }
 
@@ -97,7 +97,7 @@ public class SuspensionCollider : MonoBehaviour
     {
         contactDepth = Math.Min(contactDepth + penetration, _wheelSuspension.compressionDistance);
         _meshCollider.transform.localPosition = new Vector3(0, contactDepth, 0);
-        bool significantOverlap = penetration > penetrationTolerance && _wheelSuspension.compressionDistance > contactDepth;
+        bool significantOverlap = penetration > PenetrationTolerance && _wheelSuspension.compressionDistance > contactDepth;
         return significantOverlap;
     }
     
