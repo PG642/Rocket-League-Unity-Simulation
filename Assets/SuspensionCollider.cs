@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Cinemachine.Utility;
 using Unity.MLAgents.Integrations.Match3;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class SuspensionCollider : MonoBehaviour
 {
@@ -10,7 +13,8 @@ public class SuspensionCollider : MonoBehaviour
     private int _lastFrameCollision;
     private WheelSuspension _wheelSuspension;
 
-    public float contactDepth; //How much the suspension is compressed/extended
+    public float contactDepth;//How much the suspension is compressed/extended
+    public float lastcontactDepth;
     private Rigidbody _rb;
     public float stiffnes;
     public float tolerance = 0.01f;
@@ -31,6 +35,7 @@ public class SuspensionCollider : MonoBehaviour
 
     public void CalculateContactdepth(Collider other)
     {
+        lastcontactDepth = contactDepth;
         contactDepth = -_wheelSuspension.extensionDistance;
         transform.localPosition = new Vector3(0, contactDepth, 0);
         if (other == null)
@@ -48,8 +53,11 @@ public class SuspensionCollider : MonoBehaviour
 
         if (contactDepth > 0)
         {
-            var springAcceleration = contactDepth * stiffnes;
+            float damper = 20f;
+            float speed = (contactDepth -lastcontactDepth ) / Time.fixedDeltaTime;
+            var springAcceleration = contactDepth * stiffnes + speed * damper;
             var worldSpringAcceleration = transform.TransformVector(new Vector3(springAcceleration, 0.0f, 0.0f));
+            Debug.Log(transform.parent.parent.name + " " + Time.frameCount + " " + springAcceleration);
             _rb.AddForceAtPosition(worldSpringAcceleration, _wheelSuspension.displacementCollider.transform.position,
                 ForceMode.Acceleration);
         }
@@ -65,8 +73,7 @@ public class SuspensionCollider : MonoBehaviour
             out float distance);
         if (significantOverlap)
         {
-            Debug.Log(transform.parent.parent.name + " " + Time.frameCount);
-
+            // Debug.Log(transform.parent.parent.name + " " + Time.frameCount);
             float penetration = Vector3.Dot(direction * distance, _meshCollider.transform.right);
             significantOverlap = MoveWheel(penetration);
         }
@@ -82,7 +89,7 @@ public class SuspensionCollider : MonoBehaviour
             maxDistance: _wheelSuspension.extensionDistance + _wheelSuspension.compressionDistance + tolerance, hitInfo: out var hitRay);
         if (hit)
         {
-            Debug.Log("hit");
+            
             var contactDepth = _wheelSuspension.compressionDistance - (hitRay.distance - tolerance);
             MoveWheelContactDepth(contactDepth);
         }
