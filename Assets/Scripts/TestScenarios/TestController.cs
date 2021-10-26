@@ -75,7 +75,7 @@ namespace TestScenarios
         {
             var carStartValue = scenario.startValues.Find(x => x.gameObject == "car");
             SetupObject(carStartValue, carRb);
-            carRb.freezeRotation = true;
+            // carRb.freezeRotation = true;
         }
 
         private void SetupBall(Scenario scenario, Rigidbody ballRb)

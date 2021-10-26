@@ -10,7 +10,6 @@ public class CubeGroundControl : MonoBehaviour
 
     [Header("Drift")]
     public float driftTime = 3;
-    public float currentWheelSideFriction = 10;
     public float wheelSideFriction = 8;
     public float wheelSideFrictionDrift = 0.5f;
 
@@ -37,9 +36,6 @@ public class CubeGroundControl : MonoBehaviour
     private void FixedUpdate()
     {
         ApplyStabilization();
-
-        SetDriftFriction();
-
         var forwardAcceleration = CalcForwardForce(_inputManager.throttleInput);
         ApplyWheelForwardForce(forwardAcceleration);
 
@@ -77,13 +73,6 @@ public class CubeGroundControl : MonoBehaviour
         }
     }
 
-    private void SetDriftFriction()
-    {
-        // Sliding / drifting, lowers the wheel side friction when drifting
-        var currentDriftDrag = _inputManager.isDrift ? wheelSideFrictionDrift : wheelSideFriction;
-        currentWheelSideFriction = Mathf.MoveTowards(currentWheelSideFriction, currentDriftDrag, Time.deltaTime * driftTime);
-    }
-
     private void ApplyWheelForwardForce(float forwardAcceleration)
     {
         // Apply forces to each wheel
@@ -117,9 +106,11 @@ public class CubeGroundControl : MonoBehaviour
         else
             forwardAcceleration = throttleInput * GetForwardAcceleration(_controller.forwardSpeedAbs);
 
-        // Braking
-        if (_controller.forwardSpeedSign != Mathf.Sign(throttleInput) && throttleInput != 0)
-            forwardAcceleration += -1 * _controller.forwardSpeedSign * 35;
+        if (_inputManager.isDrift)
+            forwardAcceleration *= 0.5f;
+        else 
+            if (_controller.forwardSpeedSign != Mathf.Sign(throttleInput) && throttleInput != 0)
+                forwardAcceleration += -1 * _controller.forwardSpeedSign * 35; // Braking
         return forwardAcceleration;
     }
 

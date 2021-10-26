@@ -13,6 +13,7 @@ public class CubeWheel : MonoBehaviour
 
     private AnimationCurve _curve;
     private AnimationCurve _curve2;
+    private AnimationCurve _steeringCurve;
     
     public bool wheelFL, wheelFR, wheelRL, wheelRR;
     
@@ -29,6 +30,8 @@ public class CubeWheel : MonoBehaviour
     
     private const float ForwardDragWheels = 5.25f;
     private const float ForwardDragRoof = 2.5f;
+
+    private Vector3 _currentDriftForce = Vector3.zero;
     
     //[HideInInspector]
     public bool isDrawWheelVelocities, isDrawWheelDisc, isDrawForces;
@@ -38,6 +41,7 @@ public class CubeWheel : MonoBehaviour
         var wheels = GetComponentInParent<CubeWheels>();
         _curve = wheels.Curve;
         _curve2 = wheels.Curve2;
+        _steeringCurve = wheels.SteeringCurve;
         _rb = GetComponentInParent<Rigidbody>();
         _c = GetComponentInParent<CubeController>();
         _inputManager = GetComponentInParent<InputManager>();
@@ -66,8 +70,12 @@ public class CubeWheel : MonoBehaviour
     {
         UpdateWheelState();
 
-        if(_c.isCanDrive)
+        if (_c.isCanDrive)
+        {
             ApplyLateralForce();
+            ApplyRotationForce();
+        }
+
         if(_c.carState != CubeController.CarStates.Air)
             SimulateDrag();
     }
@@ -77,31 +85,57 @@ public class CubeWheel : MonoBehaviour
         _rb.AddForce(force * transform.forward, ForceMode.Acceleration);
         
         // Kill velocity to 0 for small car velocities
-        if (force == 0 && _c.forwardSpeedAbs < 0.1)
-            _rb.velocity = new Vector3(_rb.velocity.x, _rb.velocity.y, 0);
+        if (force == 0 && _c.forwardSpeedAbs < 0.1 && !_inputManager.isDrift)
+            _rb.velocity -= Vector3.Dot(_rb.velocity, transform.forward) * transform.forward;
     }
-    
+
     private void ApplyLateralForce()
     {
-        if (!(Mathf.Abs(_wheelLateralVelocity) > 0.001f)) return;
-        var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) / (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
-        var slideFriction = _curve.Evaluate(ratio);
-        var groundFriction = _curve2.Evaluate(RoboUtils.Scale(-1, 1, 0, 1, -_c.transform.up.y));
+        if (Mathf.Abs(_wheelLateralVelocity) <= 0.001f) return;
+
+        const float impulseMult = 5.0f;
+        const float driftImpulseMult = 0.5f;
+
+        var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) /
+                                  (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
+        float slideFriction = (_inputManager.isDrift ? driftImpulseMult : impulseMult) * _curve.Evaluate(ratio);
+        // var groundFriction = _curve2.Evaluate(RoboUtils.Scale(-1, 1, 0, 1, -_c.transform.up.y));
+        var groundFriction = 1.0f;
         var friction = slideFriction * groundFriction;
         var constraint = -_wheelLateralVelocity;
-        var impulse = constraint * friction * 4.7f;
+
         _lateralForcePosition = transform.position;
         _lateralForcePosition.y = _c.cogLow.position.y;
+        _lateralForcePosition += (_inputManager.isDrift ? 0.0195f : 0.0f) * transform.forward;
+
+
+        var impulse = friction * constraint; // + steeringFactor;
         _rb.AddForceAtPosition(impulse * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
-    
+
+    private void ApplyRotationForce()
+    {
+        if (Mathf.Abs(_inputManager.steerInput) <= 0.001f) return;
+        if (wheelRL || wheelRR) return;
+
+        float force = _inputManager.throttleInput * _inputManager.steerInput * 0.45f;
+        
+        _lateralForcePosition = transform.position;
+        _lateralForcePosition.y = _c.cogLow.position.y;
+        _lateralForcePosition += (_inputManager.isDrift ? 0.55f : 0.0f) * transform.forward;
+
+        _rb.AddForceAtPosition(force * transform.right, _lateralForcePosition, ForceMode.Acceleration);
+    }
+
     private void SimulateDrag()
     {
         //Applies auto braking if no input, simulates air and ground drag
-        if (!(_c.forwardSpeedAbs >= 0.1)) return;
+        if ( _c.forwardSpeedAbs < 0.1 || _inputManager.isDrift) return;
         
         var dragForce = (_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4 * _c.forwardSpeedSign * 
                         (1 - Mathf.Abs(_inputManager.throttleInput));
+
+        
         _rb.AddForce(-dragForce * transform.forward, ForceMode.Acceleration);
     }
 
