@@ -4,33 +4,33 @@ using UnityEngine;
 public class CubeSphereCollider : MonoBehaviour
 {
     public bool isTouchingSurface = false;
-    
+
     //Raycast options
     float _rayLen, _rayOffset = 0.05f;
     Vector3 _rayContactPoint, _rayContactNormal;
-    
+
     Rigidbody _rb;
-    
+
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _rayLen = transform.localScale.x / 2 + _rayOffset;
     }
-    
+
     private void FixedUpdate()
     {
         isTouchingSurface = IsRayContact() || _isColliderContact;
-        
+
         //TODO: this class should only do raycasts and sphere collider ground detection. Move to CubeWheel or CubeController
         if (isTouchingSurface)
-            ApplyStickyForces(StickyForceConstant*5, _rayContactPoint, -_rayContactNormal);
+            ApplyStickyForces(StickyForceConstant * 5, _rayContactPoint, -_rayContactNormal);
     }
 
     const int StickyForceConstant = 0 / 100;
     private void ApplyStickyForces(float stickyForce, Vector3 position, Vector3 dir)
     {
         var force = stickyForce / 4 * dir;
-        
+
         //_rb.AddForceAtPosition(stickyForce, _contactPoint, ForceMode.Acceleration);
         _rb.AddForceAtPosition(force, position, ForceMode.Acceleration);
         //Debug.DrawRay(position, force, Color.blue, 0, true);
@@ -42,7 +42,7 @@ public class CubeSphereCollider : MonoBehaviour
         var isHit = Physics.Raycast(_rb.position, -_rb.transform.up, out var hit, _rayLen);
         _rayContactPoint = hit.point;
         _rayContactNormal = hit.normal;
-        return false || isHit;
+        return isHit;
     }
 
     bool _isColliderContact;
@@ -50,7 +50,7 @@ public class CubeSphereCollider : MonoBehaviour
     {
         _isColliderContact = true;
     }
-    
+
     private void OnTriggerExit(Collider other)
     {
         _isColliderContact = false;
@@ -60,14 +60,14 @@ public class CubeSphereCollider : MonoBehaviour
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
-        if(isDrawContactLines)
-            DrawContactLines();
+        //if(isDrawContactLines)
+        DrawContactLines();
 #endif
         // Sticky forces
         //Debug.DrawRay(_contactPoint, _contactNormal);
         //Gizmos.DrawSphere(_rayContactPoint, 0.02f);
     }
-    
+
     public void DrawContactLines()    // Draw vertical lines for ground contact for visual feedback
     {
         _rayLen = transform.localScale.x / 2 + _rayOffset;
@@ -87,11 +87,12 @@ public class CubeSphereCollider : MonoBehaviour
             sphereContactPoint = _rayContactPoint;
         }
         else sphereContactPoint = rayEndPoint;
-        
+
         // Draw Raycast ray
         Gizmos.DrawLine(transform.position, rayEndPoint);
         Gizmos.DrawSphere(sphereContactPoint, 0.03f);
         // Draw vertical line as ground hit indicators         
         Gizmos.DrawLine(transform.position, transform.position + transform.up * 0.5f);
     }
+
 }
