@@ -72,7 +72,7 @@ public class CubeController : MonoBehaviour
     private void UpdateCarVariables()
     {
         forwardSpeed = Vector3.Dot(_rb.velocity, transform.forward);
-        // forwardSpeed = (float) System.Math.Round(forwardSpeed, 2);
+        forwardSpeed = (float) Math.Round(forwardSpeed, 2);
         forwardSpeedAbs = Mathf.Abs(forwardSpeed);
         forwardSpeedSign = Mathf.Sign(forwardSpeed);
     }
