@@ -10,12 +10,16 @@ public class SuspensionCollider : MonoBehaviour
     private int _lastFrameCollision;
     private WheelSuspension _wheelSuspension;
 
-    public float contactDepth;//How much the suspension is compressed/extended
+
+    public float contactDepth; //How much the suspension is compressed/extended
     public float lastcontactDepth;
     private Rigidbody _rb;
     public float stiffnes;
     const float RaycastOffset = 0.01f;
     const float PenetrationTolerance = 0.001f;
+    public float damper;
+    private float maxAcceleration = 0.0f;
+
 
     public SuspensionCollider()
     {
@@ -28,7 +32,8 @@ public class SuspensionCollider : MonoBehaviour
         _meshCollider = GetComponent<MeshCollider>();
         _wheelSuspension = GetComponentInParent<WheelSuspension>();
         _rb = GetComponentInParent<Rigidbody>();
-        stiffnes = _wheelSuspension.isFrontWheel ? 328.0044072f : 330.6491205f;
+        stiffnes = _wheelSuspension.stiffness;
+        damper = _wheelSuspension.damper;
     }
 
     public void CalculateContactdepth(Collider other)
@@ -41,19 +46,26 @@ public class SuspensionCollider : MonoBehaviour
             return;
         }
 
-        bool significantOverlap = false;
+        bool significantOverlap;
         RayCastCollision();
-        do {
+        do
+        {
             significantOverlap = PenetrativeCollision(other);
         } while (significantOverlap);
 
         if (contactDepth > 0)
         {
-            float damper = 20f;
-            float speed = (contactDepth -lastcontactDepth ) / Time.fixedDeltaTime;
-            var springAcceleration = contactDepth * stiffnes + speed * damper;
+            
+            float speed = (contactDepth - lastcontactDepth) / Time.fixedDeltaTime;
+            var springAcceleration = Math.Min(contactDepth * stiffnes + speed * damper,6f);
+            // var springAcceleration = contactDepth * stiffnes + speed * damper;
+            if (maxAcceleration < springAcceleration)
+            {
+                maxAcceleration = springAcceleration;
+            }
+            // Debug.Log($"Speed:{speed} --- ConatactDepth:{contactDepth} --- MaxAxx:{springAcceleration} timeFrame:{Time.frameCount} Wheel:{_wheelSuspension.name}");
+
             var worldSpringAcceleration = transform.TransformVector(new Vector3(springAcceleration, 0.0f, 0.0f));
-            Debug.Log(transform.parent.parent.name + " " + Time.frameCount + " " + springAcceleration);
             _rb.AddForceAtPosition(worldSpringAcceleration, _wheelSuspension.displacementCollider.transform.position,
                 ForceMode.Acceleration);
         }
@@ -80,10 +92,14 @@ public class SuspensionCollider : MonoBehaviour
 
     private bool RayCastCollision()
     {
-        var hit = Physics.Raycast(origin: _wheelSuspension.displacementCollider.transform.position +   _wheelSuspension.displacementCollider.transform.TransformDirection(new Vector3(0.0f,RaycastOffset-_wheelSuspension.radius, 0.0f)),
+        var hit = Physics.Raycast(
+            origin: _wheelSuspension.displacementCollider.transform.position +
+                    _wheelSuspension.displacementCollider.transform.TransformDirection(new Vector3(0.0f,
+                        RaycastOffset - _wheelSuspension.radius, 0.0f)),
             direction: _wheelSuspension.displacementCollider.transform.TransformDirection(
                 new Vector3(0.0f, -1.0f, 0.0f)),
-            maxDistance: _wheelSuspension.extensionDistance + _wheelSuspension.compressionDistance + RaycastOffset, hitInfo: out var hitRay);
+            maxDistance: _wheelSuspension.extensionDistance + _wheelSuspension.compressionDistance + RaycastOffset,
+            hitInfo: out var hitRay);
         if (hit)
         {
             var contactDepth = _wheelSuspension.compressionDistance - (hitRay.distance - RaycastOffset);
@@ -97,10 +113,11 @@ public class SuspensionCollider : MonoBehaviour
     {
         contactDepth = Math.Min(contactDepth + penetration, _wheelSuspension.compressionDistance);
         _meshCollider.transform.localPosition = new Vector3(0, contactDepth, 0);
-        bool significantOverlap = penetration > PenetrationTolerance && _wheelSuspension.compressionDistance > contactDepth;
+        bool significantOverlap =
+            penetration > PenetrationTolerance && _wheelSuspension.compressionDistance > contactDepth;
         return significantOverlap;
     }
-    
+
     private void MoveWheelContactDepth(float contactDepth)
     {
         this.contactDepth = contactDepth;

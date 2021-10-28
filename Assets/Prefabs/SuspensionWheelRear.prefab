@@ -49,8 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.15
   isFrontWheel: 0
-  stiffness: 0
-  damper: 0
+  stiffness: 275.4
+  damper: 50
   extensionDistance: 0.12
   compressionDistance: 0.03
   _carRb: {fileID: 0}
@@ -450,4 +450,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contactDepth: 0
+  lastcontactDepth: 0
   stiffnes: 0

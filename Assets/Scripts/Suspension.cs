@@ -5,96 +5,55 @@ using UnityEngine;
 
 public class Suspension : MonoBehaviour
 {
-    public float mass;
-
-    public float wheelDampingRate;
-
-    public float suspensionDistance;
-
-    public float spring;
 
     public float damper;
 
-    public float targetPosition;
-
-    public float frontBackSpring;
-
-    public float sprungMass;
-
-    private WheelCollider[] _wheels;
-
-    private WheelCollider[] _wheelsFront;
-
-    private WheelCollider[] _wheelsBack;
+    public float frontStiffness;
+    public float rearStiffness;
 
     public GameObject frontAxle;
 
     public GameObject backAxle;
 
     public bool updateEveryFrame = false;
-
-    public bool useSprungMass = true;
+    
 
     // Start is called before the first frame update
     void Start()
     {
-        _wheels = GetComponentsInChildren<WheelCollider>();
-        _wheelsFront = frontAxle.GetComponentsInChildren<WheelCollider>();
-        _wheelsBack = backAxle.GetComponentsInChildren<WheelCollider>();
-        foreach (WheelCollider wheel in _wheels)
+        var suspensionCollidersFront = frontAxle.GetComponentsInChildren<SuspensionCollider>();
+        var suspensionCollidersRear = backAxle.GetComponentsInChildren<SuspensionCollider>();
+        foreach (var suspensionCollider in suspensionCollidersFront)
         {
-            wheel.mass = mass;
-            wheel.wheelDampingRate = wheelDampingRate;
-            wheel.suspensionDistance = suspensionDistance;
-            JointSpring suspensionSpring = new JointSpring();
-            suspensionSpring.spring = spring;
-            suspensionSpring.damper = damper;
-            suspensionSpring.targetPosition = targetPosition;
-            wheel.suspensionSpring = suspensionSpring;
-            if (useSprungMass)
-            {
-                wheel.sprungMass = sprungMass;
-            }
+            suspensionCollider.stiffnes = frontStiffness;
+            
         }
-
-        foreach (WheelCollider wheel in _wheelsFront)
+            
+        foreach (var suspensionCollider in suspensionCollidersRear)
         {
-            JointSpring suspensionSpring = new JointSpring();
-            suspensionSpring.spring = spring * frontBackSpring;
-            suspensionSpring.damper = damper;
-            suspensionSpring.targetPosition = targetPosition;
-            wheel.suspensionSpring = suspensionSpring;
+            suspensionCollider.stiffnes = rearStiffness;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         if (updateEveryFrame)
         {
-            foreach (WheelCollider wheel in _wheels)
+            var suspensionCollidersFront = frontAxle.GetComponentsInChildren<SuspensionCollider>();
+            var suspensionCollidersRear = backAxle.GetComponentsInChildren<SuspensionCollider>();
+            foreach (var suspensionCollider in suspensionCollidersFront)
             {
-                wheel.mass = mass;
-                wheel.wheelDampingRate = wheelDampingRate;
-                wheel.suspensionDistance = suspensionDistance;
-                JointSpring suspensionSpring = new JointSpring();
-                suspensionSpring.spring = spring;
-                suspensionSpring.damper = damper;
-                suspensionSpring.targetPosition = targetPosition;
-                wheel.suspensionSpring = suspensionSpring;
-                if (useSprungMass)
-                {
-                    wheel.sprungMass = sprungMass;
-                }
-            }
+                suspensionCollider.stiffnes = frontStiffness;
+                suspensionCollider.damper = damper;
 
-            foreach (WheelCollider wheel in _wheelsFront)
+            }
+            
+            foreach (var suspensionCollider in suspensionCollidersRear)
             {
-                JointSpring suspensionSpring = new JointSpring();
-                suspensionSpring.spring = spring * frontBackSpring;
-                suspensionSpring.damper = damper;
-                suspensionSpring.targetPosition = targetPosition;
-                wheel.suspensionSpring = suspensionSpring;
+                suspensionCollider.stiffnes = rearStiffness;
+                suspensionCollider.damper = damper;
             }
         }
     }

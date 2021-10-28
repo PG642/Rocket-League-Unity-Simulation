@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -473,6 +473,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2430388164719578773, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: stiffness
+      value: 163.9
+      objectReference: {fileID: 0}
     - target: {fileID: 2439199860827544023, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -621,12 +625,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799813830}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7458b430d65787345a2c76cfb03dd011, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settingJson: {fileID: 4900000, guid: 1467fdda6b1b93f449776a6d132fe3ba, type: 3}
+  settingJson: {fileID: 4900000, guid: a7f34a6b92ef480a8c8638a1aef65d17, type: 3}
 --- !u!114 &799813833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -809,23 +813,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1579472744}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 55126dd6f34a6674084f55601b5d2849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 0.0001
-  wheelDampingRate: 0.25
-  suspensionDistance: 0
-  spring: 13585.594
-  damper: 100
-  targetPosition: 0.8
-  frontBackSpring: 1.1807173
-  sprungMass: 45
+  damper: 30
+  frontStiffness: 163.9
+  rearStiffness: 275.4
   frontAxle: {fileID: 1855835916}
   backAxle: {fileID: 1555868691}
   updateEveryFrame: 1
-  useSprungMass: 0
 --- !u!1 &1693715324
 GameObject:
   m_ObjectHideFlags: 0

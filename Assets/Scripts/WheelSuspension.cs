@@ -23,14 +23,13 @@ public class WheelSuspension : MonoBehaviour
     [Range(0, float.MaxValue)]
     public float extensionDistance;
 
-    [Tooltip("Max distance the spring can be compressed above its resting pointt")]
+    [Tooltip("Max distance the spring can be compressed above its resting point")]
     [Range(0, float.MaxValue)]
     public float compressionDistance;
     
     
 
     public  Rigidbody _carRb;
-    
     public GameObject suspensionCollider;
     public GameObject displacementCollider;
     public GameObject groundTrigger;
