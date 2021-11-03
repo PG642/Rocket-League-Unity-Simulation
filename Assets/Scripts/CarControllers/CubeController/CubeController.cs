@@ -80,8 +80,23 @@ public class CubeController : MonoBehaviour
 
     private void UpdateCarVariables()
     {
+        
+        
         forwardSpeed = Vector3.Dot(_rb.velocity, transform.forward);
-        forwardSpeed = (float) System.Math.Round(forwardSpeed, 2);
+
+        var vectorForwardSpeed = forwardSpeed * transform.forward; 
+        
+        forwardSpeed = Math.Abs(forwardSpeed) > 0.02f ?  (float) System.Math.Round(forwardSpeed, 2): 0.0f;
+
+        if (forwardSpeed == 0)
+        {
+            _rb.velocity -= vectorForwardSpeed;
+        }
+        
+        
+
+        Debug.Log($"{forwardSpeed} + Time {Time.frameCount}");
+
         forwardSpeedAbs = Mathf.Abs(forwardSpeed);
         forwardSpeedSign = Mathf.Sign(forwardSpeed);
     }
