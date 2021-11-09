@@ -119,7 +119,7 @@ public class CubeWheel : MonoBehaviour
     private void ApplyRotationForce()
     {
         if (Mathf.Abs(_inputManager.steerInput) <= 0.001f) return;
-        if (wheelRL || wheelRR) return;
+        if (!isFrontWheel) return;
 
         float force = _inputManager.throttleInput * _inputManager.steerInput * 0.45f;
         
