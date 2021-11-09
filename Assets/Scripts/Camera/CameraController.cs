@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour
 
     Vector3 _pivotPosition;
 
-    bool _isBallCam = false;
+    private bool _isBallCam = false;
     void Start()
     {
         _ball = transform.parent.Find("Ball");

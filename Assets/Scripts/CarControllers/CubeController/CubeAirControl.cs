@@ -8,6 +8,7 @@ public class CubeAirControl : MonoBehaviour
     float _inputRoll = 0, _inputPitch = 0, _inputYaw = 0;
     
     Rigidbody _rb;
+    private Transform _cogLow;
     InputManager _inputManager;
     CubeController _controller;
     private CubeJumping _cubeJumping;
@@ -16,14 +17,15 @@ public class CubeAirControl : MonoBehaviour
     const float Tr = 36.07956616966136f; // torque coefficient for roll
     const float Tp = 12.14599781908070f; // torque coefficient for pitch
     const float Ty = 8.91962804287785f; // torque coefficient for yaw
-    const float Dr = -4.47166302201591f; // drag coefficient for roll
-    const float Dp = -2.798194258050845f; // drag coefficient for pitch
+    const float Dr = -4.75f; // drag coefficient for roll
+    const float Dp = -2.85f; // drag coefficient for pitch
     const float Dy = -1.886491900437232f; // drag coefficient for yaw
     #endregion
 
     void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
+        _cogLow = transform.Find("cogLow");
         _inputManager = GetComponentInParent<InputManager>();
         _controller = GetComponent<CubeController>();
         _cubeJumping = GetComponent<CubeJumping>();
@@ -49,25 +51,36 @@ public class CubeAirControl : MonoBehaviour
         if (!_cubeJumping.IsDodge || _cubeJumping.IsCancelled)
         {
             // pitch
-            _rb.AddTorque(Tp * _inputPitch * transform.right, ForceMode.Acceleration);
-            if(isUseDamperTorque) _rb.AddTorque(transform.right * (Dp * (1 - Mathf.Abs(_inputPitch)) * transform.InverseTransformDirection(_rb.angularVelocity).x), ForceMode.Acceleration);
+            _rb.AddTorque(Tp * _inputPitch * -_cogLow.right, ForceMode.Acceleration);
+            if (isUseDamperTorque)
+            {
+                _rb.AddTorque(
+                    _cogLow.right * (Dp * (1 - Mathf.Abs(_inputPitch)) * _cogLow.InverseTransformDirection(_rb.angularVelocity).x),
+                    ForceMode.Acceleration
+                );
+            }
         }
 
         if (!_cubeJumping.IsDodge)
         {
             // roll
-            _rb.AddTorque(Tr * _inputRoll * transform.forward, ForceMode.Acceleration);
+            _rb.AddTorque(Tr * _inputRoll * _cogLow.forward, ForceMode.Acceleration);
             if (isUseDamperTorque)
-                _rb.AddTorque(Dr * transform.InverseTransformDirection(_rb.angularVelocity).z * transform.forward,
-                    ForceMode.Acceleration);
-
-            //yaw
-            _rb.AddTorque(Ty * _inputYaw * transform.up, ForceMode.Acceleration);
-            if (isUseDamperTorque)
+            {
                 _rb.AddTorque(
-                    transform.up * (Dy * (1 - Mathf.Abs(_inputYaw)) *
-                                    transform.InverseTransformDirection(_rb.angularVelocity).y),
-                    ForceMode.Acceleration);
+                    _cogLow.forward * Dr * _cogLow.InverseTransformDirection(_rb.angularVelocity).z,
+                    ForceMode.Acceleration
+                );
+            }
+            //yaw
+            _rb.AddTorque(Ty * _inputYaw * _cogLow.up, ForceMode.Acceleration);
+            if (isUseDamperTorque)
+            {
+                _rb.AddTorque(
+                    _cogLow.up * (Dy * (1 - Mathf.Abs(_inputYaw)) * _cogLow.InverseTransformDirection(_rb.angularVelocity).y),
+                    ForceMode.Acceleration
+                );
+            }
         }
     }
 }

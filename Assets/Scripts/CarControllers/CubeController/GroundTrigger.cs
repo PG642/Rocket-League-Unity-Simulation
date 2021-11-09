@@ -1,36 +1,49 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-public class CubeSphereCollider : MonoBehaviour
+public class GroundTrigger : MonoBehaviour
 {
     public bool isTouchingSurface = false;
-    
+
     //Raycast options
-    float _rayLen, _rayOffset = 0.05f;
+    float _rayLen, _rayOffset = 0f;
     Vector3 _rayContactPoint, _rayContactNormal;
-    
+
+    bool _isColliderContact;
+    WheelSuspension _ws;
+
     Rigidbody _rb;
-    
+
+    SuspensionCollider _sc;
+
+    public int groundedTriggers = 0;
+
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
-        _rayLen = transform.localScale.x / 2 + _rayOffset;
+        _ws = GetComponentInParent<WheelSuspension>();
+        _sc = _ws.suspensionCollider.GetComponent<SuspensionCollider>();
+        groundedTriggers = 0;
+        _rayLen = _ws.radius + _rayOffset;
     }
-    
+
     private void FixedUpdate()
     {
-        isTouchingSurface = IsRayContact() || _isColliderContact;
-        
+        isTouchingSurface = _isColliderContact;
+
         //TODO: this class should only do raycasts and sphere collider ground detection. Move to CubeWheel or CubeController
-        if (isTouchingSurface)
-            ApplyStickyForces(StickyForceConstant*5, _rayContactPoint, -_rayContactNormal);
+        if (isTouchingSurface) {
+            ApplyStickyForces(StickyForceConstant * 5, _rayContactPoint, -_rayContactNormal);
+        }
+        
     }
 
     const int StickyForceConstant = 0 / 100;
+
     private void ApplyStickyForces(float stickyForce, Vector3 position, Vector3 dir)
     {
         var force = stickyForce / 4 * dir;
-        
+
         //_rb.AddForceAtPosition(stickyForce, _contactPoint, ForceMode.Acceleration);
         _rb.AddForceAtPosition(force, position, ForceMode.Acceleration);
         //Debug.DrawRay(position, force, Color.blue, 0, true);
@@ -39,36 +52,49 @@ public class CubeSphereCollider : MonoBehaviour
     // Does a wheel touches the ground? Using raycasts, not sphere collider contact point, since no suspension
     bool IsRayContact()
     {
-        var isHit = Physics.Raycast(transform.position, -transform.up, out var hit, _rayLen);
+        var isHit = Physics.Raycast(transform.position, -_rb.transform.up, out var hit, _rayLen);
         _rayContactPoint = hit.point;
         _rayContactNormal = hit.normal;
-        return false || isHit;
+        return isHit;
     }
 
-    bool _isColliderContact;
-    private void OnTriggerEnter(Collider other)
+    public void TriggerEnter(Collider other)
+    {
+        groundedTriggers++;
+        _isColliderContact = true;
+        _sc.CalculateContactdepth(other);
+    }
+
+    public void TriggerStay(Collider other)
     {
         _isColliderContact = true;
+        _sc.CalculateContactdepth(other);
     }
-    
-    private void OnTriggerExit(Collider other)
+
+    public void TriggerExit()
     {
-        _isColliderContact = false;
+        groundedTriggers--;
+        if (groundedTriggers <= 0)
+        {
+            _isColliderContact = false;
+            _sc.CalculateContactdepth(null);
+        }
     }
 
     public bool isDrawContactLines = false;
+
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
-        if(isDrawContactLines)
+        if (isDrawContactLines)
             DrawContactLines();
 #endif
         // Sticky forces
         //Debug.DrawRay(_contactPoint, _contactNormal);
         //Gizmos.DrawSphere(_rayContactPoint, 0.02f);
     }
-    
-    public void DrawContactLines()    // Draw vertical lines for ground contact for visual feedback
+
+    public void DrawContactLines() // Draw vertical lines for ground contact for visual feedback
     {
         _rayLen = transform.localScale.x / 2 + _rayOffset;
         var rayEndPoint = transform.position - (transform.up * _rayLen);
@@ -87,7 +113,7 @@ public class CubeSphereCollider : MonoBehaviour
             sphereContactPoint = _rayContactPoint;
         }
         else sphereContactPoint = rayEndPoint;
-        
+
         // Draw Raycast ray
         Gizmos.DrawLine(transform.position, rayEndPoint);
         Gizmos.DrawSphere(sphereContactPoint, 0.03f);

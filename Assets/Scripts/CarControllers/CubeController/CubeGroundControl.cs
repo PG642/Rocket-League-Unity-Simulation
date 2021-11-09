@@ -4,50 +4,73 @@
 public class CubeGroundControl : MonoBehaviour
 {
     [Header("Steering")]
-    [Range(0,100)]
+    [Range(0, 100)]
     public float turnRadiusCoefficient = 50;
     public float currentSteerAngle;
-    
+
     [Header("Drift")]
     public float driftTime = 3;
-    public float currentWheelSideFriction = 10;
     public float wheelSideFriction = 8;
     public float wheelSideFrictionDrift = 0.5f;
-    
+
     Rigidbody _rb;
     CubeController _controller;
     InputManager _inputManager;
     CubeWheel[] _wheelArray;
-    
+    private CarCollision _carCollision;
+
     void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _controller = GetComponent<CubeController>();
         _wheelArray = GetComponentsInChildren<CubeWheel>();
         _inputManager = GetComponentInParent<InputManager>();
+        _carCollision = GetComponentInParent<CarCollision>();
     }
 
     private void Update()
     {
-        
+
     }
-    
+
     private void FixedUpdate()
     {
-        SetDriftFriction();
-        
+        ApplyStabilization();
         var forwardAcceleration = CalcForwardForce(_inputManager.throttleInput);
         ApplyWheelForwardForce(forwardAcceleration);
-        
+
         currentSteerAngle = CalculateSteerAngle();
         ApplyWheelRotation(currentSteerAngle);
     }
-    
-    private void SetDriftFriction()
+
+    private void ApplyStabilization()
     {
-        // Sliding / drifting, lowers the wheel side friction when drifting
-        var currentDriftDrag = _inputManager.isDrift ? wheelSideFrictionDrift : wheelSideFriction;
-        currentWheelSideFriction = Mathf.MoveTowards(currentWheelSideFriction, currentDriftDrag, Time.deltaTime * driftTime);
+        if (Mathf.Abs(_inputManager.throttleInput) <= 0.0001f)
+        {
+            return;
+        }
+        if (_controller.carState == CubeController.CarStates.Air
+            || _controller.numWheelsSurface >= 3)
+        {
+            return;
+        }
+        if (_carCollision == null || _carCollision.surfaceNormal == null)
+        {
+            return;
+        }
+        var torqueDirection = -Mathf.Sign(Vector3.SignedAngle(_carCollision.surfaceNormal, _rb.transform.up, _controller.cogLow.transform.forward));
+        ForceMode torqueForceMode = ForceMode.Acceleration;
+        float factor = 50.0f;
+        if (_controller.carState == CubeController.CarStates.BodyGroundDead)
+        {
+            torqueForceMode = ForceMode.VelocityChange;
+            factor = 0.4f;
+        }
+        _rb.AddTorque(_controller.cogLow.transform.forward * factor * torqueDirection, torqueForceMode);
+        if (_controller.carState == CubeController.CarStates.SomeWheelsSurface)
+        {
+            _rb.AddForce(-_carCollision.surfaceNormal * 3.25f, ForceMode.Acceleration);
+        }
     }
 
     private void ApplyWheelForwardForce(float forwardAcceleration)
@@ -61,7 +84,7 @@ public class CubeGroundControl : MonoBehaviour
                 wheel.ApplyForwardForce(forwardAcceleration / 4);
         }
     }
-    
+
     private void ApplyWheelRotation(float steerAngle)
     {
         // Apply steer angle to each wheel
@@ -83,29 +106,31 @@ public class CubeGroundControl : MonoBehaviour
         else
             forwardAcceleration = throttleInput * GetForwardAcceleration(_controller.forwardSpeedAbs);
 
-        // Braking
-        if (_controller.forwardSpeedSign != Mathf.Sign(throttleInput) && throttleInput != 0)
-            forwardAcceleration += -1 * _controller.forwardSpeedSign * 35;
+        if (_inputManager.isDrift)
+            forwardAcceleration *= 0.5f;
+        else 
+            if (_controller.forwardSpeedSign != Mathf.Sign(throttleInput) && throttleInput != 0)
+                forwardAcceleration += -1 * _controller.forwardSpeedSign * 35; // Braking
         return forwardAcceleration;
     }
 
     private float CalculateForwardForce(float input, float speed)
     {
-        return  input * GetForwardAcceleration(_controller.forwardSpeedAbs);
+        return input * GetForwardAcceleration(_controller.forwardSpeedAbs);
     }
-    
+
     private float CalculateSteerAngle()
     {
         var curvature = 1 / GetTurnRadius(_controller.forwardSpeed);
-        return _inputManager.steerInput *  curvature * turnRadiusCoefficient;
+        return _inputManager.steerInput * curvature * turnRadiusCoefficient;
     }
-    
+
     static float GetForwardAcceleration(float speed)
     {
         // Replicates acceleration curve from RL, depends on current car forward velocity
         speed = Mathf.Abs(speed);
         float throttle = 0;
-        
+
         if (speed > (1410 / 100))
             throttle = 0;
         else if (speed > (1400 / 100))
@@ -120,7 +145,7 @@ public class CubeGroundControl : MonoBehaviour
     {
         float forwardSpeed = Mathf.Abs(speed);
         float turnRadius = 0;
-        
+
         var curvature = RoboUtils.Scale(0, 5, 0.0069f, 0.00398f, forwardSpeed);
 
         if (forwardSpeed >= 500 / 100)
@@ -138,7 +163,7 @@ public class CubeGroundControl : MonoBehaviour
         turnRadius = 1 / (curvature * 100);
         return turnRadius;
     }
-    
+
     float _naiveRotationForce = 5;
     float _naiveRotationDampeningForce = -10;
     private void NaiveGroundControl()

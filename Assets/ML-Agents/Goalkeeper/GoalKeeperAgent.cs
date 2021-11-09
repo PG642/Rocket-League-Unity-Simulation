@@ -14,8 +14,9 @@ public class GoalKeeperAgent : Agent
     private float _episodeLength = 10f;
     private float _lastResetTime;
 
-    private Transform _ball;
-    private Transform _target;
+    private Transform _ball, _shootAt;
+    private Vector3 _startPosition;
+
 
     private CubeJumping _jumpControl;
     private CubeController _controller;
@@ -41,7 +42,9 @@ public class GoalKeeperAgent : Agent
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
 
-        _target = transform.parent.Find("World").Find("Rocket_Map").Find("Target");
+        _startPosition = transform.localPosition;
+
+        _shootAt = transform.parent.Find("ShootAt");
         _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
 
         _lastResetTime = Time.time;
@@ -50,19 +53,16 @@ public class GoalKeeperAgent : Agent
     public override void OnEpisodeBegin()
     {
         //Reset Car
-        transform.localPosition = new Vector3(-53f, 0f, 0);
-        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-        _rb.velocity = Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
+        _controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 
         //Reset Ball
-        _ball.localPosition = new Vector3(0f, 1f, Random.Range(-8f, 8f));
+        _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         // Set new Taget Position
-        _target.localPosition = new Vector3(-53f, 1f, Random.Range(-8f, 8f));
+        _shootAt.localPosition = new Vector3(-53f, Random.Range(3f, 3f), Random.Range(-7f, 7f));
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
@@ -80,7 +80,6 @@ public class GoalKeeperAgent : Agent
 
         //Car rotation, already normalized
         sensor.AddObservation(transform.rotation);
-
         //Car velocity
         sensor.AddObservation(_rb.velocity / 23f);
 
@@ -95,6 +94,9 @@ public class GoalKeeperAgent : Agent
 
         //Ball velocity
         sensor.AddObservation(_rbBall.velocity / 60f);
+
+        // Boost amount
+        sensor.AddObservation(_boostControl._boostAmount / 100f);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -115,12 +117,8 @@ public class GoalKeeperAgent : Agent
             InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
 
             InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
-            InputManager.isJumpUp = actionBuffers.ContinuousActions[8] > 0;
-            InputManager.isJumpDown = actionBuffers.ContinuousActions[9] > 0;
         }
 
-        float ballDistanceReward = 0.01f * (1-(Vector3.Distance(_ball.position,transform.position)/_mapData.diag));
-        AddReward(ballDistanceReward);
     }
 
     public void Update()
@@ -128,16 +126,19 @@ public class GoalKeeperAgent : Agent
         if (Time.time - _lastResetTime > _episodeLength)
         {
             AddReward(0.5f);
+            AddReward((_ball.localPosition.x / 53f) / 2f);
             Reset();
         }
         if(_mapData.isScoredBlue)
         {
-            AddReward(-1f);
+            // Agent scored a goal
+            AddReward(1f);
             Reset();
         }
         if (_mapData.isScoredOrange)
         {
-            AddReward(1f);
+            // Agent got scored on
+            AddReward(-1f);
             Reset();
         }
     }

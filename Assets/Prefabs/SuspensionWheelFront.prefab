@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6138923315329071711
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 202210214851680792, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 342561610088375661, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 525226519556131714, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 525226519556131714, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 668547278835125606, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Name
+      value: SuspensionWheelFront
+      objectReference: {fileID: 0}
+    - target: {fileID: 918158648363030111, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1499239783128017316, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 2862093734160234307, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2862093734160234307, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566522413124430381, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: penetrationTolerance
+      value: 0.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 3619732651864868646, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: damper
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3619732651864868646, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: radius
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 3619732651864868646, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: stiffness
+      value: 163.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3619732651864868646, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: isFrontWheel
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3619732651864868646, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: displacementCollider
+      value: 
+      objectReference: {fileID: 1858854219309026658}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086931651156209802, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5828193025664410003, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 5828193025664410003, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6048186244665832204, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 7199122443732379341, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7199122443732379341, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8476613039813606586, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: isFrontWheel
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8744071140925278552, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.25
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+--- !u!1 &1858854219309026658 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5546794452354070333, guid: 0cd01aea96de6b14b9376109fd9b8b37, type: 3}
+  m_PrefabInstance: {fileID: 6138923315329071711}
+  m_PrefabAsset: {fileID: 0}
