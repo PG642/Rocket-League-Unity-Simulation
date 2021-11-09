@@ -19,6 +19,11 @@ public class Ball : MonoBehaviour
     private float _minAngularVelocity = 1.047f;
     private float _lastStoppedTime;
 
+
+    private Vector3 _position;
+    private Vector3 _velocity;
+    private Quaternion _rotation;
+    private Vector3 _angularVelocity;
     Rigidbody _rb;
     Transform _transform;
     private float _timeWindowToStop = 2.0f;
@@ -26,6 +31,9 @@ public class Ball : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        
+        
+
         _transform = this.transform;
         isTouchedGround = false;
         _rb.maxAngularVelocity = _maxAngluarVelocity;
@@ -44,6 +52,30 @@ public class Ball : MonoBehaviour
         if (Input.GetButtonDown("Select"))
             ResetShot(new Vector3(7.76f, 2.98f, 0f));
         _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _maxVelocity);
+    }
+
+    private void FixedUpdate()
+    {
+        Clone( _rb);
+    }
+
+    private void Clone(Rigidbody rb)
+    {
+        
+        _position = rb.position;
+
+        _position = new Vector3
+        {
+            x = _position.x,
+            y = _position.y,
+            z = _position.z,
+        };
+        _rotation = new Quaternion((_rotation = rb.rotation).x, _rotation.y, _rotation.z, _rotation.w);
+        _angularVelocity = new Vector3(
+            _angularVelocity.x,
+            _angularVelocity.y,
+            _angularVelocity.z);
+        _velocity = new Vector3(_velocity.x, _velocity.y, _velocity.z);
     }
 
     private void LateUpdate()
@@ -109,14 +141,18 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.CompareTag("Player"))
+        if (!col.gameObject.CompareTag("Ground"))
         {
-            float force = initialForce + col.relativeVelocity.magnitude * hitMultiplier;
+            SetBallOneFrameBack();
+            Debug.Log($" Neu : {_rb.position.x} Alt: {_position.x}");
+            Debug.Log($"Hit : {col.GetContact(0).normal} {(_rb.position-col.GetContact(0).point).normalized}");
+            float impulseMagnitude = initialForce + col.impulse.magnitude * hitMultiplier;
             //Vector3 dir = transform.position - col.contacts[0].point;
-            var dir = _rb.position - col.transform.position;
+            var dir = _rb.position - col.contacts[0].point;
+            Debug.Log($"{dir.x/dir.y}");
             _rb.AddForce(CalculatePsyonixImpulse(col), ForceMode.Impulse);
-            _rb.AddForce(dir.normalized * force);
-            Debug.Log($" Force : {dir.normalized * force}");
+            _rb.AddForce(dir.normalized * impulseMagnitude, ForceMode.Impulse);
+            Debug.Log($" Force : {dir.normalized * impulseMagnitude}");
         }
 
         if (col.gameObject.CompareTag("Ground"))
@@ -132,6 +168,14 @@ public class Ball : MonoBehaviour
         //    }
     }
 
+    private void SetBallOneFrameBack()
+    {
+        _rb.position = _position + _velocity * Time.deltaTime;
+        _rb.velocity = _velocity;
+        _rb.angularVelocity = _angularVelocity;
+        _rb.rotation = _rotation;
+    }
+
     private void OnCollisionExit(Collision other)
     {
         if (other.gameObject.CompareTag("Ground"))
@@ -142,8 +186,10 @@ public class Ball : MonoBehaviour
 
     Vector3 CalculatePsyonixImpulse(Collision col)
     {
-        var n = _rb.position - col.transform.position;
+        var n = _rb.position - col.rigidbody.position;
         n.y *= 0.35f;
+        
+        Debug.Log($"y : {n.y/n.x}");
         var f = col.transform.forward;
         var dot = Vector3.Dot(n, f);
         n = Vector3.Normalize(n - 0.35f * dot * f);
@@ -156,8 +202,8 @@ public class Ball : MonoBehaviour
 
     float scaling(float magninute)
     {
-        var test = pysionixImpulseCurve.Evaluate(magninute);
-
+        var test = pysionixImpulseCurve.Evaluate(magninute/10f);
+        
         Debug.Log($"{Time.time}: Curve {test} : Value {magninute}");
         return test;
     }

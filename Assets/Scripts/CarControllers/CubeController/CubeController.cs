@@ -95,7 +95,6 @@ public class CubeController : MonoBehaviour
         
         
 
-        Debug.Log($"{forwardSpeed} + Time {Time.frameCount}");
 
         forwardSpeedAbs = Mathf.Abs(forwardSpeed);
         forwardSpeedSign = Mathf.Sign(forwardSpeed);
