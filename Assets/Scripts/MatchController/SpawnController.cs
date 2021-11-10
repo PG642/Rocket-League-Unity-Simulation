@@ -22,7 +22,7 @@ namespace MatchController
         private Transform _orangeRespawnPositions;
         private Transform _orangeSpawnPositions;
         
-        private void Start()
+        private void Awake()
         {
             var spawnPositions = transform.Find("World").Find("Rocket_Map").Find("SpawnPositions");
 
@@ -46,9 +46,10 @@ namespace MatchController
             Transform spawnPositions;
             if (team == TeamController.Team.ORANGE)
                 spawnPositions = wasDemolished ? _orangeRespawnPositions : _orangeSpawnPositions;
+
             else
                 spawnPositions = wasDemolished ? _blueRespawnPositions : _blueSpawnPositions;
-            
+
             var childNum = spawnPositions.childCount;
             var idx = Random.Range(0, childNum - 1);
             for (var i = 0; i < childNum; i++)
