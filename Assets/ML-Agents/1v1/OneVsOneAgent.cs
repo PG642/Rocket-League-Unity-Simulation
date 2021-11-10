@@ -9,6 +9,10 @@ public class OneVsOneAgent : Agent
 {
     // Start is called before the first frame update
 
+    private TeamController _teamController;
+    private TeamController.Team _team;
+    private MapData _mapData;
+
     private Rigidbody _rb, _rbBall, _rbEnemy;
 
     private float _episodeLength;
@@ -22,8 +26,6 @@ public class OneVsOneAgent : Agent
     private CubeGroundControl _groundControl;
     private CubeAirControl _airControl;
 
-    private MapData _mapData;
-
     public InputManager InputManager;
 
 
@@ -33,6 +35,9 @@ public class OneVsOneAgent : Agent
 
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
+
+        _teamController = GetComponentInParent<TeamController>();
+        _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
 
         _rb = GetComponent<Rigidbody>();
         _airControl = GetComponentInChildren<CubeAirControl>();
@@ -44,13 +49,18 @@ public class OneVsOneAgent : Agent
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
 
-        if (transform.name.Equals("1v1Agent0"))
-            _enemy = transform.parent.Find("1v1Agent1");
+        if (gameObject.Equals(_teamController.TeamBlue[0]))
+        {
+            _enemy = _teamController.TeamOrange[0].transform;
+            _team = TeamController.Team.BLUE;
+        }
         else
-            _enemy = transform.parent.Find("1v1Agent0");
-        _rbEnemy = _enemy.GetComponent<Rigidbody>();
+        {
+            _enemy = _teamController.TeamBlue[0].transform;
+            _team = TeamController.Team.ORANGE;
+        }
 
-        _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
+        _rbEnemy = _enemy.GetComponent<Rigidbody>();
     }
 
     public override void OnEpisodeBegin()
@@ -130,8 +140,38 @@ public class OneVsOneAgent : Agent
             Reset();
         }
 
-        float ballDistanceReward = 0.01f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
-        AddReward(ballDistanceReward);
+        if (_mapData.isScoredBlue)
+        {
+            if (_team.Equals(TeamController.Team.ORANGE))
+            {
+                AddReward(1);
+            }
+            else
+            {
+                AddReward(-1);
+            }
+            Reset();
+        }
+        else
+        {
+            if (_team.Equals(TeamController.Team.BLUE))
+            {
+                AddReward(1);
+            }
+            else
+            {
+                AddReward(-1);
+            }
+            Reset();
+        }
+
+        float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
+        AddReward(agentBallDistanceReward);
+
+        GameObject goalLines = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").gameObject;
+        Vector3 enemyGoalPosition = _team.Equals(TeamController.Team.BLUE) ? goalLines.transform.Find("GoalLineRed").position : goalLines.transform.Find("GoalLineBlue").position;
+        float ballEnemyGoalDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, enemyGoalPosition) / _mapData.diag));
+        AddReward(ballEnemyGoalDistanceReward);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
