@@ -39,6 +39,7 @@ namespace TestScenarios.JsonClasses
     [Serializable]
     public class GameCar
     {
+        public string id;
         public GameObjectSaveValue physics;
         public bool has_wheel_contact;
         public bool jumped;

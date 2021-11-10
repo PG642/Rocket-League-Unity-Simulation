@@ -99,9 +99,9 @@ public class CubeWheel : MonoBehaviour
     {
         //Applies auto braking if no input, simulates air and ground drag
         if (!(_c.forwardSpeedAbs >= 0.1)) return;
-        
-        var dragForce = (_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4 * _c.forwardSpeedSign * 
-                        (1 - Mathf.Abs(_inputManager.throttleInput));
+        var dragInputConstant = Mathf.Max(Mathf.Abs(_inputManager.throttleInput), (_inputManager.isBoost ? 1.0f : 0.0f));
+        var dragForce = ((_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4) * _c.forwardSpeedSign * 
+                        (1 - dragInputConstant);
         _rb.AddForce(-dragForce * transform.forward, ForceMode.Acceleration);
     }
 

@@ -13,22 +13,22 @@ namespace TestScenarios
     public class TestController : MonoBehaviour
     {
         public TextAsset settingJson;
+        public GameObject controllableCarPrefab;
 
-        private List<Action> _actions;
-        private InputManager _inputManager;
-        private Action _currentAction;
         private Scenario _currentScenario;
         private List<Scenario> _scenarios;
-        private float _nextActionTime;
         private bool _done = false;
         private TestLogger _logger;
+        private bool _isFirstUpdate = true;
 
-        private GameInformationController _gameInformationController;
+        private List<GameObject> _controllableCars = new List<GameObject>();
+        private Dictionary<GameObject, InputManager> _dictCarInput = new Dictionary<GameObject, InputManager>();
+        private Dictionary<GameObject, List<Action>> _dictCarAction = new Dictionary<GameObject, List<Action>>();
+        private Dictionary<GameObject, float> _dictCarNextActionTime = new Dictionary<GameObject, float>();
 
         void Start()
         {
-            _gameInformationController = GetComponent<GameInformationController>();
-            
+
             var settingsToSettings = JsonUtility.FromJson<ToSettings>(settingJson.text);
             var jsonSettingsPath = settingsToSettings.settings_path;
 
@@ -36,97 +36,126 @@ namespace TestScenarios
 
             var settings = JsonUtility.FromJson<SafeSettings>(jsonSettings);
             var jsonScenarioPath = settings.szenario_path + settings.file_name;
-            
+
             var scenario = System.IO.File.ReadAllText(jsonScenarioPath);
 
             var fromJson = JsonUtility.FromJson<Scenario>(scenario);
             _currentScenario = fromJson;
-            var carRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar"));
-            var ballRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("Ball"));
-            SetupCar(_currentScenario, carRb);
-            
-            if (carRb.position.y > 0.1701f && Mathf.Abs(carRb.rotation.x) < 0.001f)
+            _logger = new TestLogger(_currentScenario, settings.results_path_robo_league);
+
+
+
+            InitializeGameobjects(_currentScenario.gameObjects);
+
+
+        }
+
+        private void InitializeGameobjects(List<GameObjectValue> gameObjects)
+        { 
+            List<GameObject> blueTeam = new List<GameObject>();
+            List<GameObject> orangeTeam = new List<GameObject>();
+            foreach (GameObjectValue gov in gameObjects)
             {
-                var cc = GetComponentInChildren<CubeController>();
-                cc.isCanDrive = false;
-                cc.carState = CubeController.CarStates.Air;
-                cc.isAllWheelsSurface = false;
-                cc.numWheelsSurface = 0;
+                if ("car".Equals(gov.gameObject))
+                {
+                    GameObject controllableCar = GameObject.Instantiate(controllableCarPrefab, transform);
+                    controllableCar.GetComponentInChildren<CubeBoosting>().SetInfiniteBoost(true);
+                    _controllableCars.Add(controllableCar);
+                    _dictCarInput.Add(controllableCar, controllableCar.GetComponent<InputManager>());
+                    _dictCarAction.Add(controllableCar, gov.actions);
+                    _dictCarNextActionTime.Add(controllableCar, -1.0f);
+                    Rigidbody carRb = controllableCar.GetComponent<Rigidbody>();
+                    _logger.AddControllableCar(controllableCar, gov.id);
+                    SetupCar(gov, carRb);
+                    if ("car".Equals(gov.gameObject))
+                    {
+                        // generate Teams
+                        if ("0".Equals(gov.team) || "blue".Equals(gov.team.ToLower()))
+                        {
+                            blueTeam.Add(controllableCar);
+                        }
+                        if ("1".Equals(gov.team) || "orange".Equals(gov.team.ToLower()))
+                        {
+                            orangeTeam.Add(controllableCar);
+                        }
+                    }
+                    if (carRb.position.y > 0.1701f && Mathf.Abs(carRb.rotation.x) < 0.001f)
+                    {
+                        var cc = GetComponentInChildren<CubeController>();
+                        cc.isCanDrive = false;
+                        cc.carState = CubeController.CarStates.Air;
+                        cc.isAllWheelsSurface = false;
+                        cc.numWheelsSurface = 0;
+                    }
+                }
+                else if("ball".Equals(gov.gameObject))
+                {
+                    var ballRb = GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("Ball"));
+                    SetupBall(gov, ballRb);
+                    _logger.SetRigidbodyBall(ballRb);
+                }
             }
-            
-            SetupBall(_currentScenario, ballRb);
-            GetInputManager();
-            _actions = _currentScenario.actions;
-            _nextActionTime = -0.1f;
-            _gameInformationController.SetStartValues(_currentScenario.boost);
-
-
-            _logger = new TestLogger(carRb, ballRb, _currentScenario, _inputManager, settings.results_path_robo_league);
+            TeamController teamController = gameObject.GetComponent<TeamController>();
+            teamController.SetTeams(blueTeam, orangeTeam);
         }
 
-        private void GetInputManager()
-        {
-            _inputManager = GetComponentsInChildren<InputManager>()
-                .FirstOrDefault(x => x.CompareTag("ControllableCar"));
-            if (_inputManager != null) _inputManager.isAgent = true;
-        }
 
-        private void SetupCar(Scenario scenario, Rigidbody carRb)
+        private void SetupCar(GameObjectValue gov, Rigidbody carRb)
         {
-            var carStartValue = scenario.startValues.Find(x => x.gameObject == "car");
-            SetupObject(carStartValue, carRb);
+            var carStartValues = gov.startValues;
+            SetupObject(carStartValues, carRb);
             carRb.freezeRotation = true;
         }
 
-        private void SetupBall(Scenario scenario, Rigidbody ballRb)
+        private void SetupBall(GameObjectValue gov, Rigidbody ballRb)
         {
-            var ballStartValue = scenario.startValues.Find(x => x.gameObject == "ball");
-            SetupObject(ballStartValue, ballRb);
+            var ballStartValues = gov.startValues;
+            SetupObject(ballStartValues, ballRb);
         }
 
-        private void SetupObject(GameObjectValue gameObjectValue, Rigidbody rigidBody, float offsetY = 0.0f)
+        private void SetupObject(StartValues startValues, Rigidbody rigidBody, float offsetY = 0.0f)
         {
-            rigidBody.position = gameObjectValue.position.ToVector(offsetY: offsetY);
-            rigidBody.rotation = gameObjectValue.rotation.ToQuaternion();
-            rigidBody.velocity = gameObjectValue.velocity.ToVector();
-            rigidBody.angularVelocity = gameObjectValue.angularVelocity.ToVector();
+            rigidBody.position = startValues.position.ToVector(offsetY: offsetY);
+            rigidBody.rotation = startValues.rotation.ToQuaternion();
+            rigidBody.velocity = startValues.velocity.ToVector();
+            rigidBody.angularVelocity = startValues.angularVelocity.ToVector();
         }
 
-        private void ApplyActionOnCar(Action nextAction)
+        private void ApplyActionOnCar(InputManager inputManager, Action nextAction)
         {
             if (nextAction == null) return;
             var inputs = nextAction.inputs;
-            inputs.ForEach(input => ApplyInput(input));
+            inputs.ForEach(input => ApplyInput(inputManager, input));
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
-        private void ApplyInput(Input input)
+        private void ApplyInput(InputManager inputManager, Input input)
         {
             switch (input.name)
             {
                 case "jump":
-                    _inputManager.isJump = Convert.ToBoolean(input.value);
+                    inputManager.isJump = Convert.ToBoolean(input.value);
                     break;
                 case "boost":
-                    _inputManager.isBoost = Convert.ToBoolean(input.value);
+                    inputManager.isBoost = Convert.ToBoolean(input.value);
                     break;
                 case "handbrake":
-                    _inputManager.isDrift = Convert.ToBoolean(input.value);
+                    inputManager.isDrift = Convert.ToBoolean(input.value);
                     break;
                 case "steer":
-                    _inputManager.steerInput = input.value;
+                    inputManager.steerInput = input.value;
                     break;
                 case "pitch":
-                    _inputManager.pitchInput = input.value;
+                    inputManager.pitchInput = input.value;
                     break;
                 case "yaw":
-                    _inputManager.yawInput = input.value;
+                    inputManager.yawInput = input.value;
                     break;
                 case "roll":
-                    _inputManager.rollInput = input.value;
+                    inputManager.rollInput = input.value;
                     break;
                 case "throttle":
-                    _inputManager.throttleInput = input.value;
+                    inputManager.throttleInput = input.value;
                     break;
                 default:
                     Debug.LogError("Input could not be mapped");
@@ -137,32 +166,52 @@ namespace TestScenarios
         // Update is called once per frame
         void FixedUpdate()
         {
-            GetComponentsInChildren<Rigidbody>().FirstOrDefault(x => x.CompareTag("ControllableCar")).freezeRotation = false;
+            if(_isFirstUpdate)
+            {
+                foreach(GameObject controllableCar in _controllableCars)
+                {
+                    controllableCar.GetComponent<Rigidbody>().freezeRotation = false;
+                }
+                _isFirstUpdate = false;
+            }
             ExecutedScenario();
         }
 
 
         private void ExecutedScenario()
         {
-            if (Time.time <= _nextActionTime)
+            foreach(GameObject controllableCar in _controllableCars)
             {
-                ApplyActionOnCar(_currentAction);
-            }
-
-            if (Time.time > _nextActionTime)
-            {
-                if (_actions.Count > 0)
+                //Debug.Log("time: " + Time.time + " nextActionTime: " + _dictCarNextActionTime[controllableCar]);
+                if (Time.time <= _dictCarNextActionTime[controllableCar])
                 {
-                    ResetActionCar();
-                    _currentAction = _actions.First();
-                    _nextActionTime = Time.time + _currentAction.duration;
-                    _actions.RemoveAt(0);
-                    ApplyActionOnCar(_currentAction);
+                    ApplyActionOnCar(_dictCarInput[controllableCar], _dictCarAction[controllableCar].First());
                 }
                 else
                 {
-                    ResetActionCar();
+                    if (_dictCarAction[controllableCar].Count > 0)
+                    {
+                        ResetActionCar(_dictCarInput[controllableCar]);
+                        if(_dictCarNextActionTime[controllableCar]!=-1.0)
+                        {
+                            _dictCarAction[controllableCar].RemoveAt(0);
+                        }
+                        if (_dictCarAction[controllableCar].Count > 0)
+                        {
+                            _dictCarNextActionTime[controllableCar] = Time.time + _dictCarAction[controllableCar].First().duration;
+                            ApplyActionOnCar(_dictCarInput[controllableCar], _dictCarAction[controllableCar].First());
+                        }
+                        else
+                        {
+                            ResetActionCar(_dictCarInput[controllableCar]);
+                        }
+                    }
+                    else
+                    {
+                        ResetActionCar(_dictCarInput[controllableCar]);
+                    }
                 }
+
             }
 
             if (Time.time > _currentScenario?.time && !_done)
@@ -171,20 +220,19 @@ namespace TestScenarios
                 _logger.SaveLog();
             }
 
-            _logger?.Log(_gameInformationController.boost, _gameInformationController.wheelsOnGround,
-                _gameInformationController.jumped);
+            _logger?.Log();
         }
 
-        private void ResetActionCar()
+        private void ResetActionCar(InputManager inputManager)
         {
-            _inputManager.isJump = false;
-            _inputManager.isBoost = false;
-            _inputManager.isDrift = false;
-            _inputManager.steerInput = 0.0f;
-            _inputManager.pitchInput = 0.0f;
-            _inputManager.yawInput = 0.0f;
-            _inputManager.rollInput = 0.0f;
-            _inputManager.throttleInput = 0.0f;
+            inputManager.isJump = false;
+            inputManager.isBoost = false;
+            inputManager.isDrift = false;
+            inputManager.steerInput = 0.0f;
+            inputManager.pitchInput = 0.0f;
+            inputManager.yawInput = 0.0f;
+            inputManager.rollInput = 0.0f;
+            inputManager.throttleInput = 0.0f;
         }
     }
 

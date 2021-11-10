@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Extentions;
 using TestScenarios.JsonClasses;
 using UnityEngine;
@@ -8,22 +9,46 @@ namespace TestScenarios
 {
     public class TestLogger
     {
-        private Rigidbody _rigidbodyCar;
-        private readonly InputManager _inputManager;
+        private List<GameObject> _controllableCars;
+        private Rigidbody _rigidbodyBall;
         private readonly string _loggingPath;
         private Log _currentLog;
-        private readonly Rigidbody _rigidbodyBall;
+
+
+        private Dictionary<GameObject, Rigidbody> _dictCarRb;
+        private Dictionary<GameObject, string> _dictCarId;
+        private Dictionary<GameObject, CubeBoosting> _dictCarBoosting;
+        private Dictionary<GameObject, CubeController> _dictCarController;
+        private Dictionary<GameObject, CubeJumping> _dictCarJumping;
+
         
 
-        public TestLogger(Rigidbody rigidbodyCar, Rigidbody rigidbodyBall, JsonClasses.Scenario scenario,
-            InputManager inputManager, string loggingPath)
+        public TestLogger(JsonClasses.Scenario scenario, string loggingPath)
         {
-            _rigidbodyCar = rigidbodyCar;
-            _rigidbodyBall = rigidbodyBall;
-            _inputManager = inputManager;
+            _dictCarRb = new Dictionary<GameObject, Rigidbody>();
+            _dictCarId = new Dictionary<GameObject, string>();
+            _dictCarBoosting = new Dictionary<GameObject, CubeBoosting>();
+            _dictCarController = new Dictionary<GameObject, CubeController>();
+            _dictCarJumping = new Dictionary<GameObject, CubeJumping>();
+            _controllableCars = new List<GameObject>();
             _loggingPath = loggingPath;
 
             StartNewLogging(scenario.name);
+        }
+
+        public void AddControllableCar(GameObject controllableCar, string id)
+        {
+            _controllableCars.Add(controllableCar);
+            _dictCarId.Add(controllableCar, id);
+            _dictCarRb.Add(controllableCar, controllableCar.GetComponent<Rigidbody>());
+            _dictCarBoosting.Add(controllableCar, controllableCar.GetComponentInChildren<CubeBoosting>());
+            _dictCarController.Add(controllableCar, controllableCar.GetComponentInChildren<CubeController>());
+            _dictCarJumping.Add(controllableCar, controllableCar.GetComponentInChildren<CubeJumping>());
+        }
+
+        public void SetRigidbodyBall(Rigidbody rigidbodyBall)
+        {
+            _rigidbodyBall = rigidbodyBall;
         }
 
         public void StartNewLogging(string scenarioName)
@@ -35,28 +60,28 @@ namespace TestScenarios
             };
         }
 
-        public void Log(float boost, bool wheelsOnGround, bool jumped)
+        public void Log()
         {
             var logValue = new LogValue()
             {
                 time = Time.time,
-                game_cars = new List<GameCar>()
-                {
+                game_cars = new List<GameCar>(
+                    from controllableCar in _controllableCars select
                     new GameCar()
                     {
+                        id = _dictCarId[controllableCar],
                         physics = new GameObjectSaveValue()
                         {
-                            location = _rigidbodyCar.position.ToVector(),
-                            velocity = _rigidbodyCar.velocity.ToVector(),
-                            rotation = _rigidbodyCar.rotation.ToVector(),
-                            angular_velocity = _rigidbodyCar.angularVelocity.ToVector()
+                            location = _dictCarRb[controllableCar].position.ToVector(),
+                            velocity = _dictCarRb[controllableCar].velocity.ToVector(),
+                            rotation = _dictCarRb[controllableCar].rotation.ToVector(),
+                            angular_velocity = _dictCarRb[controllableCar].angularVelocity.ToVector()
                         },
 
-                        boost = boost,
-                        has_wheel_contact = wheelsOnGround,
-                        jumped = jumped,
-                    }
-                },
+                        boost = _dictCarBoosting[controllableCar]._boostAmount,
+                        has_wheel_contact = _dictCarController[controllableCar].isAllWheelsSurface,
+                        jumped = _dictCarJumping[controllableCar].IsFirstJump || _dictCarJumping[controllableCar].IsSecondJump
+                    }),
                 game_ball = new BallValues()
                 {
                     physics = new GameObjectSaveValue()
@@ -64,7 +89,7 @@ namespace TestScenarios
                         location = _rigidbodyBall.position.ToVector(),
                         velocity = _rigidbodyBall.velocity.ToVector(),
                         rotation = _rigidbodyBall.rotation.ToVector(),
-                        angular_velocity = _rigidbodyCar.angularVelocity.ToVector()
+                        angular_velocity = _rigidbodyBall.angularVelocity.ToVector()
                     }
                 }
             };
