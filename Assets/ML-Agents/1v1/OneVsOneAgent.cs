@@ -48,7 +48,14 @@ public class OneVsOneAgent : Agent
 
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
+    }
 
+    public override void OnEpisodeBegin()
+    {
+        //Respawn Cars
+        transform.parent.GetComponent<TeamController>().SpawnTeams();
+
+        //Define Enemy
         if (gameObject.Equals(_teamController.TeamBlue[0]))
         {
             _enemy = _teamController.TeamOrange[0].transform;
@@ -61,12 +68,6 @@ public class OneVsOneAgent : Agent
         }
 
         _rbEnemy = _enemy.GetComponent<Rigidbody>();
-    }
-
-    public override void OnEpisodeBegin()
-    {
-        //Respawn Cars
-        transform.parent.GetComponent<TeamController>().SpawnTeams();
 
         //Reset Ball
         _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
@@ -152,7 +153,7 @@ public class OneVsOneAgent : Agent
             }
             Reset();
         }
-        else
+        if(_mapData.isScoredOrange)
         {
             if (_team.Equals(TeamController.Team.BLUE))
             {
