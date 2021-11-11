@@ -49,15 +49,6 @@ public class GroundTrigger : MonoBehaviour
         //Debug.DrawRay(position, force, Color.blue, 0, true);
     }
 
-    // Does a wheel touches the ground? Using raycasts, not sphere collider contact point, since no suspension
-    bool IsRayContact()
-    {
-        var isHit = Physics.Raycast(transform.position, -_rb.transform.up, out var hit, _rayLen);
-        _rayContactPoint = hit.point;
-        _rayContactNormal = hit.normal;
-        return isHit;
-    }
-
     public void TriggerEnter(Collider other)
     {
         groundedTriggers++;

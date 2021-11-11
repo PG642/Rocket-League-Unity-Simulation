@@ -70,27 +70,27 @@ public class SuspensionCollider : MonoBehaviour
                 ForceMode.Acceleration);
         }
     }
-
-    public bool PenetrativeCollision(Collider other)
+    //Calculate Collision with a Physics.ComputePenetration and transforms the wheel in y-Direction.
+    private bool PenetrativeCollision(Collider other)
     {
         var ownBodyTransform = _meshCollider.transform;
         var collisionBodyTransform = other.transform;
-        var significantOverlap = Physics.ComputePenetration(_meshCollider, ownBodyTransform.position,
+        var isSignificantOverlap = false;
+        var isOverlap = Physics.ComputePenetration(_meshCollider, ownBodyTransform.position,
             ownBodyTransform.rotation,
             other, collisionBodyTransform.position, collisionBodyTransform.rotation, out Vector3 direction,
             out float distance);
-        if (significantOverlap)
+        if (isOverlap)
         {
-            //Debug.Log(transform.parent.parent.name + " " + Time.frameCount);
-
             float penetration = Vector3.Dot(direction * distance, _meshCollider.transform.right);
-            significantOverlap = MoveWheel(penetration);
+            isSignificantOverlap = MoveWheel(penetration);
         }
 
-        return significantOverlap;
+        return isSignificantOverlap;
     }
 
-    private bool RayCastCollision()
+    //Approximate Collision with RayCast and transforms the wheel in y-Direction.
+    private void RayCastCollision()
     {
         var hit = Physics.Raycast(
             origin: _wheelSuspension.displacementCollider.transform.position +
@@ -105,8 +105,6 @@ public class SuspensionCollider : MonoBehaviour
             var contactDepth = _wheelSuspension.compressionDistance - (hitRay.distance - RaycastOffset);
             MoveWheelContactDepth(contactDepth);
         }
-
-        return hit;
     }
 
     private bool MoveWheel(float penetration)
