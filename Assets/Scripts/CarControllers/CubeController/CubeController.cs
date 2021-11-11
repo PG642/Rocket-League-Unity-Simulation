@@ -92,10 +92,6 @@ public class CubeController : MonoBehaviour
         {
             _rb.velocity -= vectorForwardSpeed;
         }
-        
-        
-
-
         forwardSpeedAbs = Mathf.Abs(forwardSpeed);
         forwardSpeedSign = Mathf.Sign(forwardSpeed);
     }
