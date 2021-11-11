@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -6,24 +6,22 @@ using UnityEngine;
 //[RequireComponent(typeof(Rigidbody))]
 public class CubeController : MonoBehaviour
 {
-    [Header("Car State")]
-    public bool isAllWheelsSurface = false;
+    [Header("Car State")] public bool isAllWheelsSurface = false;
     public bool isCanDrive;
     public float forwardSpeed = 0, forwardSpeedSign = 0, forwardSpeedAbs = 0;
     public int numWheelsSurface;
     public bool isBodySurface;
     public CarStates carState;
-    
-    [Header("Other")]
-    public Transform cogLow;
+
+    [Header("Other")] public Transform cogLow;
     public GameObject sceneViewFocusObject;
-    
+
     public const float MaxSpeedBoost = 23.00f;
 
     Rigidbody _rb;
     GUIStyle _style;
-    CubeSphereCollider[] _sphereColliders;
-    
+    GroundTrigger[] _sphereColliders;
+
     public enum CarStates
     {
         AllWheelsGround,
@@ -33,33 +31,34 @@ public class CubeController : MonoBehaviour
         BodySideGround,
         BodyGroundDead
     }
-    
+
     void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
         _rb.centerOfMass = cogLow.localPosition;
         _rb.maxAngularVelocity = 5.5f;
 
-        _sphereColliders = GetComponentsInChildren<CubeSphereCollider>();
-        
+        _sphereColliders = GetComponentsInChildren<GroundTrigger>();
+
         // GUI stuff
         _style = new GUIStyle();
         _style.normal.textColor = Color.red;
         _style.fontSize = 25;
         _style.fontStyle = FontStyle.Bold;
-        
+
         // Lock scene view camera to the car
 // #if UNITY_EDITOR
 //         Selection.activeGameObject = sceneViewFocusObject;
 //         SceneView.lastActiveSceneView.FrameSelected(true);
 // #endif
     }
-    
+
     void FixedUpdate()
     {
         SetCarState();
         UpdateCarVariables();
     }
+    
 
     private void LateUpdate()
     {
@@ -81,17 +80,27 @@ public class CubeController : MonoBehaviour
 
     private void UpdateCarVariables()
     {
+        
+        
         forwardSpeed = Vector3.Dot(_rb.velocity, transform.forward);
-        forwardSpeed = (float) Math.Round(forwardSpeed, 2);
+
+        var vectorForwardSpeed = forwardSpeed * transform.forward; 
+        
+        forwardSpeed = Math.Abs(forwardSpeed) > 0.02f ?  (float) System.Math.Round(forwardSpeed, 2): 0.0f;
+
+        if (forwardSpeed == 0)
+        {
+            _rb.velocity -= vectorForwardSpeed;
+        }
         forwardSpeedAbs = Mathf.Abs(forwardSpeed);
         forwardSpeedSign = Mathf.Sign(forwardSpeed);
     }
-    
+
     void SetCarState()
     {
-        int temp = _sphereColliders.Count(c => c.isTouchingSurface);
-        numWheelsSurface = temp;
-        
+        numWheelsSurface
+            = _sphereColliders.Count(c => c.isTouchingSurface);
+
         isAllWheelsSurface = numWheelsSurface >= 3;
 
         // All wheels are touching the ground
@@ -126,7 +135,7 @@ public class CubeController : MonoBehaviour
         if (carState == CarStates.AllWheelsSurface || carState == CarStates.AllWheelsGround)
             _rb.AddForce(-transform.up * 5, ForceMode.Acceleration);
     }
-    
+
     # region GUI
 
     void OnGUI()

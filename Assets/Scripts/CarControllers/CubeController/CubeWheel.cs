@@ -15,7 +15,7 @@ public class CubeWheel : MonoBehaviour
     private AnimationCurve _curve2;
     private AnimationCurve _steeringCurve;
     
-    public bool wheelFL, wheelFR, wheelRL, wheelRR;
+    public bool isFrontWheel;
     
     public Transform wheelMesh;
     private float _meshRevolutionAngle;
@@ -46,13 +46,16 @@ public class CubeWheel : MonoBehaviour
         _c = GetComponentInParent<CubeController>();
         _inputManager = GetComponentInParent<InputManager>();
         _groundControl= GetComponentInParent<CubeGroundControl>();
-        _wheelRadius = transform.localScale.z / 2;
+        _wheelRadius = GetComponentInParent<WheelSuspension>().radius;
     }
     
     public void RotateWheels(float steerAngle)
     {
-        if(wheelFL || wheelFR)
+        if (isFrontWheel)
+        {
             transform.localRotation = Quaternion.Euler(Vector3.up * steerAngle);
+        }
+        
         
         // Update mesh rotations of the wheel
         if (wheelMesh)
@@ -116,7 +119,7 @@ public class CubeWheel : MonoBehaviour
     private void ApplyRotationForce()
     {
         if (Mathf.Abs(_inputManager.steerInput) <= 0.001f) return;
-        if (wheelRL || wheelRR) return;
+        if (!isFrontWheel) return;
 
         float force = _inputManager.throttleInput * _inputManager.steerInput * 0.45f;
         

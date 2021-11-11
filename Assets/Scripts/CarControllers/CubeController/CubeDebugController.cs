@@ -6,12 +6,12 @@ using UnityEngine;
 public class CubeDebugController : MonoBehaviour
 {
     private CubeWheel[] _wheelArray;
-    private CubeSphereCollider[] _sphereArray;
+    private GroundTrigger[] _sphereArray;
     
     private void Start()
     {
         _wheelArray = GetComponentsInChildren<CubeWheel>();
-        _sphereArray = GetComponentsInChildren<CubeSphereCollider>();
+        _sphereArray = GetComponentsInChildren<GroundTrigger>();
 
         _isDrawRaycasts = _sphereArray[0].isDrawContactLines;
     }

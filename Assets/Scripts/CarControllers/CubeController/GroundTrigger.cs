@@ -1,32 +1,45 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-public class CubeSphereCollider : MonoBehaviour
+public class GroundTrigger : MonoBehaviour
 {
     public bool isTouchingSurface = false;
 
     //Raycast options
-    float _rayLen, _rayOffset = 0.05f;
+    float _rayLen, _rayOffset = 0f;
     Vector3 _rayContactPoint, _rayContactNormal;
 
+    bool _isColliderContact;
+    WheelSuspension _ws;
+
     Rigidbody _rb;
+
+    SuspensionCollider _sc;
+
+    public int groundedTriggers = 0;
 
     private void Start()
     {
         _rb = GetComponentInParent<Rigidbody>();
-        _rayLen = transform.localScale.x / 2 + _rayOffset;
+        _ws = GetComponentInParent<WheelSuspension>();
+        _sc = _ws.suspensionCollider.GetComponent<SuspensionCollider>();
+        groundedTriggers = 0;
+        _rayLen = _ws.radius + _rayOffset;
     }
 
     private void FixedUpdate()
     {
-        isTouchingSurface = IsRayContact() || _isColliderContact;
+        isTouchingSurface = _isColliderContact;
 
         //TODO: this class should only do raycasts and sphere collider ground detection. Move to CubeWheel or CubeController
-        if (isTouchingSurface)
+        if (isTouchingSurface) {
             ApplyStickyForces(StickyForceConstant * 5, _rayContactPoint, -_rayContactNormal);
+        }
+        
     }
 
     const int StickyForceConstant = 0 / 100;
+
     private void ApplyStickyForces(float stickyForce, Vector3 position, Vector3 dir)
     {
         var force = stickyForce / 4 * dir;
@@ -36,39 +49,43 @@ public class CubeSphereCollider : MonoBehaviour
         //Debug.DrawRay(position, force, Color.blue, 0, true);
     }
 
-    // Does a wheel touches the ground? Using raycasts, not sphere collider contact point, since no suspension
-    bool IsRayContact()
+    public void TriggerEnter(Collider other)
     {
-        var isHit = Physics.Raycast(_rb.position, -_rb.transform.up, out var hit, _rayLen);
-        _rayContactPoint = hit.point;
-        _rayContactNormal = hit.normal;
-        return isHit;
+        groundedTriggers++;
+        _isColliderContact = true;
+        _sc.CalculateContactdepth(other);
     }
 
-    bool _isColliderContact;
-    private void OnTriggerEnter(Collider other)
+    public void TriggerStay(Collider other)
     {
         _isColliderContact = true;
+        _sc.CalculateContactdepth(other);
     }
 
-    private void OnTriggerExit(Collider other)
+    public void TriggerExit()
     {
-        _isColliderContact = false;
+        groundedTriggers--;
+        if (groundedTriggers <= 0)
+        {
+            _isColliderContact = false;
+            _sc.CalculateContactdepth(null);
+        }
     }
 
     public bool isDrawContactLines = false;
+
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
-        //if(isDrawContactLines)
-        DrawContactLines();
+        if (isDrawContactLines)
+            DrawContactLines();
 #endif
         // Sticky forces
         //Debug.DrawRay(_contactPoint, _contactNormal);
         //Gizmos.DrawSphere(_rayContactPoint, 0.02f);
     }
 
-    public void DrawContactLines()    // Draw vertical lines for ground contact for visual feedback
+    public void DrawContactLines() // Draw vertical lines for ground contact for visual feedback
     {
         _rayLen = transform.localScale.x / 2 + _rayOffset;
         var rayEndPoint = transform.position - (transform.up * _rayLen);
@@ -94,5 +111,4 @@ public class CubeSphereCollider : MonoBehaviour
         // Draw vertical line as ground hit indicators         
         Gizmos.DrawLine(transform.position, transform.position + transform.up * 0.5f);
     }
-
 }

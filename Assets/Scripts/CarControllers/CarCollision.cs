@@ -1,17 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CarCollision : MonoBehaviour
 {
     private MatchController.MatchController _matchController;
     private float forwardSpeed;
+    private SuspensionCollider[] _suspensionColliders;
     public Vector3 surfaceNormal;
 
 
     void Start()
     {
         _matchController = transform.GetComponentInParent<MatchController.MatchController>();
+        _suspensionColliders = GetComponentsInChildren<SuspensionCollider>();
     }
 
 
@@ -19,7 +23,12 @@ public class CarCollision : MonoBehaviour
     {
         forwardSpeed = Vector3.Dot(GetComponent<Rigidbody>().velocity, transform.forward);
     }
-
+    
+    private void OnCollisionEnter(Collision collisionInfo)
+    {
+        DoCarCarInteraction(collisionInfo);
+    }
+    
     private void OnCollisionStay(Collision collisionInfo)
     {
         if (collisionInfo.gameObject.CompareTag("Ground"))
@@ -28,19 +37,26 @@ public class CarCollision : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collisionInfo)
+    private void OnCollisionExit(Collision collisionInfo)
+    {
+    }
+    
+
+    private void DoCarCarInteraction(Collision collisionInfo)
     {
         if (collisionInfo.gameObject.CompareTag("Ground"))
         {
             surfaceNormal = collisionInfo.contacts[0].normal;
         }
+
         if (!collisionInfo.gameObject.CompareTag("ControllableCar"))
             return;
         TeamController teamController = GetComponentInParent<TeamController>();
         if (teamController.GetTeamOfCar(collisionInfo.gameObject) == teamController.GetTeamOfCar(gameObject))
             return;
 
-        Vector3 directionToOtherCogLow = collisionInfo.transform.Find("CubeController").Find("cogLow").position - transform.Find("CubeController").Find("cogLow").position;
+        Vector3 directionToOtherCogLow = collisionInfo.transform.Find("CubeController").Find("cogLow").position -
+                                         transform.Find("CubeController").Find("cogLow").position;
 
         Vector3 horizontalDirection = Vector3.ProjectOnPlane(directionToOtherCogLow, transform.up);
         Debug.DrawRay(transform.position, horizontalDirection, Color.red, 3f);
@@ -65,5 +81,5 @@ public class CarCollision : MonoBehaviour
         }
     }
 
-
+    
 }
