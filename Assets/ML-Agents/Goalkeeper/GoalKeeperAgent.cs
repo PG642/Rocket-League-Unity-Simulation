@@ -39,7 +39,7 @@ public class GoalKeeperAgent : Agent
     /// <summary>
     /// Shows whether the action space of the agent is continuous, multi-discrete or mixed.
     /// </summary>
-    private ActionSpaceType actionSpaceType;
+    private ActionSpaceType _actionSpaceType;
     
     void Start()
     {
@@ -47,7 +47,7 @@ public class GoalKeeperAgent : Agent
         InputManager.isAgent = true;
 
         ActionSpec actionSpec = GetComponent<BehaviorParameters>().BrainParameters.ActionSpec;
-        actionSpaceType = DetermineActionSpaceType(actionSpec);
+        _actionSpaceType = DetermineActionSpaceType(actionSpec);
 
         _rb = GetComponent<Rigidbody>();
         _airControl = GetComponentInChildren<CubeAirControl>();
@@ -73,13 +73,13 @@ public class GoalKeeperAgent : Agent
         _controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 
         //Reset Ball
-        _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
+        _ball.localPosition = new Vector3(UnityEngine.Random.Range(-10f, 0f), UnityEngine.Random.Range(0f, 20f), UnityEngine.Random.Range(-30f, 30f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         // Set new Taget Position
-        _shootAt.localPosition = new Vector3(-53f, Random.Range(3f, 3f), Random.Range(-7f, 7f));
+        _shootAt.localPosition = new Vector3(-53f, UnityEngine.Random.Range(3f, 3f), UnityEngine.Random.Range(-7f, 7f));
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
@@ -120,7 +120,7 @@ public class GoalKeeperAgent : Agent
     {
         if (InputManager.isAgent)
         {
-            switch (actionSpaceType)
+            switch (_actionSpaceType)
             {
                 case ActionSpaceType.Continuous:
                     ProcessContinuousActions(actionBuffers);
@@ -132,7 +132,7 @@ public class GoalKeeperAgent : Agent
                     ProcessMixedActions(actionBuffers);
                     break;
                 default:
-                    throw new InvalidOperationException(string.Format("The method {0} does not support the {1} '{2}'.", nameof(OnActionReceived), typeof(ActionSpaceType), actionSpaceType.ToString()));
+                    throw new InvalidOperationException(string.Format("The method {0} does not support the {1} '{2}'.", nameof(OnActionReceived), typeof(ActionSpaceType), _actionSpaceType.ToString()));
                     break;
             }
         }
@@ -261,12 +261,8 @@ public class GoalKeeperAgent : Agent
     /// </summary>
     /// <param name="actionSpec">The <see cref="ActionSpec"/> for which we want to determine the action sapce type.</param>
     /// <returns>The corresponding action space type.</returns>
-    /// <exception cref="ArgumentNullException">If <paramref name="actionSpec"/> is <c>null</c>.</exception>
-    private static ActionSpaceType DetermineActionSpaceType(ActionSpec actionSpec)
+    private ActionSpaceType DetermineActionSpaceType(ActionSpec actionSpec)
     {
-        // Check for invalid parameter
-        _ == actionSpec ?? throw new ArgumentNullException(nameof(actionSpec));
-
         int requiredNumActions = 8;
 
         // Determine action space type
@@ -287,7 +283,7 @@ public class GoalKeeperAgent : Agent
                 throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches.", typeof(GoalKeeperAgent)));
             }
             int[] requiredBranchSizes = { DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, 3, 2, 2, 2, 2};
-            for(int i = 0; i < actionSpec.BranchSizes; i++)
+            for(int i = 0; i < actionSpec.BranchSizes.Length; i++)
             {
                 if(actionSpec.BranchSizes[i] != requiredBranchSizes[i])
                 {
@@ -306,7 +302,7 @@ public class GoalKeeperAgent : Agent
                 throw new ArgumentException(string.Format("It seems like you tried to use a mixed action space for the agent. In this case the {0} needs 5 discrete action branches and 3 continuous actions.", typeof(GoalKeeperAgent)));
             }
             int[] requiredBranchSizes = { 3, 2, 2, 2, 2 };
-            for (int i = 0; i < actionSpec.BranchSizes; i++)
+            for (int i = 0; i < actionSpec.BranchSizes.Length; i++)
             {
                 if (actionSpec.BranchSizes[i] != requiredBranchSizes[i])
                 {
