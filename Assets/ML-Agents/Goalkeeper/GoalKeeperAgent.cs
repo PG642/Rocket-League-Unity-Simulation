@@ -1,9 +1,12 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
+
 
 public class GoalKeeperAgent : Agent
 {
@@ -27,10 +30,24 @@ public class GoalKeeperAgent : Agent
     private MapData _mapData;
 
     public InputManager InputManager;
+
+    /// <summary>
+    /// Contains the possible values for the discretized actions.
+    /// </summary>
+    private readonly float[] DISCRETE_ACTIONS = { -1f, -0.5f, 0f, 0.5f, 1f };
+
+    /// <summary>
+    /// Shows whether the action space of the agent is continuous, multi-discrete or mixed.
+    /// </summary>
+    private ActionSpaceType _actionSpaceType;
+    
     void Start()
     {
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
+
+        ActionSpec actionSpec = GetComponent<BehaviorParameters>().BrainParameters.ActionSpec;
+        _actionSpaceType = DetermineActionSpaceType(actionSpec);
 
         _rb = GetComponent<Rigidbody>();
         _airControl = GetComponentInChildren<CubeAirControl>();
@@ -56,13 +73,13 @@ public class GoalKeeperAgent : Agent
         _controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 
         //Reset Ball
-        _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
+        _ball.localPosition = new Vector3(UnityEngine.Random.Range(-10f, 0f), UnityEngine.Random.Range(0f, 20f), UnityEngine.Random.Range(-30f, 30f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         // Set new Taget Position
-        _shootAt.localPosition = new Vector3(-53f, Random.Range(3f, 3f), Random.Range(-7f, 7f));
+        _shootAt.localPosition = new Vector3(-53f, UnityEngine.Random.Range(3f, 3f), UnityEngine.Random.Range(-7f, 7f));
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
@@ -103,6 +120,67 @@ public class GoalKeeperAgent : Agent
     {
         if (InputManager.isAgent)
         {
+            switch (_actionSpaceType)
+            {
+                case ActionSpaceType.Continuous:
+                    ProcessContinuousActions(actionBuffers);
+                    break;
+                case ActionSpaceType.MultiDiscrete:
+                    ProcessMultiDiscreteActions(actionBuffers);
+                    break;
+                case ActionSpaceType.Mixed:
+                    ProcessMixedActions(actionBuffers);
+                    break;
+                default:
+                    throw new InvalidOperationException(string.Format("The method {0} does not support the {1} '{2}'.", nameof(OnActionReceived), typeof(ActionSpaceType), _actionSpaceType.ToString()));
+                    break;
+            }
+        }
+        AssignReward();
+    }
+    
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        InputManager.isAgent = false;
+    }
+
+    private void Reset()
+    {
+        _lastResetTime = Time.time;
+        EndEpisode();
+    }
+
+    /// <summary>
+    /// Assigns a reward if the maximum episode length is reached or a goal is scored by any team.
+    /// </summary>
+    private void AssignReward()
+    {
+        if (Time.time - _lastResetTime > _episodeLength)
+        {
+            AddReward(0.5f);
+            AddReward((_ball.localPosition.x / 53f) / 2f);
+            Reset();
+        }
+        if (_mapData.isScoredBlue)
+        {
+            // Agent scored a goal
+            SetReward(1f);
+            Reset();
+        }
+        if (_mapData.isScoredOrange)
+        {
+            // Agent got scored on
+            SetReward(-1f);
+            Reset();
+        }
+    }
+
+    /// <summary>
+    /// Processes the actions, if <see cref="actionSpaceType"/> is <see cref="ActionSpaceType.Continuous"/>.
+    /// </summary>
+    /// <param name="actionBuffers">The action buffers containing the actions.</param>
+    private void ProcessContinuousActions(ActionBuffers actionBuffers)
+    {
             // set inputs
             InputManager.throttleInput = actionBuffers.ContinuousActions[0];
             InputManager.steerInput = actionBuffers.ContinuousActions[1];
@@ -117,40 +195,133 @@ public class GoalKeeperAgent : Agent
             InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
 
             InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
-        }
-
     }
 
-    public void Update()
+    /// <summary>
+    /// Processes the actions, if <see cref="actionSpaceType"/> is <see cref="ActionSpaceType.MultiDiscrete"/>.
+    /// </summary>
+    /// <param name="actionBuffers">The action buffers containing the actions.</param>
+    private void ProcessMultiDiscreteActions(ActionBuffers actionBuffers)
     {
-        if (Time.time - _lastResetTime > _episodeLength)
+        InputManager.throttleInput = DISCRETE_ACTIONS[actionBuffers.DiscreteActions[0]];
+        InputManager.steerInput = DISCRETE_ACTIONS[actionBuffers.DiscreteActions[1]];
+        InputManager.yawInput = DISCRETE_ACTIONS[actionBuffers.DiscreteActions[1]];
+        InputManager.pitchInput = DISCRETE_ACTIONS[actionBuffers.DiscreteActions[2]];
+        switch (actionBuffers.DiscreteActions[3])
         {
-            AddReward(0.5f);
-            AddReward((_ball.localPosition.x / 53f) / 2f);
-            Reset();
+            case 0:
+                InputManager.rollInput = -1;
+                break;
+            case 2:
+                InputManager.rollInput = 1;
+                break;
+            default:
+                InputManager.rollInput = 0;
+                break;
         }
-        if(_mapData.isScoredBlue)
-        {
-            // Agent scored a goal
-            AddReward(1f);
-            Reset();
-        }
-        if (_mapData.isScoredOrange)
-        {
-            // Agent got scored on
-            AddReward(-1f);
-            Reset();
-        }
-    }
-    
-    public override void Heuristic(in ActionBuffers actionsOut)
-    {
-        InputManager.isAgent = false;
+        InputManager.isBoost = actionBuffers.DiscreteActions[4] > 0;
+        InputManager.isDrift = actionBuffers.DiscreteActions[5] > 0;
+        InputManager.isAirRoll = actionBuffers.DiscreteActions[6] > 0;
+        InputManager.isJump = actionBuffers.DiscreteActions[7] > 0;
     }
 
-    private void Reset()
+    /// <summary>
+    /// Processes the actions, if <see cref="actionSpaceType"/> is <see cref="ActionSpaceType.Mixed"/>.
+    /// </summary>
+    /// <param name="actionBuffers">The action buffers containing the actions.</param>
+    private void ProcessMixedActions(ActionBuffers actionBuffers)
     {
-        _lastResetTime = Time.time;
-        EndEpisode();
+        //Continuous actions
+        InputManager.throttleInput = actionBuffers.ContinuousActions[0];
+        InputManager.steerInput = actionBuffers.ContinuousActions[1];
+        InputManager.yawInput = actionBuffers.ContinuousActions[1];
+        InputManager.pitchInput = actionBuffers.ContinuousActions[2];
+
+        //Discrete actions
+        switch (actionBuffers.DiscreteActions[0])
+        {
+            case 0:
+                InputManager.rollInput = -1;
+                break;
+            case 2:
+                InputManager.rollInput = 1;
+                break;
+            default:
+                InputManager.rollInput = 0;
+                break;
+        }
+        InputManager.isBoost = actionBuffers.DiscreteActions[1] > 0;
+        InputManager.isDrift = actionBuffers.DiscreteActions[2] > 0;
+        InputManager.isAirRoll = actionBuffers.DiscreteActions[3] > 0;
+        InputManager.isJump = actionBuffers.DiscreteActions[4] > 0;
+    }
+
+    /// <summary>
+    /// Determines the action space type for the specified <paramref name="actionSpec"/>.
+    /// </summary>
+    /// <param name="actionSpec">The <see cref="ActionSpec"/> for which we want to determine the action sapce type.</param>
+    /// <returns>The corresponding action space type.</returns>
+    private ActionSpaceType DetermineActionSpaceType(ActionSpec actionSpec)
+    {
+        int requiredNumActions = 8;
+
+        // Determine action space type
+        if(actionSpec.NumContinuousActions > 0 && actionSpec.NumDiscreteActions == 0)
+        {
+            //Propably continuous, we check the size
+            if(actionSpec.NumContinuousActions != requiredNumActions)
+            {
+                throw new ArgumentException(string.Format("It seems like you tried to use a continuos action space for the agent. In this case the {0} needs 8 continuous actions.", typeof(GoalKeeperAgent)));
+            }
+            return ActionSpaceType.Continuous;
+        }
+        else if(actionSpec.NumContinuousActions == 0 && actionSpec.NumDiscreteActions > 0)
+        {
+            //Propably multi discrete, we check the size
+            if (actionSpec.NumDiscreteActions != requiredNumActions)
+            {
+                throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches.", typeof(GoalKeeperAgent)));
+            }
+            int[] requiredBranchSizes = { DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, 3, 2, 2, 2, 2};
+            for(int i = 0; i < actionSpec.BranchSizes.Length; i++)
+            {
+                if(actionSpec.BranchSizes[i] != requiredBranchSizes[i])
+                {
+                    throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches with sizes ({1}).", 
+                        typeof(GoalKeeperAgent), 
+                        string.Join(", ", requiredBranchSizes)));
+                }
+            }
+            return ActionSpaceType.MultiDiscrete;
+        }
+        else
+        {
+            //Propably multi discrete, we check the size
+            if (actionSpec.NumDiscreteActions != 5 || actionSpec.NumContinuousActions != 3)
+            {
+                throw new ArgumentException(string.Format("It seems like you tried to use a mixed action space for the agent. In this case the {0} needs 5 discrete action branches and 3 continuous actions.", typeof(GoalKeeperAgent)));
+            }
+            int[] requiredBranchSizes = { 3, 2, 2, 2, 2 };
+            for (int i = 0; i < actionSpec.BranchSizes.Length; i++)
+            {
+                if (actionSpec.BranchSizes[i] != requiredBranchSizes[i])
+                {
+                    throw new ArgumentException(string.Format("It seems like you tried to use a mixed action space for the agent. In this case the {0} needs 5 discrete action branches with sizes ({1}).",
+                        typeof(GoalKeeperAgent),
+                        string.Join(", ", requiredBranchSizes)));
+                }
+            }
+            return ActionSpaceType.Mixed;
+        }
+    }
+
+    /// <summary>
+    /// Helper for classifying the action space.
+    /// </summary>
+    private enum ActionSpaceType
+    {
+        Continuous,
+        MultiDiscrete,
+        Mixed
     }
 }

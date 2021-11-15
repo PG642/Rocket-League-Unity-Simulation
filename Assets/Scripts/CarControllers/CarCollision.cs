@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CarCollision : MonoBehaviour
@@ -7,6 +9,7 @@ public class CarCollision : MonoBehaviour
     private MatchController.MatchController _matchController;
     private float forwardSpeed;
     private Rigidbody rb;
+    private SuspensionCollider[] _suspensionColliders;
     public Vector3 surfaceNormal;
     private float _bumpingForce = 1200.0f;
     private float _bumpingUpForce = 100.0f;
@@ -22,6 +25,7 @@ public class CarCollision : MonoBehaviour
         previousState = GetComponent<PreviousCarState>();
         _matchController = transform.GetComponentInParent<MatchController.MatchController>();
         rb = GetComponent<Rigidbody>();
+        _suspensionColliders = GetComponentsInChildren<SuspensionCollider>();
     }
 
 
@@ -30,7 +34,12 @@ public class CarCollision : MonoBehaviour
         forwardSpeed = Vector3.Dot(rb.velocity, transform.forward);
         _lastTimeSuperSonic = forwardSpeed >= 22f ? Time.time : _lastTimeSuperSonic;
     }
-
+    
+    private void OnCollisionEnter(Collision collisionInfo)
+    {
+        DoCarCarInteraction(collisionInfo);
+    }
+    
     private void OnCollisionStay(Collision collisionInfo)
     {
         if (collisionInfo.gameObject.CompareTag("Ground"))
@@ -39,7 +48,12 @@ public class CarCollision : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collisionInfo)
+    private void OnCollisionExit(Collision collisionInfo)
+    {
+    }
+    
+
+    private void DoCarCarInteraction(Collision collisionInfo)
     {
         if (Time.time - _lastTimeCollided < 0.05f)
         {
@@ -51,14 +65,16 @@ public class CarCollision : MonoBehaviour
         {
             surfaceNormal = collisionInfo.contacts[0].normal;
         }
+
         if (!collisionInfo.gameObject.CompareTag("ControllableCar"))
             return;
         TeamController teamController = GetComponentInParent<TeamController>();
         if (teamController.GetTeamOfCar(collisionInfo.gameObject) == teamController.GetTeamOfCar(gameObject))
             return;
 
-        Vector3 directionToOtherCogLow = collisionInfo.transform.Find("CubeController").Find("cogLow").position - transform.Find("CubeController").Find("cogLow").position;
-        directionToOtherCogLow = directionToOtherCogLow.normalized;
+        Vector3 directionToOtherCogLow = collisionInfo.transform.Find("CubeController").Find("cogLow").position -
+                                         transform.Find("CubeController").Find("cogLow").position;
+
         Vector3 horizontalDirection = Vector3.ProjectOnPlane(directionToOtherCogLow, transform.up);
         //Debug.DrawRay(transform.position, horizontalDirection, Color.red, 3f);
         Vector3 verticalDirection = Vector3.ProjectOnPlane(directionToOtherCogLow, transform.right);

@@ -6,5 +6,6 @@ namespace CarControllers.CubeController
     {
         public AnimationCurve Curve;
         public AnimationCurve Curve2;
+        public AnimationCurve SteeringCurve;
     }
 }
