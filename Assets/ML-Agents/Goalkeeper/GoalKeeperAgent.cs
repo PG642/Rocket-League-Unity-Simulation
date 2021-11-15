@@ -118,29 +118,7 @@ public class GoalKeeperAgent : Agent
 
             InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
         }
-
-    }
-
-    public void Update()
-    {
-        if (Time.time - _lastResetTime > _episodeLength)
-        {
-            AddReward(0.5f);
-            AddReward((_ball.localPosition.x / 53f) / 2f);
-            Reset();
-        }
-        if(_mapData.isScoredBlue)
-        {
-            // Agent scored a goal
-            AddReward(1f);
-            Reset();
-        }
-        if (_mapData.isScoredOrange)
-        {
-            // Agent got scored on
-            AddReward(-1f);
-            Reset();
-        }
+        AssignReward();
     }
     
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -152,5 +130,30 @@ public class GoalKeeperAgent : Agent
     {
         _lastResetTime = Time.time;
         EndEpisode();
+    }
+
+    /// <summary>
+    /// Assigns a reward if the maximum episode length is reached or a goal is scored by any team.
+    /// </summary>
+    private void AssignReward()
+    {
+        if (Time.time - _lastResetTime > _episodeLength)
+        {
+            AddReward(0.5f);
+            AddReward((_ball.localPosition.x / 53f) / 2f);
+            Reset();
+        }
+        if (_mapData.isScoredBlue)
+        {
+            // Agent scored a goal
+            SetReward(1f);
+            Reset();
+        }
+        if (_mapData.isScoredOrange)
+        {
+            // Agent got scored on
+            SetReward(-1f);
+            Reset();
+        }
     }
 }
