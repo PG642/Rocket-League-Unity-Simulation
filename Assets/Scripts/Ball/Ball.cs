@@ -19,13 +19,13 @@ public class Ball : Resettable
 
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         
 
         _transform = this.transform;
         isTouchedGround = false;
-        _rb.maxAngularVelocity = maxAngluarVelocity;
-        _rb.maxDepenetrationVelocity = maxVelocity;
+        rb.maxAngularVelocity = maxAngluarVelocity;
+        rb.maxDepenetrationVelocity = maxVelocity;
     }
 
     void Update()
@@ -39,19 +39,19 @@ public class Ball : Resettable
 
         if (Input.GetButtonDown("Select"))
             ResetShot(new Vector3(7.76f, 2.98f, 0f));
-        _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, maxVelocity);
+        rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
     }
 
     private void LateUpdate()
     {
-        if (_rb.velocity.magnitude > maxVelocity)
+        if (rb.velocity.magnitude > maxVelocity)
         {
-            _rb.velocity = _rb.velocity.normalized * maxVelocity;
+            rb.velocity = rb.velocity.normalized * maxVelocity;
         }
 
-        if (_rb.angularVelocity.magnitude > maxAngluarVelocity)
+        if (rb.angularVelocity.magnitude > maxAngluarVelocity)
         {
-            _rb.angularVelocity = _rb.angularVelocity.normalized * maxAngluarVelocity;
+            rb.angularVelocity = rb.angularVelocity.normalized * maxAngluarVelocity;
         }
 
         StopBallIfTooSlow();
@@ -60,8 +60,8 @@ public class Ball : Resettable
     private void ResetShot(Vector3 pos)
     {
         _transform.position = pos;
-        _rb.velocity = new Vector3(30, 10, 0);
-        _rb.angularVelocity = Vector3.zero;
+        rb.velocity = new Vector3(30, 10, 0);
+        rb.angularVelocity = Vector3.zero;
     }
 
     [ContextMenu("ResetBall")]
@@ -69,8 +69,8 @@ public class Ball : Resettable
     {
         var desired = new Vector3(0, 12.23f, 0f);
         _transform.SetPositionAndRotation(desired, Quaternion.identity);
-        _rb.velocity = Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     [ContextMenu("ShootInRandomDirection")]
@@ -79,12 +79,12 @@ public class Ball : Resettable
         float speedRange = Random.Range(speed - 10, speed + 10);
         var randomDirection = Random.insideUnitCircle.normalized;
         var direction = new Vector3(randomDirection.x, Random.Range(-0.5f, 0.5f), randomDirection.y).normalized;
-        _rb.velocity = direction * speedRange;
+        rb.velocity = direction * speedRange;
     }
 
     private void StopBallIfTooSlow()
     {
-        if (_rb.velocity.magnitude <= MINVelocity && _rb.angularVelocity.magnitude <= MINAngularVelocity)
+        if (rb.velocity.magnitude <= MINVelocity && rb.angularVelocity.magnitude <= MINAngularVelocity)
         {
             if (_lastStoppedTime == 0.0f)
             {
@@ -93,8 +93,8 @@ public class Ball : Resettable
 
             if (_lastStoppedTime < Time.time - TimeWindowToStop && _lastStoppedTime > 0.0f)
             {
-                _rb.velocity = Vector3.zero;
-                _rb.angularVelocity = Vector3.zero;
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
         }
         else
@@ -131,10 +131,10 @@ public class Ball : Resettable
         {
             CancelUnityImpulse();
             var jBullet = CustomPhysics.CalculateBulletImpulse(col);
-            var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(_rb, col, pysionixImpulseCurve);
+            var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
             //TODO: Add bullet impulse to car
             Vector3 J = jBullet + jPsyonix;
-            _rb.AddForceAtPosition(J,col.contacts.First().point, ForceMode.Impulse);
+            rb.AddForceAtPosition(J,col.contacts.First().point, ForceMode.Impulse);
         }
     }
 
