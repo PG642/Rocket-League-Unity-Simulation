@@ -529,12 +529,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799813830}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7458b430d65787345a2c76cfb03dd011, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settingJson: {fileID: 4900000, guid: a7f34a6b92ef480a8c8638a1aef65d17, type: 3}
+  settingJson: {fileID: 4900000, guid: 1467fdda6b1b93f449776a6d132fe3ba, type: 3}
 --- !u!114 &799813833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1367,6 +1367,10 @@ PrefabInstance:
     - target: {fileID: 2532842153811578198, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_Drag
       value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 2532842153811578198, guid: 2946bfcea95aa1d40872741310581650, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2946bfcea95aa1d40872741310581650, type: 3}
