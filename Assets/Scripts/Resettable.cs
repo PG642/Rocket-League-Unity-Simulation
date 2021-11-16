@@ -1,15 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-//Allows the Rigidbody to be reset to the state of its previous frame
 public class Resettable : MonoBehaviour
 {
     public Vector3 _position;
     public Vector3 _velocity;
     public Quaternion _rotation;
     public Vector3 _angularVelocity;
-    private Rigidbody _rb;
+    protected Rigidbody _rb;
 
     public void CancelUnityImpulse()
     {
@@ -18,14 +15,14 @@ public class Resettable : MonoBehaviour
         _rb.angularVelocity = _angularVelocity;
         _rb.rotation = _rotation;
     }
+
     private void FixedUpdate()
     {
-        Clone( _rb);
+        Clone(_rb);
     }
 
     private void Clone(Rigidbody rb)
     {
-        
         _position = rb.position;
 
         _position = new Vector3

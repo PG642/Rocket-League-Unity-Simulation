@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 public static class CustomPhysics
@@ -10,7 +9,7 @@ public static class CustomPhysics
         n.y *= 0.35f;
         var f = col.transform.forward;
         n = Vector3.Normalize(n - 0.35f * Vector3.Dot(n, f) * f);
-        var J = ball.mass * Math.Abs(col.relativeVelocity.magnitude) * pysionixImpulseCurve.Evaluate(magninute/10f) * n;
+        var J = ball.mass * Math.Abs(col.relativeVelocity.magnitude) * pysionixImpulseCurve.Evaluate(col.impulse.magnitude/10f) * n;
         return J;
     }
 
@@ -20,5 +19,3 @@ public static class CustomPhysics
         return Vector3.zero;
     }
 }
-
-

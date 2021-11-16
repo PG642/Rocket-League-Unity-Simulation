@@ -1,10 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Consolation;
+﻿using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class Ball : Resettable
@@ -20,6 +15,7 @@ public class Ball : Resettable
     private const float MINAngularVelocity = 1.047f;
     private float _lastStoppedTime;
     private const float TimeWindowToStop = 2.0f;
+    private Transform _transform;
 
     void Start()
     {
@@ -134,11 +130,11 @@ public class Ball : Resettable
         if (!col.gameObject.CompareTag("Ground"))
         {
             CancelUnityImpulse();
-            J_psyonix = CustomPhysics.CalculateBulletImpulse(col);
-            J_bullet = CustomPhysics.CalculatePsyonixImpulse(_rb, col);
+            var jBullet = CustomPhysics.CalculateBulletImpulse(col);
+            var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(_rb, col, pysionixImpulseCurve);
             //TODO: Add bullet impulse to car
-            Vector3 J = J_bullet + J_psyonix;
-            _rb.AddForceAtPosition(J,col.contacts.First().point, ForceMode.VelocityChange);
+            Vector3 J = jBullet + jPsyonix;
+            _rb.AddForceAtPosition(J,col.contacts.First().point, ForceMode.Impulse);
         }
     }
 
@@ -152,3 +148,6 @@ public class Ball : Resettable
 
     
 }
+
+
+
