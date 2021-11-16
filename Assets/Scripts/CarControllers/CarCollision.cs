@@ -11,9 +11,11 @@ public class CarCollision : MonoBehaviour
     private Rigidbody rb;
     private SuspensionCollider[] _suspensionColliders;
     public Vector3 surfaceNormal;
-    private float _bumpingForce = 1200.0f;
-    private float _bumpingUpForce = 100.0f;
-    private float _bumpingTorque = 10f;
+    private float _bumpingForce = 10f;
+    private float _bumpingUpForce = 3f;
+    
+
+    private float _bumpingTorque = 8f;
     private float _lastTimeSuperSonic = 0f;
     private float _lastTimeCollided = 0f;
     private PreviousCarState previousState;
@@ -37,7 +39,14 @@ public class CarCollision : MonoBehaviour
     
     private void OnCollisionEnter(Collision collisionInfo)
     {
-        DoCarCarInteraction(collisionInfo);
+        if (collisionInfo.gameObject.CompareTag("Ground"))
+        {
+            surfaceNormal = collisionInfo.contacts[0].normal;
+        }
+        if (collisionInfo.gameObject.CompareTag("ControllableCar"))
+        {
+            DoCarCarInteraction(collisionInfo);
+        }
     }
     
     private void OnCollisionStay(Collision collisionInfo)
@@ -55,19 +64,12 @@ public class CarCollision : MonoBehaviour
 
     private void DoCarCarInteraction(Collision collisionInfo)
     {
-        if (Time.time - _lastTimeCollided < 0.05f)
+        if (Time.time - _lastTimeCollided < 0.001f)
         {
-            //RestoreCarPhysics();
+            RestoreCarPhysics();
             return;
         }
         _lastTimeCollided = Time.time;
-        if (collisionInfo.gameObject.CompareTag("Ground"))
-        {
-            surfaceNormal = collisionInfo.contacts[0].normal;
-        }
-
-        if (!collisionInfo.gameObject.CompareTag("ControllableCar"))
-            return;
         TeamController teamController = GetComponentInParent<TeamController>();
         if (teamController.GetTeamOfCar(collisionInfo.gameObject) == teamController.GetTeamOfCar(gameObject))
             return;
@@ -97,8 +99,12 @@ public class CarCollision : MonoBehaviour
         {
             Debug.Log("BUMPING!");
             GameObject bumpedCar = collisionInfo.gameObject;
-            RestoreBumperPhysics(bumpedCar, directionToOtherCogLow);
+            RestoreBumperPhysics(bumpedCar, directionToOtherCogLow.normalized);
 
+        }
+        else
+        {
+            Debug.Log("NOTHING!");
         }
     }
 
@@ -119,21 +125,15 @@ public class CarCollision : MonoBehaviour
         float bumpedvel = Mathf.Abs(Vector3.Dot(bumpedCarPrevious.velocity.normalized, -directionToOtherCogLow) * bumpedCarPrevious.velocity.magnitude);
         bumpervel = previousState.velocity.magnitude < 1e-4 ? 0 : bumpervel;
         bumpedvel = bumpedCarPrevious.velocity.magnitude < 1e-4 ? 0 : bumpedvel;
-        rb.velocity = previousState.velocity;
-        bumpedRb.velocity = bumpedCarPrevious.velocity;
         directionToOtherCogLow.y = Mathf.Abs(directionToOtherCogLow.y) < 1e-1 ? 0.1f: directionToOtherCogLow.y;
-        rb.AddForce(-directionToOtherCogLow * ((rb.mass * bumpervel + bumpedRb.mass * bumpedvel * (2f * bumpedvel - bumpervel))) / (rb.mass + bumpedRb.mass), ForceMode.Impulse);
-        bumpedRb.AddForce( directionToOtherCogLow * ((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel))) / (bumpedRb.mass + rb.mass), ForceMode.Impulse);
+        rb.velocity = previousState.velocity - directionToOtherCogLow * ((rb.mass * bumpervel + bumpedRb.mass * bumpedvel * (2f * bumpedvel - bumpervel))) / (rb.mass + bumpedRb.mass);
+        bumpedRb.velocity = bumpedCarPrevious.velocity + _bumpingForce * directionToOtherCogLow * ((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel))) / (bumpedRb.mass + rb.mass);
         Debug.Log((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel)) / (bumpedRb.mass + rb.mass));
-        Debug.Log(directionToOtherCogLow.x);
-        Debug.Log(directionToOtherCogLow.y);
-        Debug.Log(directionToOtherCogLow.z);
+        Debug.Log(directionToOtherCogLow.ToString());
         Debug.Log(directionToOtherCogLow * ((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel))) / (bumpedRb.mass + rb.mass));
 
-        transform.position = previousState.position + Time.deltaTime * rb.velocity;
-        bumpedCar.transform.position = bumpedCarPrevious.position + Time.deltaTime * bumpedRb.velocity;
+        //transform.position = previousState.position + Time.deltaTime * rb.velocity;
+        //bumpedCar.transform.position = bumpedCarPrevious.position + Time.deltaTime * bumpedRb.velocity;
     }
-
-
 
 }

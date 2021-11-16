@@ -11,7 +11,7 @@ public class PreviousCarState : MonoBehaviour
     public Vector3 eulerAngles { get; private set; }
     public Vector3 angularVelocity { get; private set; }
 
-    private void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }

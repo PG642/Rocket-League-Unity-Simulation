@@ -59,6 +59,7 @@ namespace TestScenarios
                 if ("car".Equals(gov.gameObject))
                 {
                     GameObject controllableCar = GameObject.Instantiate(controllableCarPrefab, transform);
+                    controllableCar.SetActive(true);
                     controllableCar.GetComponentInChildren<CubeBoosting>().SetInfiniteBoost(true);
                     _controllableCars.Add(controllableCar);
                     _dictCarInput.Add(controllableCar, controllableCar.GetComponent<InputManager>());
@@ -81,7 +82,7 @@ namespace TestScenarios
                     }
                     if (carRb.position.y > 0.1701f && Mathf.Abs(carRb.rotation.x) < 0.001f)
                     {
-                        var cc = GetComponentInChildren<CubeController>();
+                        var cc = controllableCar.GetComponentInChildren<CubeController>();
                         cc.isCanDrive = false;
                         cc.carState = CubeController.CarStates.Air;
                         cc.isAllWheelsSurface = false;
