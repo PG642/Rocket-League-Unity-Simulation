@@ -21,9 +21,9 @@ public class Resettable : MonoBehaviour
         Clone(rb);
     }
 
-    private void Clone(Rigidbody rb)
+    private void Clone(Rigidbody rbToClone)
     {
-        position = rb.position;
+        position = rbToClone.position;
 
         position = new Vector3
         {
@@ -31,7 +31,7 @@ public class Resettable : MonoBehaviour
             y = position.y,
             z = position.z,
         };
-        rotation = new Quaternion((rotation = rb.rotation).x, rotation.y, rotation.z, rotation.w);
+        rotation = new Quaternion((rotation = rbToClone.rotation).x, rotation.y, rotation.z, rotation.w);
         angularVelocity = new Vector3(
             angularVelocity.x,
             angularVelocity.y,
