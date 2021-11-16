@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -102,14 +103,11 @@ public class Ball : Resettable
             _lastStoppedTime = 0.0f;
         }
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        PerformPlayerHit(collision);
-    }
+    
 
     private void OnCollisionEnter(Collision collision)
     {
+        
         PerformPlayerHit(collision);
 
         if (collision.gameObject.CompareTag("Ground"))
@@ -129,12 +127,14 @@ public class Ball : Resettable
     {
         if (!col.gameObject.CompareTag("Ground"))
         {
+            Debug.Log($"{col.rigidbody.inertiaTensor}");
             CancelUnityImpulse();
-            var jBullet = CustomPhysics.CalculateBulletImpulse(col);
+            var jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col, friction);
             var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
             //TODO: Add bullet impulse to car
             Vector3 J = jBullet + jPsyonix;
             rb.AddForceAtPosition(J,col.contacts.First().point, ForceMode.Impulse);
+            col.rigidbody.AddForceAtPosition(-jBullet,col.contacts.First().point, ForceMode.Impulse);
         }
     }
 

@@ -2,6 +2,7 @@
 
 public class Resettable : MonoBehaviour
 {
+    public float friction;
     public Vector3 position;
     public Vector3 velocity;
     public Quaternion rotation;
