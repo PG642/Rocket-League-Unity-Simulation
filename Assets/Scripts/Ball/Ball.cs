@@ -127,11 +127,9 @@ public class Ball : Resettable
     {
         if (!col.gameObject.CompareTag("Ground"))
         {
-            Debug.Log($"{col.rigidbody.inertiaTensor}");
             CancelUnityImpulse();
-            var jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col, friction);
+            var jBullet = CustomPhysics.CalculateBulletImpulse(rb, col, friction);
             var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
-            //TODO: Add bullet impulse to car
             Vector3 J = jBullet + jPsyonix;
             CustomPhysics.ApplyImpulseAtPosition(rb, J, col.rigidbody.ClosestPointOnBounds(rb.position));
             CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, col.rigidbody.ClosestPointOnBounds(rb.position));
