@@ -133,8 +133,8 @@ public class Ball : Resettable
             var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
             //TODO: Add bullet impulse to car
             Vector3 J = jBullet + jPsyonix;
-            rb.AddForceAtPosition(J,col.contacts.First().point, ForceMode.Impulse);
-            col.rigidbody.AddForceAtPosition(-jBullet,col.contacts.First().point, ForceMode.Impulse);
+            CustomPhysics.ApplyImpulseAtPosition(rb, J, col.rigidbody.ClosestPointOnBounds(rb.position));
+            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, col.rigidbody.ClosestPointOnBounds(rb.position));
         }
     }
 

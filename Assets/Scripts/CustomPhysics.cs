@@ -11,7 +11,7 @@ public static class CustomPhysics
         n.y *= 0.35f;
         var f = col.transform.forward;
         n = Vector3.Normalize(n - 0.35f * Vector3.Dot(n, f) * f);
-        var J = ball.mass * Math.Abs(col.relativeVelocity.magnitude) *
+        var J = ball.mass * col.relativeVelocity.magnitude *
                 pysionixImpulseCurve.Evaluate(col.impulse.magnitude / 10f) * n;
         return J;
     }
@@ -47,6 +47,23 @@ public static class CustomPhysics
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
         
         return J;
+    }
+
+    public static Vector3 CalculateVelocityAfterImpulse(Rigidbody rb, Vector3 J)
+    {
+        return rb.velocity + J / rb.mass;
+    }
+
+    public static Vector3 CalculateAngularVelocityAfterImpulse(Rigidbody rb, Vector3 J, Vector3 collisionPoint)
+    {
+        Vector4 deltaOmega = CalculateInertiaTensorMatrix(rb.inertiaTensor, rb.inertiaTensorRotation).inverse * CalculateMatrixL(rb.position, collisionPoint) * J;
+        return rb.angularVelocity + new Vector3(deltaOmega.x, deltaOmega.y, deltaOmega.z);
+    }
+
+    public static void ApplyImpulseAtPosition(Rigidbody rb, Vector3 J, Vector3 position)
+    {
+        rb.velocity = CalculateVelocityAfterImpulse(rb, J);
+        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, J, position);
     }
 
     private static Matrix4x4 CalculateMatrixL(Vector3 rbPosition, Vector3 collisionPoint)
