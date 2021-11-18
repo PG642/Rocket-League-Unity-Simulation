@@ -28,22 +28,28 @@ public class Resettable : MonoBehaviour
 
     private void Clone(Rigidbody rbToClone)
     {
+        var rbPosition = rbToClone.position;
         position = new Vector3
         {
-            x = rbToClone.position.x,
-            y = rbToClone.position.y,
-            z = rbToClone.position.z,
+            x = rbPosition.x,
+            y = rbPosition.y,
+            z = rbPosition.z,
         };
-        rotation = new Quaternion(rbToClone.rotation.x, rbToClone.rotation.y, rbToClone.rotation.z, rbToClone.rotation.w);
+        var rbRotation = rbToClone.rotation;
+        rotation = new Quaternion(rbRotation.x, rbRotation.y, rbRotation.z, rbRotation.w);
+        var rbAngularVelocity = rbToClone.angularVelocity;
         angularVelocity = new Vector3(
-            rbToClone.angularVelocity.x,
-            rbToClone.angularVelocity.y,
-            rbToClone.angularVelocity.z);
-        velocity = new Vector3(rbToClone.velocity.x, rbToClone.velocity.y, rbToClone.velocity.z);
+            rbAngularVelocity.x,
+            rbAngularVelocity.y,
+            rbAngularVelocity.z);
+        var rbVelocity = rbToClone.velocity;
+        velocity = new Vector3(rbVelocity.x, rbVelocity.y, rbVelocity.z);
+        var rbInertiaTensor = rbToClone.inertiaTensor;
         inertiaTensor = new Vector3(
-            rbToClone.inertiaTensor.x,
-            rbToClone.inertiaTensor.y,
-            rbToClone.inertiaTensor.z);
-        inertiaTensorRotation = new Quaternion(rbToClone.inertiaTensorRotation.x, rbToClone.inertiaTensorRotation.y, rbToClone.inertiaTensorRotation.z, rbToClone.inertiaTensorRotation.w);
+            rbInertiaTensor.x,
+            rbInertiaTensor.y,
+            rbInertiaTensor.z);
+        var rbInertiaTensorRotation = rbToClone.inertiaTensorRotation;
+        inertiaTensorRotation = new Quaternion(rbInertiaTensorRotation.x, rbInertiaTensorRotation.y, rbInertiaTensorRotation.z, rbInertiaTensorRotation.w);
     }
 }

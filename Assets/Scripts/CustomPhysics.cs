@@ -19,7 +19,7 @@ public static class CustomPhysics
     public static Vector3 CalculateBulletImpulse(Rigidbody self, Collision col, float friction)
     {
         
-        var collisionPoint = col.contacts.First().point;
+        var collisionPoint = col.rigidbody.ClosestPointOnBounds(self.position);
         var carRigidBody = col.rigidbody;
         var ballRigidBody = self;
         Matrix4x4 Lc = CalculateMatrixL(carRigidBody.position, collisionPoint);
@@ -29,19 +29,19 @@ public static class CustomPhysics
         Matrix4x4 Ib = CalculateInertiaTensorMatrix(ballRigidBody.inertiaTensor, ballRigidBody.inertiaTensorRotation);
         
         Matrix4x4 scaleIdentity = Matrix4x4.identity;
-        var massScale = (1 / carRigidBody.mass + 1 / ballRigidBody.mass);
+        var massScale = ((1 / carRigidBody.mass) + (1 / ballRigidBody.mass));
         scaleIdentity[0, 0] = massScale;
         scaleIdentity[1, 1] = massScale;
         scaleIdentity[2, 2] = massScale;
  
         var M = Subtract( Subtract(scaleIdentity, (Lc* Ic.inverse * Lc)) , Lb* Ib.inverse * Lb ).inverse ;
-
-        var carV = CalculateContactVelocity(carRigidBody, collisionPoint);
-
-        var ballV = CalculateContactVelocity(ballRigidBody, collisionPoint);
+        var carV = carRigidBody.velocity - (Vector3)(Lc * carRigidBody.angularVelocity); //CalculateContactVelocity(carRigidBody, collisionPoint);
+        
+        // var ballV = CalculateContactVelocity(ballRigidBody, collisionPoint);
+        var ballV =  ballRigidBody.velocity - (Vector3)(Lb * ballRigidBody.angularVelocity);
         var deltaV = carV - ballV;
         Vector3 J = Subtract(Matrix4x4.zero, M) * deltaV;
-        var n = (collisionPoint - carRigidBody.position).normalized;
+        var n = (collisionPoint - ballRigidBody.position) / (collisionPoint - ballRigidBody.position).magnitude;
         var Jperp = Vector3.Dot(J, n) * n;
         var Jpara = J - Jperp;
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
@@ -56,8 +56,8 @@ public static class CustomPhysics
 
     public static Vector3 CalculateAngularVelocityAfterImpulse(Rigidbody rb, Vector3 J, Vector3 collisionPoint)
     {
-        Vector4 deltaOmega = CalculateInertiaTensorMatrix(rb.inertiaTensor, rb.inertiaTensorRotation).inverse * CalculateMatrixL(rb.position, collisionPoint) * J;
-        return rb.angularVelocity + new Vector3(deltaOmega.x, deltaOmega.y, deltaOmega.z);
+        Vector3 deltaOmega = CalculateInertiaTensorMatrix(rb.inertiaTensor, rb.inertiaTensorRotation).inverse * CalculateMatrixL(rb.position, collisionPoint) * J;
+        return rb.angularVelocity + deltaOmega;
     }
 
     public static void ApplyImpulseAtPosition(Rigidbody rb, Vector3 J, Vector3 position)
@@ -68,19 +68,14 @@ public static class CustomPhysics
 
     private static Matrix4x4 CalculateMatrixL(Vector3 rbPosition, Vector3 collisionPoint)
     {
-        Vector3 dist = collisionPoint - rbPosition;
+        Vector3 dist =  collisionPoint - rbPosition ;
         return new Matrix4x4(
             new Vector4(0, -dist.z, dist.y, 0),
             new Vector4(dist.z, 0, -dist.x, 0),
             new Vector4(-dist.y, dist.x, 0, 0),
             new Vector4(0, 0, 0, 1));
     }
-
-    private static Vector3 CalculateContactVelocity(Rigidbody rb, Vector3 collisionPoint)
-    {
-        return rb.velocity + Vector3.Cross(rb.angularVelocity,
-            collisionPoint - rb.position);
-    }
+    
 
     private static Matrix4x4 CalculateInertiaTensorMatrix(Vector3 inertiaTensor, Quaternion inertiaTensorRotation)
     {
@@ -102,5 +97,6 @@ public static class CustomPhysics
 
         return result;
     }
+    
 
 }
