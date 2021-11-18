@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Random = UnityEngine.Random;
-
+using System.Linq;
 
 namespace MatchController
 {
@@ -83,6 +83,23 @@ namespace MatchController
             car.transform.rotation = spawnLocation.rotation;
 
             return car;
+        }
+
+        public void SpawnOppositeCars(GameObject[] teamBlue, GameObject[] teamOrane)
+        {
+            var teamSize = teamBlue.Length;
+            var spawnNum = _blueSpawnPositions.childCount;
+
+            var rnd = new System.Random();
+            var spawns = Enumerable.Range(0, spawnNum).ToList().OrderBy(x=>rnd.Next()).Take(teamSize).ToList();
+
+            for(int i=0; i<teamSize; i++)
+            {
+                teamBlue[i].transform.position = _blueSpawnPositions.GetChild(spawns[i]).position;
+                teamBlue[i].transform.rotation = _blueSpawnPositions.GetChild(spawns[i]).rotation;
+                teamOrane[i].transform.position = _orangeSpawnPositions.GetChild(spawns[i]).position;
+                teamOrane[i].transform.rotation = _orangeSpawnPositions.GetChild(spawns[i]).rotation;
+            }
         }
 
         public GameObject SpawnBall(GameObject ball)
