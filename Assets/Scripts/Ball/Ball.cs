@@ -1,35 +1,32 @@
 ﻿using System;
-using System.Diagnostics;
-using Consolation;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
-public class Ball : MonoBehaviour
+public class Ball : Resettable
 {
     [SerializeField] [Range(10, 80)] float randomSpeed = 40;
     [SerializeField] float initialForce;
     [SerializeField] float hitMultiplier;
-    public float _maxAngluarVelocity = 6.0f;
-    public float _maxVelocity = 60.0f;
+    public float maxAngluarVelocity = 6.0f;
+    public float maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     public bool isTouchedGround = false;
-    private float _minVelocity = 0.4f;
-    private float _minAngularVelocity = 1.047f;
+    private const float MINVelocity = 0.4f;
+    private const float MINAngularVelocity = 1.047f;
     private float _lastStoppedTime;
-
-    Rigidbody _rb;
-    Transform _transform;
-    private float _timeWindowToStop = 2.0f;
+    private const float TimeWindowToStop = 2.0f;
+    private Transform _transform;
 
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
+        
+
         _transform = this.transform;
         isTouchedGround = false;
-        _rb.maxAngularVelocity = _maxAngluarVelocity;
-        _rb.maxDepenetrationVelocity = _maxVelocity;
+        rb.maxAngularVelocity = maxAngluarVelocity;
+        rb.maxDepenetrationVelocity = maxVelocity;
     }
 
     void Update()
@@ -43,19 +40,19 @@ public class Ball : MonoBehaviour
 
         if (Input.GetButtonDown("Select"))
             ResetShot(new Vector3(7.76f, 2.98f, 0f));
-        _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _maxVelocity);
+        rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
     }
 
     private void LateUpdate()
     {
-        if (_rb.velocity.magnitude > _maxVelocity)
+        if (rb.velocity.magnitude > maxVelocity)
         {
-            _rb.velocity = _rb.velocity.normalized * _maxVelocity;
+            rb.velocity = rb.velocity.normalized * maxVelocity;
         }
 
-        if (_rb.angularVelocity.magnitude > _maxAngluarVelocity)
+        if (rb.angularVelocity.magnitude > maxAngluarVelocity)
         {
-            _rb.angularVelocity = _rb.angularVelocity.normalized * _maxVelocity;
+            rb.angularVelocity = rb.angularVelocity.normalized * maxAngluarVelocity;
         }
 
         StopBallIfTooSlow();
@@ -64,8 +61,8 @@ public class Ball : MonoBehaviour
     private void ResetShot(Vector3 pos)
     {
         _transform.position = pos;
-        _rb.velocity = new Vector3(30, 10, 0);
-        _rb.angularVelocity = Vector3.zero;
+        rb.velocity = new Vector3(30, 10, 0);
+        rb.angularVelocity = Vector3.zero;
     }
 
     [ContextMenu("ResetBall")]
@@ -73,8 +70,8 @@ public class Ball : MonoBehaviour
     {
         var desired = new Vector3(0, 12.23f, 0f);
         _transform.SetPositionAndRotation(desired, Quaternion.identity);
-        _rb.velocity = Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     [ContextMenu("ShootInRandomDirection")]
@@ -83,22 +80,22 @@ public class Ball : MonoBehaviour
         float speedRange = Random.Range(speed - 10, speed + 10);
         var randomDirection = Random.insideUnitCircle.normalized;
         var direction = new Vector3(randomDirection.x, Random.Range(-0.5f, 0.5f), randomDirection.y).normalized;
-        _rb.velocity = direction * speedRange;
+        rb.velocity = direction * speedRange;
     }
 
     private void StopBallIfTooSlow()
     {
-        if (_rb.velocity.magnitude <= _minVelocity && _rb.angularVelocity.magnitude <= _minAngularVelocity)
+        if (rb.velocity.magnitude <= MINVelocity && rb.angularVelocity.magnitude <= MINAngularVelocity)
         {
             if (_lastStoppedTime == 0.0f)
             {
                 _lastStoppedTime = Time.time;
             }
 
-            if (_lastStoppedTime < Time.time - _timeWindowToStop && _lastStoppedTime > 0.0f)
+            if (_lastStoppedTime < Time.time - TimeWindowToStop && _lastStoppedTime > 0.0f)
             {
-                _rb.velocity = Vector3.zero;
-                _rb.angularVelocity = Vector3.zero;
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
         }
         else
@@ -106,20 +103,14 @@ public class Ball : MonoBehaviour
             _lastStoppedTime = 0.0f;
         }
     }
+    
 
-    private void OnCollisionEnter(Collision col)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (col.gameObject.CompareTag("Player"))
-        {
-            float force = initialForce + col.relativeVelocity.magnitude * hitMultiplier;
-            //Vector3 dir = transform.position - col.contacts[0].point;
-            var dir = _rb.position - col.transform.position;
-            _rb.AddForce(CalculatePsyonixImpulse(col), ForceMode.Impulse);
-            _rb.AddForce(dir.normalized * force);
-            Debug.Log($" Force : {dir.normalized * force}");
-        }
+        
+        PerformPlayerHit(collision);
 
-        if (col.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground"))
         {
             isTouchedGround = true;
         }
@@ -132,6 +123,19 @@ public class Ball : MonoBehaviour
         //    }
     }
 
+    private void PerformPlayerHit(Collision col)
+    {
+        if (!col.gameObject.CompareTag("Ground"))
+        {
+            CancelUnityImpulse();
+            var jBullet = CustomPhysics.CalculateBulletImpulse(rb, col, friction);
+            var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
+            Vector3 J = -jBullet + jPsyonix;
+            CustomPhysics.ApplyImpulseAtPosition(rb, J , rb.ClosestPointOnBounds(col.rigidbody.position));
+            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, jBullet, col.rigidbody.ClosestPointOnBounds(rb.position));
+        }
+    }
+
     private void OnCollisionExit(Collision other)
     {
         if (other.gameObject.CompareTag("Ground"))
@@ -140,25 +144,8 @@ public class Ball : MonoBehaviour
         }
     }
 
-    Vector3 CalculatePsyonixImpulse(Collision col)
-    {
-        var n = _rb.position - col.transform.position;
-        n.y *= 0.35f;
-        var f = col.transform.forward;
-        var dot = Vector3.Dot(n, f);
-        n = Vector3.Normalize(n - 0.35f * dot * f);
-        var impulse = _rb.mass * Math.Abs(col.relativeVelocity.magnitude) * scaling(col.relativeVelocity.magnitude) *
-                      n; // TODO scaling
-        //Debug.Log(impulse);
-        //Debug.Log(col.relativeVelocity.magnitude);
-        return impulse;
-    }
-
-    float scaling(float magninute)
-    {
-        var test = pysionixImpulseCurve.Evaluate(magninute);
-
-        Debug.Log($"{Time.time}: Curve {test} : Value {magninute}");
-        return test;
-    }
+    
 }
+
+
+

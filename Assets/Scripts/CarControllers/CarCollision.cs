@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CarCollision : MonoBehaviour
+public class CarCollision : Resettable
 {
     private MatchController.MatchController _matchController;
     private float forwardSpeed;
