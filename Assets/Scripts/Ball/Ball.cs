@@ -105,6 +105,7 @@ public class Ball : Resettable
     }
     
 
+
     private void OnCollisionEnter(Collision collision)
     {
         
@@ -128,11 +129,15 @@ public class Ball : Resettable
         if (!col.gameObject.CompareTag("Ground"))
         {
             CancelUnityImpulse();
-            var jBullet = CustomPhysics.CalculateBulletImpulse(rb, col, friction);
+            col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
+            var jBullet =  CustomPhysics.CalculateBulletImpulse(rb, col, friction);
             var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
             Vector3 J = -jBullet + jPsyonix;
-            CustomPhysics.ApplyImpulseAtPosition(rb, J , rb.ClosestPointOnBounds(col.rigidbody.position));
-            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, jBullet, col.rigidbody.ClosestPointOnBounds(rb.position));
+            CustomPhysics.ApplyImpulseAtPosition(rb, jBullet , rb.ClosestPointOnBounds(col.rigidbody.position));
+            CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix , rb.position);
+            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, col.rigidbody.ClosestPointOnBounds(rb.position));
+            Debug.Log(jBullet);
+            Debug.Log(jPsyonix);
         }
     }
 

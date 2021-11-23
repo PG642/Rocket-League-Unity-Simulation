@@ -41,7 +41,7 @@ public static class CustomPhysics
         var ballV =  ballRigidBody.velocity - (Vector3)(Lb * ballRigidBody.angularVelocity);
         var deltaV = carV - ballV;
         Vector3 J = Subtract(Matrix4x4.zero, M) * deltaV;
-        var n = (collisionPoint - ballRigidBody.position) / (collisionPoint - ballRigidBody.position).magnitude;
+        var n = ( ballRigidBody.position- collisionPoint) / (ballRigidBody.position- collisionPoint).magnitude;
         var Jperp = Vector3.Dot(J, n) * n;
         var Jpara = J - Jperp;
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
