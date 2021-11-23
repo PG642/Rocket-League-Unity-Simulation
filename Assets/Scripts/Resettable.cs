@@ -13,9 +13,9 @@ public class Resettable : MonoBehaviour
     protected Rigidbody rb;
 
 
-    private void Start()
+    void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
     }
 
     public void CancelUnityImpulse()
@@ -28,7 +28,7 @@ public class Resettable : MonoBehaviour
         rb.inertiaTensorRotation = inertiaTensorRotation;
     }
 
-    private void FixedUpdate()
+    public void FixedUpdate()
     {
         Clone(rb);
     }

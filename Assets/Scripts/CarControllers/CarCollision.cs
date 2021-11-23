@@ -14,6 +14,7 @@ public class CarCollision : Resettable
 
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
         _matchController = transform.GetComponentInParent<MatchController.MatchController>();
         _suspensionColliders = GetComponentsInChildren<SuspensionCollider>();
     }
@@ -21,6 +22,7 @@ public class CarCollision : Resettable
 
     private void FixedUpdate()
     {
+        base.FixedUpdate();
         //TODO: Conform to Resettable
         forwardSpeed = Vector3.Dot(GetComponent<Rigidbody>().velocity, transform.forward);
     }

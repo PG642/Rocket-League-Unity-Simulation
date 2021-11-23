@@ -7,21 +7,21 @@ public static class CustomPhysics
 {
     public static Vector3 CalculatePsyonixImpulse(Rigidbody ball, Collision col, AnimationCurve pysionixImpulseCurve)
     {
-        var n = ball.position - col.rigidbody.position;
+        Vector3 n = ball.position - col.rigidbody.position;
         n.y *= 0.35f;
-        var f = col.transform.forward;
+        Vector3 f = col.transform.forward;
         n = Vector3.Normalize(n - 0.35f * Vector3.Dot(n, f) * f);
-        var J = ball.mass * col.relativeVelocity.magnitude *
+        Vector3 J = ball.mass * col.relativeVelocity.magnitude *
                 pysionixImpulseCurve.Evaluate(col.impulse.magnitude / 10f) * n;
         return J;
     }
 
     public static Vector3 CalculateBulletImpulse(Rigidbody self, Collision col, float friction)
     {
-        
-        var collisionPoint = col.rigidbody.ClosestPointOnBounds(self.position);
-        var carRigidBody = col.rigidbody;
-        var ballRigidBody = self;
+
+        Vector3 collisionPoint = col.GetContact(0).point;//col.rigidbody.ClosestPointOnBounds(self.position);
+        Rigidbody carRigidBody = col.rigidbody;
+        Rigidbody ballRigidBody = self;
         Matrix4x4 Lc = CalculateMatrixL(carRigidBody.position, collisionPoint);
         Matrix4x4 Lb = CalculateMatrixL(ballRigidBody.position, collisionPoint);
 
@@ -29,21 +29,19 @@ public static class CustomPhysics
         Matrix4x4 Ib = CalculateInertiaTensorMatrix(ballRigidBody.inertiaTensor, ballRigidBody.inertiaTensorRotation);
         
         Matrix4x4 scaleIdentity = Matrix4x4.identity;
-        var massScale = ((1 / carRigidBody.mass) + (1 / ballRigidBody.mass));
+        float massScale = ((1 / carRigidBody.mass) + (1 / ballRigidBody.mass));
         scaleIdentity[0, 0] = massScale;
         scaleIdentity[1, 1] = massScale;
         scaleIdentity[2, 2] = massScale;
  
-        var M = Subtract( Subtract(scaleIdentity, (Lc* Ic.inverse * Lc)) , Lb* Ib.inverse * Lb ).inverse ;
-        var carV = carRigidBody.velocity - (Vector3)(Lc * carRigidBody.angularVelocity); //CalculateContactVelocity(carRigidBody, collisionPoint);
-        
-        // var ballV = CalculateContactVelocity(ballRigidBody, collisionPoint);
-        var ballV =  ballRigidBody.velocity - (Vector3)(Lb * ballRigidBody.angularVelocity);
-        var deltaV = carV - ballV;
+        Matrix4x4 M = Subtract( Subtract(scaleIdentity, (Lc* Ic.inverse * Lc)) , Lb* Ib.inverse * Lb ).inverse;
+        Vector3 carV = carRigidBody.velocity - (Vector3)(Lc * carRigidBody.angularVelocity);
+        Vector3 ballV =  ballRigidBody.velocity - (Vector3)(Lb * ballRigidBody.angularVelocity);
+        Vector3 deltaV = carV - ballV;
         Vector3 J = Subtract(Matrix4x4.zero, M) * deltaV;
-        var n = ( ballRigidBody.position- collisionPoint) / (ballRigidBody.position- collisionPoint).magnitude;
-        var Jperp = Vector3.Dot(J, n) * n;
-        var Jpara = J - Jperp;
+        Vector3 n = (collisionPoint - ballRigidBody.position) / (collisionPoint - ballRigidBody.position).magnitude;
+        Vector3 Jperp = Vector3.Dot(J, n) * n;
+        Vector3 Jpara = J - Jperp;
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
         
         return J;
@@ -86,15 +84,14 @@ public static class CustomPhysics
 
     private static Matrix4x4 Subtract(Matrix4x4 first, Matrix4x4 second)
     {
-        Matrix4x4 result = Matrix4x4.zero;
-        for (int i = 0; i < 4; i++)
+        Matrix4x4 result = Matrix4x4.identity;
+        for (int i = 0; i < 3; i++)
         {
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 3; j++)
             {
                 result[i,j] = first[i,j] - second[i,j];
             }
         }
-
         return result;
     }
     

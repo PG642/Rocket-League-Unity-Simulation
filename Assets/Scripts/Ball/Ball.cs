@@ -21,7 +21,6 @@ public class Ball : Resettable
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        
 
         _transform = this.transform;
         isTouchedGround = false;
@@ -130,12 +129,13 @@ public class Ball : Resettable
         {
             CancelUnityImpulse();
             col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
-            var jBullet =  CustomPhysics.CalculateBulletImpulse(rb, col, friction);
+            var jBullet =  -CustomPhysics.CalculateBulletImpulse(rb, col, friction);
             var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
-            Vector3 J = -jBullet + jPsyonix;
-            CustomPhysics.ApplyImpulseAtPosition(rb, jBullet , rb.ClosestPointOnBounds(col.rigidbody.position));
+            Vector3 J = jBullet + jPsyonix;
+            Vector3 contactPoint = col.GetContact(0).point; //col.rigidbody.ClosestPointOnBounds(rb.position);
+            CustomPhysics.ApplyImpulseAtPosition(rb, jBullet , contactPoint);
             CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix , rb.position);
-            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, col.rigidbody.ClosestPointOnBounds(rb.position));
+            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, contactPoint);
             Debug.Log(jBullet);
             Debug.Log(jPsyonix);
         }
