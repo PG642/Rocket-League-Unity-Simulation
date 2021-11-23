@@ -70,10 +70,10 @@ public static class CustomPhysics
     {
         Vector3 dist =  collisionPoint - rbPosition ;
         return new Matrix4x4(
-            new Vector4(0, -dist.z, dist.y, 0),
-            new Vector4(dist.z, 0, -dist.x, 0),
-            new Vector4(-dist.y, dist.x, 0, 0),
-            new Vector4(0, 0, 0, 1));
+            new Vector4(      0, -dist.z,  dist.y, 0),
+            new Vector4( dist.z,       0, -dist.x, 0),
+            new Vector4(-dist.y,  dist.x,       0, 0),
+            new Vector4(      0,       0,       0, 1));
     }
     
 
