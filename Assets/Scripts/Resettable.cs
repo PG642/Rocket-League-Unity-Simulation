@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Resettable : MonoBehaviour
 {
@@ -10,6 +11,12 @@ public class Resettable : MonoBehaviour
     public Vector3 angularVelocity;
     public Quaternion inertiaTensorRotation;
     protected Rigidbody rb;
+
+
+    private void Start()
+    {
+        
+    }
 
     public void CancelUnityImpulse()
     {
