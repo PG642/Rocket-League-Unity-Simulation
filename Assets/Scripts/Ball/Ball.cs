@@ -18,10 +18,9 @@ public class Ball : Resettable
     private const float TimeWindowToStop = 2.0f;
     private Transform _transform;
 
-    void Start()
+    public override void Start()
     {
-        rb = GetComponent<Rigidbody>();
-
+        base.Start();
         _transform = this.transform;
         isTouchedGround = false;
         rb.maxAngularVelocity = maxAngluarVelocity;

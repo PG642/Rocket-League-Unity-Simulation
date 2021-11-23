@@ -13,7 +13,7 @@ public class Resettable : MonoBehaviour
     protected Rigidbody rb;
 
 
-    void Start()
+    public virtual void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
@@ -28,7 +28,7 @@ public class Resettable : MonoBehaviour
         rb.inertiaTensorRotation = inertiaTensorRotation;
     }
 
-    public void FixedUpdate()
+    public virtual void FixedUpdate()
     {
         Clone(rb);
     }
