@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class Resettable : MonoBehaviour
 {
-    public float friction = 2f;
     public Vector3 position;
     public Vector3 velocity;
     private Vector3 inertiaTensor;

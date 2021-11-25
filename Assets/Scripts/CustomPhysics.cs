@@ -5,6 +5,8 @@ using UnityEngine;
 
 public static class CustomPhysics
 {
+
+    public static float friction = 2f;
     public static Vector3 CalculatePsyonixImpulse(Rigidbody ball, Collision col, AnimationCurve pysionixImpulseCurve)
     {
         Vector3 n = ball.position - col.rigidbody.position;
@@ -16,12 +18,10 @@ public static class CustomPhysics
         return J;
     }
 
-    public static Vector3 CalculateBulletImpulse(Rigidbody self, Collision col, float friction)
+    public static Vector3 CalculateBulletImpulse(Rigidbody self, Rigidbody other, Vector3 collisionPoint)
     {
-
-        Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(self.position); //col.GetContact(0).point;
-        Rigidbody carRigidBody = col.rigidbody;
         Rigidbody ballRigidBody = self;
+        Rigidbody carRigidBody = other;
         Matrix4x4 Lc = CalculateMatrixL(carRigidBody.position, collisionPoint);
         Matrix4x4 Lb = CalculateMatrixL(ballRigidBody.position, collisionPoint);
 
@@ -58,13 +58,13 @@ public static class CustomPhysics
     public static Vector3 CalculateAngularVelocityAfterImpulse(Rigidbody rb, Vector3 J, Vector3 collisionPoint)
     {
         Vector3 deltaOmega = CalculateInertiaTensorMatrix(rb.inertiaTensor, rb.inertiaTensorRotation).inverse * CalculateMatrixL(rb.position, collisionPoint) * J;
-        return rb.angularVelocity + deltaOmega;
+        return rb.angularVelocity - deltaOmega;
     }
 
     public static void ApplyImpulseAtPosition(Rigidbody rb, Vector3 J, Vector3 position)
     {
         rb.velocity = CalculateVelocityAfterImpulse(rb, J);
-        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, -J, position);
+        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, J, position);
     }
 
     private static Matrix4x4 CalculateMatrixL(Vector3 rbPosition, Vector3 collisionPoint)
