@@ -207,7 +207,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57328d66b70a3d4fa10ca170bdcb747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friction: 0
   position: {x: 0, y: 0, z: 0}
   velocity: {x: 0, y: 0, z: 0}
   rotation: {x: 0, y: 0, z: 0, w: 0}
@@ -570,9 +569,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roundPosition: 1
   decimalsPosition: 4
-  roundVelocity: 1
+  roundVelocity: 0
   decimalsVelocity: 4
-  roundAngularVelocity: 1
+  roundAngularVelocity: 0
   decimalsAngularVelocity: 4
   roundRotation: 0
   decimalsRotation: 4

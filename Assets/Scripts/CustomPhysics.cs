@@ -45,8 +45,6 @@ public static class CustomPhysics
 
         Vector3 Jperp = Vector3.Dot(J, n) * n;
         Vector3 Jpara = J - Jperp;
-        Debug.Log(Jperp);
-        Debug.Log(Jpara);
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
         
         return J;
@@ -54,7 +52,6 @@ public static class CustomPhysics
 
     public static Vector3 CalculateVelocityAfterImpulse(Rigidbody rb, Vector3 J)
     {
-        Debug.Log(J);
         return rb.velocity + J / rb.mass;
     }
 
@@ -67,7 +64,7 @@ public static class CustomPhysics
     public static void ApplyImpulseAtPosition(Rigidbody rb, Vector3 J, Vector3 position)
     {
         rb.velocity = CalculateVelocityAfterImpulse(rb, J);
-        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, -J, position);
+        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, J, position);
     }
 
     private static Matrix4x4 CalculateMatrixL(Vector3 rbPosition, Vector3 collisionPoint)
