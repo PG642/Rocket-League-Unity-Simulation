@@ -39,7 +39,10 @@ public static class CustomPhysics
         Vector3 ballV =  ballRigidBody.velocity - (Vector3)(Lb * ballRigidBody.angularVelocity);
         Vector3 deltaV = carV - ballV;
         Vector3 J = Subtract(Matrix4x4.zero, M) * deltaV;
+
+        //n ist normale des aufprallpunkts. Wir aktuell für kollision mit kugel berechnet, bei kollision mit auto muss verallgemeinerte formel her
         Vector3 n = (collisionPoint - ballRigidBody.position) / (collisionPoint - ballRigidBody.position).magnitude;
+
         Vector3 Jperp = Vector3.Dot(J, n) * n;
         Vector3 Jpara = J - Jperp;
         Debug.Log(Jperp);
@@ -64,7 +67,7 @@ public static class CustomPhysics
     public static void ApplyImpulseAtPosition(Rigidbody rb, Vector3 J, Vector3 position)
     {
         rb.velocity = CalculateVelocityAfterImpulse(rb, J);
-        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, J, position);
+        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, -J, position);
     }
 
     private static Matrix4x4 CalculateMatrixL(Vector3 rbPosition, Vector3 collisionPoint)

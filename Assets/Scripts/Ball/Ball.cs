@@ -141,9 +141,9 @@ public class Ball : Resettable
             CancelUnityImpulse();
             col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
 
+
             var jBullet =  -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
             var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
-            //Vector3 J = jBullet + jPsyonix;
             
 
             CustomPhysics.ApplyImpulseAtPosition(rb, jBullet , collisionPoint);
