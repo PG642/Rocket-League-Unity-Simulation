@@ -137,7 +137,7 @@ public class Ball : Resettable
     {
         if (!col.gameObject.CompareTag("Ground"))
         {
-            Vector3 collisionPoint = col.GetContact(0).point; // col.rigidbody.ClosestPointOnBounds(rb.position); //col.GetContact(0).point;
+            Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
             CancelUnityImpulse();
             col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
 
