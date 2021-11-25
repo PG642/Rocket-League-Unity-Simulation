@@ -102,6 +102,17 @@ public class Ball : Resettable
         }
     }
     
+    private void OnCollisionStay(Collision collision)
+    {
+        /*
+        PerformPlayerHit(collision);
+
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isTouchedGround = true;
+        }
+        */
+    }
 
 
     private void OnCollisionEnter(Collision collision)
@@ -132,7 +143,7 @@ public class Ball : Resettable
 
             var jBullet =  -CustomPhysics.CalculateBulletImpulse(rb, col, friction);
             var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
-            Vector3 J = jBullet + jPsyonix;
+            //Vector3 J = jBullet + jPsyonix;
             
 
             CustomPhysics.ApplyImpulseAtPosition(rb, jBullet , contactPoint);
@@ -140,8 +151,8 @@ public class Ball : Resettable
 
             CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, contactPoint);
 
-            Debug.Log(jBullet);
-            Debug.Log(jPsyonix);
+            
+            
         }
     }
 

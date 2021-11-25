@@ -12,14 +12,14 @@ public static class CustomPhysics
         Vector3 f = col.transform.forward;
         n = Vector3.Normalize(n - 0.35f * Vector3.Dot(n, f) * f);
         Vector3 J = ball.mass * col.relativeVelocity.magnitude *
-                pysionixImpulseCurve.Evaluate(col.impulse.magnitude / 10f) * n;
+                pysionixImpulseCurve.Evaluate(col.relativeVelocity.magnitude / 10f) * n;
         return J;
     }
 
     public static Vector3 CalculateBulletImpulse(Rigidbody self, Collision col, float friction)
     {
 
-        Vector3 collisionPoint = col.GetContact(0).point;//col.rigidbody.ClosestPointOnBounds(self.position);
+        Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(self.position); //col.GetContact(0).point;
         Rigidbody carRigidBody = col.rigidbody;
         Rigidbody ballRigidBody = self;
         Matrix4x4 Lc = CalculateMatrixL(carRigidBody.position, collisionPoint);
@@ -42,6 +42,8 @@ public static class CustomPhysics
         Vector3 n = (collisionPoint - ballRigidBody.position) / (collisionPoint - ballRigidBody.position).magnitude;
         Vector3 Jperp = Vector3.Dot(J, n) * n;
         Vector3 Jpara = J - Jperp;
+        Debug.Log(Jperp);
+        Debug.Log(Jpara);
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
         
         return J;
@@ -49,6 +51,7 @@ public static class CustomPhysics
 
     public static Vector3 CalculateVelocityAfterImpulse(Rigidbody rb, Vector3 J)
     {
+        Debug.Log(J);
         return rb.velocity + J / rb.mass;
     }
 
@@ -61,7 +64,7 @@ public static class CustomPhysics
     public static void ApplyImpulseAtPosition(Rigidbody rb, Vector3 J, Vector3 position)
     {
         rb.velocity = CalculateVelocityAfterImpulse(rb, J);
-        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, J, position);
+        rb.angularVelocity = CalculateAngularVelocityAfterImpulse(rb, -J, position);
     }
 
     private static Matrix4x4 CalculateMatrixL(Vector3 rbPosition, Vector3 collisionPoint)
@@ -79,7 +82,7 @@ public static class CustomPhysics
     {
         Matrix4x4 R = Matrix4x4.Rotate(inertiaTensorRotation); //rotation matrix created
         Matrix4x4 S = Matrix4x4.Scale(inertiaTensor); // diagonal matrix created
-        return R * S * R.transpose; // R is orthogonal, so R.transpose == R.inverse
+        return R * S * R.inverse; // R is orthogonal, so R.transpose == R.inverse
     }
 
     private static Matrix4x4 Subtract(Matrix4x4 first, Matrix4x4 second)
