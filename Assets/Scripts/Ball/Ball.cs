@@ -132,7 +132,6 @@ public class Ball : Resettable
 
     private void Bounce(Collision col)
     {
-        Debug.Log("Bounce!");
         Vector3 n = col.GetContact(0).normal;
         CancelUnityImpulse();
 
@@ -147,8 +146,6 @@ public class Ball : Resettable
         Vector3 deltaVPara = -Math.Min(1, friction * ratio) * mu * s;
 
         rb.velocity += deltaVPara + deltaVPerp;
-        Debug.Log(A * radius);
-        Debug.Log(Vector3.Cross(deltaVPara, n));
         rb.angularVelocity += A * radius * Vector3.Cross(deltaVPara, n);
     }
 
