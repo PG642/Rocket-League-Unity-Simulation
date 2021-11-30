@@ -32,19 +32,18 @@ public class Ball : Resettable
         rb.maxDepenetrationVelocity = maxVelocity;
     }
 
-    void Update()
-    {
-        //TODO: move inputs to the InputController
-        if (Input.GetKeyDown(KeyCode.T))
-            ShootInRandomDirection(randomSpeed);
-
-        if (Input.GetKeyDown(KeyCode.R))
-            ResetBall();
-
-        if (Input.GetButtonDown("Select"))
-            ResetShot(new Vector3(7.76f, 2.98f, 0f));
-        rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
-    }
+    // void Update()
+    // {
+    //    if (Input.GetKeyDown(KeyCode.T))
+    //         ShootInRandomDirection(randomSpeed);
+    //
+    //     if (Input.GetKeyDown(KeyCode.R))
+    //         ResetBall();
+    //
+    //     if (Input.GetButtonDown("Select"))
+    //         ResetShot(new Vector3(7.76f, 2.98f, 0f));
+    //     rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
+    // }
 
     private void LateUpdate()
     {
