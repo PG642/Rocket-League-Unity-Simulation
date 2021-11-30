@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Random = UnityEngine.Random;
-
+using System.Linq;
 
 namespace MatchController
 {
@@ -22,7 +22,7 @@ namespace MatchController
         private Transform _orangeRespawnPositions;
         private Transform _orangeSpawnPositions;
         
-        private void Start()
+        private void Awake()
         {
             var spawnPositions = transform.Find("World").Find("Rocket_Map").Find("SpawnPositions");
 
@@ -46,9 +46,10 @@ namespace MatchController
             Transform spawnPositions;
             if (team == TeamController.Team.ORANGE)
                 spawnPositions = wasDemolished ? _orangeRespawnPositions : _orangeSpawnPositions;
+
             else
                 spawnPositions = wasDemolished ? _blueRespawnPositions : _blueSpawnPositions;
-            
+
             var childNum = spawnPositions.childCount;
             var idx = Random.Range(0, childNum - 1);
             for (var i = 0; i < childNum; i++)
@@ -82,6 +83,23 @@ namespace MatchController
             car.transform.rotation = spawnLocation.rotation;
 
             return car;
+        }
+
+        public void SpawnOppositeCars(GameObject[] teamBlue, GameObject[] teamOrane)
+        {
+            var teamSize = teamBlue.Length;
+            var spawnNum = _blueSpawnPositions.childCount;
+
+            var rnd = new System.Random();
+            var spawns = Enumerable.Range(0, spawnNum).ToList().OrderBy(x=>rnd.Next()).Take(teamSize).ToList();
+
+            for(int i=0; i<teamSize; i++)
+            {
+                teamBlue[i].transform.position = _blueSpawnPositions.GetChild(spawns[i]).position;
+                teamBlue[i].transform.rotation = _blueSpawnPositions.GetChild(spawns[i]).rotation;
+                teamOrane[i].transform.position = _orangeSpawnPositions.GetChild(spawns[i]).position;
+                teamOrane[i].transform.rotation = _orangeSpawnPositions.GetChild(spawns[i]).rotation;
+            }
         }
 
         public GameObject SpawnBall(GameObject ball)

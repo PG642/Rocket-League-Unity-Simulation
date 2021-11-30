@@ -1,25 +1,27 @@
 using System.Collections;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using System;
 using Unity.MLAgents.Policies;
+using Random = UnityEngine.Random;
 
-
-public class GoalKeeperAgent : Agent
+public class OneVsOneAgent : Agent
 {
     // Start is called before the first frame update
 
-    private Rigidbody _rb, _rbBall;
+    private TeamController _teamController;
+    private TeamController.Team _team;
+    private MapData _mapData;
 
-    private float _episodeLength = 10f;
+    private Rigidbody _rb, _rbBall, _rbEnemy;
+
+    private float _episodeLength;
     private float _lastResetTime;
 
-    private Transform _ball, _shootAt;
-    private Vector3 _startPosition;
-
+    private Transform _ball, _enemy;
 
     private CubeJumping _jumpControl;
     private CubeController _controller;
@@ -27,27 +29,21 @@ public class GoalKeeperAgent : Agent
     private CubeGroundControl _groundControl;
     private CubeAirControl _airControl;
 
-    private MapData _mapData;
-
     public InputManager InputManager;
 
-    /// <summary>
-    /// Contains the possible values for the discretized actions.
-    /// </summary>
     private readonly float[] DISCRETE_ACTIONS = { -1f, -0.5f, 0f, 0.5f, 1f };
-
-    /// <summary>
-    /// Shows whether the action space of the agent is continuous, multi-discrete or mixed.
-    /// </summary>
     private ActionSpaceType _actionSpaceType;
-    
+
+
     void Start()
     {
+        _episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
+
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
 
-        ActionSpec actionSpec = GetComponent<BehaviorParameters>().BrainParameters.ActionSpec;
-        _actionSpaceType = DetermineActionSpaceType(actionSpec);
+        _teamController = GetComponentInParent<TeamController>();
+        _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
 
         _rb = GetComponent<Rigidbody>();
         _airControl = GetComponentInChildren<CubeAirControl>();
@@ -59,32 +55,33 @@ public class GoalKeeperAgent : Agent
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
 
-        _startPosition = transform.localPosition;
-
-        _shootAt = transform.parent.Find("ShootAt");
-        _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
-
-        _lastResetTime = Time.time;
+        ActionSpec actionSpec = GetComponent<BehaviorParameters>().BrainParameters.ActionSpec;
+        _actionSpaceType = DetermineActionSpaceType(actionSpec);
     }
 
     public override void OnEpisodeBegin()
     {
-        //Reset Car
-        _controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
+        //Respawn Cars
+        transform.parent.GetComponent<TeamController>().SpawnTeams();
+
+        //Define Enemy
+        if (gameObject.Equals(_teamController.TeamBlue[0]))
+        {
+            _enemy = _teamController.TeamOrange[0].transform;
+            _team = TeamController.Team.BLUE;
+        }
+        else
+        {
+            _enemy = _teamController.TeamBlue[0].transform;
+            _team = TeamController.Team.ORANGE;
+        }
+
+        _rbEnemy = _enemy.GetComponent<Rigidbody>();
 
         //Reset Ball
-        _ball.localPosition = new Vector3(UnityEngine.Random.Range(-10f, 0f), UnityEngine.Random.Range(0f, 20f), UnityEngine.Random.Range(-30f, 30f));
-        //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
+        _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-
-        // Set new Taget Position
-        _shootAt.localPosition = new Vector3(-53f, UnityEngine.Random.Range(3f, 3f), UnityEngine.Random.Range(-7f, 7f));
-
-        //Throw Ball
-        _ball.GetComponent<ShootBall>().ShootTarget();
-
-        _mapData.ResetIsScored();
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -94,21 +91,30 @@ public class GoalKeeperAgent : Agent
         var carYNormalized = transform.localPosition.y / 20f;
         var carZNormalized = (transform.localPosition.z + 41f) / 82f;
         sensor.AddObservation(new Vector3(carXNormalized, carYNormalized, carZNormalized));
-
         //Car rotation, already normalized
         sensor.AddObservation(transform.rotation);
         //Car velocity
         sensor.AddObservation(_rb.velocity / 23f);
-
         //Car angular velocity
         sensor.AddObservation(_rb.angularVelocity / 5.5f);
+
+        //Enemy position
+        var enemyXNormalized = (_enemy.localPosition.x + 60f) / 120f;
+        var enemyYNormalized = _enemy.localPosition.y / 20f;
+        var enemyZNormalized = (_enemy.localPosition.z + 41f) / 82f;
+        sensor.AddObservation(new Vector3(enemyXNormalized, enemyYNormalized, enemyZNormalized));
+        //Enemy rotation, already normalized
+        sensor.AddObservation(_enemy.rotation);
+        //Enemy velocity
+        sensor.AddObservation(_rbEnemy.velocity / 23f);
+        //Enemy angular velocity
+        sensor.AddObservation(_rbEnemy.angularVelocity / 5.5f);
 
         //Ball position
         var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
         var ballYNormalized = _ball.localPosition.y / 20f;
         var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
         sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
-
         //Ball velocity
         sensor.AddObservation(_rbBall.velocity / 60f);
 
@@ -138,7 +144,7 @@ public class GoalKeeperAgent : Agent
         }
         AssignReward();
     }
-    
+
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         InputManager.isAgent = false;
@@ -150,51 +156,63 @@ public class GoalKeeperAgent : Agent
         EndEpisode();
     }
 
-    /// <summary>
-    /// Assigns a reward if the maximum episode length is reached or a goal is scored by any team.
-    /// </summary>
     private void AssignReward()
     {
         if (Time.time - _lastResetTime > _episodeLength)
         {
-            AddReward(0.5f);
-            AddReward((_ball.localPosition.x / 53f) / 2f);
             Reset();
         }
+
         if (_mapData.isScoredBlue)
         {
-            // Agent scored a goal
-            SetReward(1f);
+            if (_team.Equals(TeamController.Team.ORANGE))
+            {
+                AddReward(1);
+            }
+            else
+            {
+                AddReward(-1);
+            }
             Reset();
         }
         if (_mapData.isScoredOrange)
         {
-            // Agent got scored on
-            SetReward(-1f);
+            if (_team.Equals(TeamController.Team.BLUE))
+            {
+                AddReward(1);
+            }
+            else
+            {
+                AddReward(-1);
+            }
             Reset();
         }
+
+        float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
+        AddReward(agentBallDistanceReward);
+
+        GameObject goalLines = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").gameObject;
+        Vector3 enemyGoalPosition = _team.Equals(TeamController.Team.BLUE) ? goalLines.transform.Find("GoalLineRed").position : goalLines.transform.Find("GoalLineBlue").position;
+        float ballEnemyGoalDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, enemyGoalPosition) / _mapData.diag));
+        AddReward(ballEnemyGoalDistanceReward);
     }
 
-    /// <summary>
-    /// Processes the actions, if <see cref="actionSpaceType"/> is <see cref="ActionSpaceType.Continuous"/>.
-    /// </summary>
-    /// <param name="actionBuffers">The action buffers containing the actions.</param>
     private void ProcessContinuousActions(ActionBuffers actionBuffers)
     {
-            // set inputs
-            InputManager.throttleInput = actionBuffers.ContinuousActions[0];
-            InputManager.steerInput = actionBuffers.ContinuousActions[1];
-            InputManager.yawInput = actionBuffers.ContinuousActions[1];
-            InputManager.pitchInput = actionBuffers.ContinuousActions[2];
-            InputManager.rollInput = 0;
-            if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
-            if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
+        // set inputs
+        InputManager.throttleInput = actionBuffers.ContinuousActions[0];
+        InputManager.steerInput = actionBuffers.ContinuousActions[1];
+        InputManager.yawInput = actionBuffers.ContinuousActions[1];
+        InputManager.pitchInput = actionBuffers.ContinuousActions[2];
+        InputManager.rollInput = 0;
+        if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
+        if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
 
-            InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
-            InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
-            InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
+        InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
+        InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
+        InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
 
-            InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
+        InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
     }
 
     /// <summary>
@@ -266,29 +284,29 @@ public class GoalKeeperAgent : Agent
         int requiredNumActions = 8;
 
         // Determine action space type
-        if(actionSpec.NumContinuousActions > 0 && actionSpec.NumDiscreteActions == 0)
+        if (actionSpec.NumContinuousActions > 0 && actionSpec.NumDiscreteActions == 0)
         {
             //Propably continuous, we check the size
-            if(actionSpec.NumContinuousActions != requiredNumActions)
+            if (actionSpec.NumContinuousActions != requiredNumActions)
             {
                 throw new ArgumentException(string.Format("It seems like you tried to use a continuos action space for the agent. In this case the {0} needs 8 continuous actions.", typeof(GoalKeeperAgent)));
             }
             return ActionSpaceType.Continuous;
         }
-        else if(actionSpec.NumContinuousActions == 0 && actionSpec.NumDiscreteActions > 0)
+        else if (actionSpec.NumContinuousActions == 0 && actionSpec.NumDiscreteActions > 0)
         {
             //Propably multi discrete, we check the size
             if (actionSpec.NumDiscreteActions != requiredNumActions)
             {
                 throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches.", typeof(GoalKeeperAgent)));
             }
-            int[] requiredBranchSizes = { DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, 3, 2, 2, 2, 2};
-            for(int i = 0; i < actionSpec.BranchSizes.Length; i++)
+            int[] requiredBranchSizes = { DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, 3, 2, 2, 2, 2 };
+            for (int i = 0; i < actionSpec.BranchSizes.Length; i++)
             {
-                if(actionSpec.BranchSizes[i] != requiredBranchSizes[i])
+                if (actionSpec.BranchSizes[i] != requiredBranchSizes[i])
                 {
-                    throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches with sizes ({1}).", 
-                        typeof(GoalKeeperAgent), 
+                    throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches with sizes ({1}).",
+                        typeof(GoalKeeperAgent),
                         string.Join(", ", requiredBranchSizes)));
                 }
             }
