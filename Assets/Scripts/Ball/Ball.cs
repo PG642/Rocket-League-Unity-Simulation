@@ -15,12 +15,12 @@ public class Ball : Resettable
     private const float MINVelocity = 0.4f;
     private const float MINAngularVelocity = 1.047f;
     private float _lastStoppedTime;
-    private const float restitution = 0.6f;
+    private const float Restitution = 0.6f;
     private const float TimeWindowToStop = 2.0f;
-    private const float friction = 2f;
-    private const float mu = 0.285f;
+    private const float Friction = 2f;
+    private const float Mu = 0.285f;
     private const float A = 3f;
-    private const float radius = 0.9125f;
+    private const float Radius = 0.9125f;
     private Transform _transform;
 
     public override void Start()
@@ -107,13 +107,11 @@ public class Ball : Resettable
         }
     }
 
-
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            Bounce(collision);
+            ApplyBounce(collision);
             isTouchedGround = true;
         }
         else
@@ -130,23 +128,23 @@ public class Ball : Resettable
         }
     }
 
-    private void Bounce(Collision col)
+    private void ApplyBounce(Collision col)
     {
         Vector3 n = col.GetContact(0).normal;
         CancelUnityImpulse();
 
         Vector3 vPerp = Vector3.Dot(rb.velocity, n) * n;
         Vector3 vPara = rb.velocity - vPerp;
-        Vector3 vSpin = radius * Vector3.Cross(n, rb.angularVelocity);
+        Vector3 vSpin = Radius * Vector3.Cross(n, rb.angularVelocity);
         Vector3 s = vPara + vSpin;
 
         float ratio = vPerp.magnitude / s.magnitude;
 
-        Vector3 deltaVPerp = -(1 + restitution) * vPerp;
-        Vector3 deltaVPara = -Math.Min(1, friction * ratio) * mu * s;
+        Vector3 deltaVPerp = -(1 + Restitution) * vPerp;
+        Vector3 deltaVPara = -Math.Min(1, Friction * ratio) * Mu * s;
 
         rb.velocity += deltaVPara + deltaVPerp;
-        rb.angularVelocity += A * radius * Vector3.Cross(deltaVPara, n);
+        rb.angularVelocity += A * Radius * Vector3.Cross(deltaVPara, n);
     }
 
     private void PerformPlayerHit(Collision col)
@@ -155,23 +153,14 @@ public class Ball : Resettable
         CancelUnityImpulse();
         col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
 
-        //DEBUG
-        //setCarState(col.rigidbody);
-
         Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
         Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
 
-
+        
         CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
         CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
 
         CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
-    }
-
-    private void setCarState(Rigidbody rb)
-    {
-        rb.velocity = new Vector3(9.130809f, 0.00191f, 0);
-        rb.angularVelocity = new Vector3(0, 0, 0.00051f);
     }
 
     private void OnCollisionExit(Collision other)
