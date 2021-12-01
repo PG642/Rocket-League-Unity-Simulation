@@ -24,4 +24,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}
+          path: WorkflowBuilds/${{ matrix.targetPlatform }}
+          customParameters: -nographics
