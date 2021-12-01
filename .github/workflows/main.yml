@@ -11,6 +11,7 @@ jobs:
       matrix:
         targetPlatform:
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - StandaloneWindows64
     steps:
       - uses: actions/checkout@v2
         with:
