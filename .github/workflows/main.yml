@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         targetPlatform:
-          - StandaloneLinux # Build a Linux 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
           #- StandaloneWindows64
     steps:
       - uses: actions/checkout@v2
