@@ -167,11 +167,11 @@ public class OneVsOneAgent : Agent
         {
             if (_team.Equals(TeamController.Team.ORANGE))
             {
-                AddReward(1);
+                AddReward(5);
             }
             else
             {
-                AddReward(-1);
+                AddReward(-5);
             }
             Reset();
         }
@@ -179,22 +179,32 @@ public class OneVsOneAgent : Agent
         {
             if (_team.Equals(TeamController.Team.BLUE))
             {
-                AddReward(1);
+                AddReward(5);
             }
             else
             {
-                AddReward(-1);
+                AddReward(-5);
             }
             Reset();
         }
 
+        // if (_team.Equals(TeamController.Team.BLUE) && _rb.transform.localPosition.x > 0 ||
+        //     _team.Equals(TeamController.Team.ORANGE) && _rb.transform.localPosition.x < 0)
+        // {
+        //     AddReward(0.001f);
+        // }
+        // else
+        // {
+        //     AddReward(-0.001f);
+        // }
+
         float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
         AddReward(agentBallDistanceReward);
-
-        GameObject goalLines = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").gameObject;
-        Vector3 enemyGoalPosition = _team.Equals(TeamController.Team.BLUE) ? goalLines.transform.Find("GoalLineRed").position : goalLines.transform.Find("GoalLineBlue").position;
-        float ballEnemyGoalDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, enemyGoalPosition) / _mapData.diag));
-        AddReward(ballEnemyGoalDistanceReward);
+        
+        // GameObject goalLines = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").gameObject;
+        // Vector3 enemyGoalPosition = _team.Equals(TeamController.Team.BLUE) ? goalLines.transform.Find("GoalLineRed").position : goalLines.transform.Find("GoalLineBlue").position;
+        // float ballEnemyGoalDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, enemyGoalPosition) / _mapData.diag));
+        // AddReward(ballEnemyGoalDistanceReward);
     }
 
     private void ProcessContinuousActions(ActionBuffers actionBuffers)
