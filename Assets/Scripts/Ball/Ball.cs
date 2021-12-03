@@ -20,7 +20,7 @@ public class Ball : Resettable
     private const float Friction = 2f;
     private const float Mu = 0.285f;
     private const float A = 3f;
-    private const float Radius = 0.9125f;
+    private const float Radius = 0.9315f;
     private Transform _transform;
 
     public override void Start()
@@ -110,11 +110,13 @@ public class Ball : Resettable
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            Debug.Log("Bounce");
             ApplyBounce(collision);
             isTouchedGround = true;
         }
         else
         {
+            Debug.Log("Hit");
             PerformPlayerHit(collision);
         }
     }
