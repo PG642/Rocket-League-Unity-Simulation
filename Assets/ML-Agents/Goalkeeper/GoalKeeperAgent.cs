@@ -155,10 +155,10 @@ public class GoalKeeperAgent : Agent
     /// </summary>
     private void AssignReward()
     {
-        if (Time.time - _lastResetTime > _episodeLength)
+        if (Time.time - _lastResetTime > _episodeLength || _rbBall.velocity.normalized.x > 0.3f)
         {
-            AddReward(0.5f);
-            AddReward((_ball.localPosition.x / 53f) / 2f);
+            SetReward(1f);
+            //AddReward((_ball.localPosition.x / 53f) / 2f);
             Reset();
         }
         if (_mapData.isScoredBlue)
