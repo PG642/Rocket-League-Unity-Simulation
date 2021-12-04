@@ -20,7 +20,7 @@ public class Ball : Resettable
     private const float Friction = 2f;
     private const float Mu = 0.285f;
     private const float A = 3f;
-    private const float Radius = 0.9315f;
+    private const float Radius = 0.9125f; //0.9138625f;
     private Transform _transform;
 
     public override void Start()
@@ -47,6 +47,12 @@ public class Ball : Resettable
 
     private void LateUpdate()
     {
+        CapVelocities();
+
+        StopBallIfTooSlow();
+    }
+
+    private void CapVelocities() {
         if (rb.velocity.magnitude > maxVelocity)
         {
             rb.velocity = rb.velocity.normalized * maxVelocity;
@@ -56,8 +62,6 @@ public class Ball : Resettable
         {
             rb.angularVelocity = rb.angularVelocity.normalized * maxAngluarVelocity;
         }
-
-        StopBallIfTooSlow();
     }
 
     private void ResetShot(Vector3 pos)
@@ -150,9 +154,13 @@ public class Ball : Resettable
 
     private void PerformPlayerHit(Collision col)
     {
-        Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
+       
+        
         CancelUnityImpulse();
         col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
+
+        //setCarState(col.rigidbody);
+        Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
 
         Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
         Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
@@ -160,8 +168,18 @@ public class Ball : Resettable
         
         CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
         CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
+        CapVelocities();
 
         CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
+    }
+
+    private void setCarState(Rigidbody rb)
+    {
+        //at time 1.117961 im Ballschuss szenario mit radius 93.15uu
+        rb.velocity = new Vector3(9.130809f,0.00191f,0);
+        rb.position = new Vector3(-11.5511f,0.1701f,15);
+        rb.rotation.eulerAngles.Set(0.5493164f,0,0);
+        rb.angularVelocity = new Vector3(0,0,0.00051f);
     }
 
     private void OnCollisionExit(Collision other)
