@@ -161,12 +161,6 @@ public class GoalKeeperAgent : Agent
             //AddReward((_ball.localPosition.x / 53f) / 2f);
             Reset();
         }
-        if (_mapData.isScoredBlue)
-        {
-            // Agent scored a goal
-            SetReward(1f);
-            Reset();
-        }
         if (_mapData.isScoredOrange)
         {
             // Agent got scored on
