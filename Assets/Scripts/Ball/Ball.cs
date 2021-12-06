@@ -18,11 +18,9 @@ public class Ball : Resettable
     private const float TimeWindowToStop = 2.0f;
     private Transform _transform;
 
-    void Start()
+    public void Start()
     {
         rb = GetComponent<Rigidbody>();
-        
-
         _transform = this.transform;
         isTouchedGround = false;
         rb.maxAngularVelocity = maxAngluarVelocity;
@@ -103,11 +101,22 @@ public class Ball : Resettable
             _lastStoppedTime = 0.0f;
         }
     }
-    
+
+    private void OnCollisionStay(Collision collision)
+    {
+        /*
+        PerformPlayerHit(collision);
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isTouchedGround = true;
+        }
+        */
+    }
+
 
     private void OnCollisionEnter(Collision collision)
     {
-        
+
         PerformPlayerHit(collision);
 
         if (collision.gameObject.CompareTag("Ground"))
@@ -127,13 +136,31 @@ public class Ball : Resettable
     {
         if (!col.gameObject.CompareTag("Ground"))
         {
+            Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
             CancelUnityImpulse();
-            var jBullet = CustomPhysics.CalculateBulletImpulse(rb, col, friction);
+            col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
+
+            //DEBUG
+            // setCarState(col.rigidbody);
+
+            var jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
             var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
-            Vector3 J = -jBullet + jPsyonix;
-            CustomPhysics.ApplyImpulseAtPosition(rb, J , rb.ClosestPointOnBounds(col.rigidbody.position));
-            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, jBullet, col.rigidbody.ClosestPointOnBounds(rb.position));
+
+
+            CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
+            CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position); // collisionPoint or rb.pos?
+
+            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
+
+
+
         }
+    }
+
+    private void setCarState(Rigidbody rb)
+    {
+        rb.velocity = new Vector3(9.130809f, 0.00191f, 0);
+        rb.angularVelocity = new Vector3(0, 0, 0.00051f);
     }
 
     private void OnCollisionExit(Collision other)
@@ -144,8 +171,5 @@ public class Ball : Resettable
         }
     }
 
-    
+
 }
-
-
-

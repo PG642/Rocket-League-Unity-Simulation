@@ -8,12 +8,12 @@ public class CarCollision : Resettable
 {
     private MatchController.MatchController _matchController;
     private float forwardSpeed;
-    private Rigidbody rb;
     private SuspensionCollider[] _suspensionColliders;
     public Vector3 surfaceNormal;
-    private float _bumpingForce = 10f;
-    private float _bumpingUpForce = 3f;
-    
+    private float _bumpingForce = 4f;
+    private float _bumpingUpForce = 8f;
+    public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
+
 
     private float _bumpingTorque = 8f;
     private float _lastTimeSuperSonic = 0f;
@@ -24,15 +24,16 @@ public class CarCollision : Resettable
 
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
         previousState = GetComponent<PreviousCarState>();
         _matchController = transform.GetComponentInParent<MatchController.MatchController>();
-        rb = GetComponent<Rigidbody>();
         _suspensionColliders = GetComponentsInChildren<SuspensionCollider>();
     }
 
 
     private void FixedUpdate()
     {
+        base.Clone(rb);
         forwardSpeed = Vector3.Dot(rb.velocity, transform.forward);
         _lastTimeSuperSonic = forwardSpeed >= 22f ? Time.time : _lastTimeSuperSonic;
     }
@@ -99,7 +100,7 @@ public class CarCollision : Resettable
         {
             Debug.Log("BUMPING!");
             GameObject bumpedCar = collisionInfo.gameObject;
-            RestoreBumperPhysics(bumpedCar, directionToOtherCogLow.normalized);
+            RestoreBumperPhysics(bumpedCar, directionToOtherCogLow.normalized, collisionInfo);
 
         }
         else
@@ -117,9 +118,32 @@ public class CarCollision : Resettable
         transform.position = previousState.position + Time.deltaTime * previousState.velocity;
     }
 
-    void RestoreBumperPhysics(GameObject bumpedCar, Vector3 directionToOtherCogLow)
+    void RestoreBumperPhysics(GameObject bumpedCar, Vector3 directionToOtherCogLow, Collision col)
     {
+        
+        CancelUnityImpulse();
         Rigidbody bumpedRb = bumpedCar.GetComponent<Rigidbody>();
+        bumpedCar.GetComponent<CarCollision>().CancelUnityImpulse();
+        Vector3 averageContactPoint = Vector3.zero;
+        Vector3 averageContactNormal = Vector3.zero;
+        foreach( ContactPoint cp in col.contacts)
+        {
+            averageContactPoint += cp.point;
+            averageContactNormal += cp.normal;
+        }
+        averageContactPoint /= col.contacts.Length;
+        averageContactNormal /= col.contacts.Length;
+        Debug.DrawRay(averageContactPoint, averageContactNormal * 3f, Color.red, 3f);
+        Vector3 jBullet = CustomPhysics.CalculateBulletImpulse(rb, bumpedRb, averageContactPoint);
+        Vector3 jPsyonix = -CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
+
+        Debug.Log("Bullet" + jBullet.ToString());
+        Debug.Log("Psyonix" + jPsyonix.ToString());
+        CustomPhysics.ApplyImpulseAtPosition(bumpedRb, Vector3.Scale(jBullet, new Vector3(_bumpingForce, _bumpingForce, _bumpingForce)), averageContactPoint); // col.GetContact(0).point-4.0f*Vector3.up);
+        CustomPhysics.ApplyImpulseAtPosition(bumpedRb, Vector3.Scale(jPsyonix, new Vector3(1f, 1f, 1f)), bumpedRb.position); // col.GetContact(0).point-4.0f*Vector3.up);
+        CustomPhysics.ApplyImpulseAtPosition(rb, -jBullet, averageContactPoint);
+
+        return;
         PreviousCarState bumpedCarPrevious = bumpedCar.GetComponent<PreviousCarState>();
         float bumpervel = Mathf.Abs(Vector3.Dot(previousState.velocity.normalized, directionToOtherCogLow) * previousState.velocity.magnitude);
         float bumpedvel = Mathf.Abs(Vector3.Dot(bumpedCarPrevious.velocity.normalized, -directionToOtherCogLow) * bumpedCarPrevious.velocity.magnitude);
