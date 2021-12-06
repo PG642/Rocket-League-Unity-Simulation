@@ -28,6 +28,6 @@ jobs:
           customParameters: -EnableHeadlessMode
       - uses: actions/upload-artifact@v2
         with:
-          name: Build-${{ matrix.targetPlatform }}
+          name: ${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 
