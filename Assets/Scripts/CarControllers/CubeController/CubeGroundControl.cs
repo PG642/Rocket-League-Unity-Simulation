@@ -89,7 +89,7 @@ public class CubeGroundControl : MonoBehaviour
         {
             //TODO: Func. call like this below OR Wheel class fetches data from this class?
             // Also probably should be an interface to a concrete implementation. Same for the NaiveGroundControl below.
-            if (_controller.isCanDrive && _inputManager.throttleInput >= 0.0001f)
+            if (_controller.isCanDrive && Mathf.Abs(_inputManager.throttleInput) >= 0.0001f)
                 wheel.ApplyForwardForce(forwardAcceleration / 4);
         }
     }
