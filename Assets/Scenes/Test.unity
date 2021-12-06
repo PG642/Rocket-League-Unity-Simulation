@@ -202,16 +202,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 17332315}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d57328d66b70a3d4fa10ca170bdcb747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  position: {x: 0, y: 0, z: 0}
-  velocity: {x: 0, y: 0, z: 0}
-  rotation: {x: 0, y: 0, z: 0, w: 0}
-  angularVelocity: {x: 0, y: 0, z: 0}
-  inertiaTensorRotation: {x: 0, y: 0, z: 0, w: 0}
   surfaceNormal: {x: 0, y: 0, z: 0}
 --- !u!4 &89234563 stripped
 Transform:
@@ -534,12 +529,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799813830}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7458b430d65787345a2c76cfb03dd011, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settingJson: {fileID: 4900000, guid: 1467fdda6b1b93f449776a6d132fe3ba, type: 3}
+  settingJson: {fileID: 4900000, guid: 18f8e4633fa2e7148ba2a3adccc17d02, type: 3}
 --- !u!114 &799813833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,7 +542,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799813830}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d59d0c447b678834ebf85152d24159f5, type: 3}
   m_Name: 
@@ -569,9 +564,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roundPosition: 1
   decimalsPosition: 4
-  roundVelocity: 0
+  roundVelocity: 1
   decimalsVelocity: 4
-  roundAngularVelocity: 0
+  roundAngularVelocity: 1
   decimalsAngularVelocity: 4
   roundRotation: 0
   decimalsRotation: 4
@@ -624,6 +619,18 @@ PrefabInstance:
     - target: {fileID: 5044392351187916662, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
       propertyPath: m_RootOrder
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351187916662, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.00
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351187916662, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.00
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044392351187916662, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.00
       objectReference: {fileID: 0}
     - target: {fileID: 5044392351187916662, guid: 2da57cb4d085eab45b87f09e12d86dcc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1209,10 +1216,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 4300000, guid: 57b8bd6c400ebdc4fb90a1d842f0b417, type: 3}
-    - target: {fileID: 2532842153302682343, guid: 2946bfcea95aa1d40872741310581650, type: 3}
-      propertyPath: m_Radius
-      value: 0.9315
-      objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578195, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_Name
       value: Ball
@@ -1231,7 +1234,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.9315
+      value: 0.9275
       objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1376,10 +1379,6 @@ PrefabInstance:
     - target: {fileID: 2532842153811578198, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_Drag
       value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 2532842153811578198, guid: 2946bfcea95aa1d40872741310581650, type: 3}
-      propertyPath: m_IsKinematic
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2946bfcea95aa1d40872741310581650, type: 3}
