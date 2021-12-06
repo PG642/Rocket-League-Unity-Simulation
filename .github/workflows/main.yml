@@ -2,6 +2,7 @@ name: Test Unity Builder
 
 on:
   push:
+    types: [closed]
     branches:
       -master
 jobs:
@@ -14,6 +15,7 @@ jobs:
         targetPlatform:
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
           #- StandaloneWindows64
+    if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v2
         with:
