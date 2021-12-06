@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CarCollision : MonoBehaviour
+public class CarCollision : Resettable
 {
     private MatchController.MatchController _matchController;
     private float forwardSpeed;
@@ -12,15 +12,17 @@ public class CarCollision : MonoBehaviour
     public Vector3 surfaceNormal;
 
 
-    void Start()
+    public override void Start()
     {
+        base.Start();
         _matchController = transform.GetComponentInParent<MatchController.MatchController>();
         _suspensionColliders = GetComponentsInChildren<SuspensionCollider>();
     }
 
 
-    private void FixedUpdate()
+    public override void FixedUpdate()
     {
+        base.FixedUpdate();
         forwardSpeed = Vector3.Dot(GetComponent<Rigidbody>().velocity, transform.forward);
     }
     

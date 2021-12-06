@@ -64,7 +64,7 @@ namespace TestScenarios
                         location = _rigidbodyBall.position.ToVector(),
                         velocity = _rigidbodyBall.velocity.ToVector(),
                         rotation = _rigidbodyBall.rotation.ToVector(),
-                        angular_velocity = _rigidbodyCar.angularVelocity.ToVector()
+                        angular_velocity = _rigidbodyBall.angularVelocity.ToVector()
                     }
                 }
             };
