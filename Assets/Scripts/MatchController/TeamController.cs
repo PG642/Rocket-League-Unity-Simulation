@@ -107,16 +107,7 @@ public class TeamController : MonoBehaviour
 
     public void SpawnTeams()
     {
-        // Spawn cars from orange team
-        foreach (GameObject orangeCar in TeamOrange)
-        {
-            transform.GetComponent<SpawnController>().SpawnCar(orangeCar, Team.ORANGE, false);
-        }
-        // Spawn cars from blue team
-        foreach (GameObject blueCar in TeamBlue)
-        {
-            transform.GetComponent<SpawnController>().SpawnCar(blueCar, Team.BLUE, false);
-        }
+        transform.GetComponent<SpawnController>().SpawnOppositeCars(TeamBlue,TeamOrange);
     }
     // Update is called once per frame
     void Update()

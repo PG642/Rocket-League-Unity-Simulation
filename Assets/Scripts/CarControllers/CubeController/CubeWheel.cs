@@ -16,7 +16,9 @@ public class CubeWheel : MonoBehaviour
     private AnimationCurve _steeringCurve;
     
     public bool isFrontWheel;
-    
+    private bool _isAtWallDriving;
+    private bool _isAtWall;
+
     public Transform wheelMesh;
     private float _meshRevolutionAngle;
     
@@ -72,7 +74,10 @@ public class CubeWheel : MonoBehaviour
     private void FixedUpdate()
     {
         UpdateWheelState();
-
+        _isAtWallDriving = Mathf.Abs(Vector3.Dot(Vector3.up, transform.up)) <= 0.95f
+            && _c.carState != CubeController.CarStates.Air
+            && _c.numWheelsSurface >= 2;
+        _isAtWall = _isAtWallDriving && Mathf.Abs(_inputManager.throttleInput) <= 0.0001f;
         if (_c.isCanDrive)
         {
             ApplyLateralForce();
@@ -86,7 +91,9 @@ public class CubeWheel : MonoBehaviour
     public void ApplyForwardForce(float force)
     {
         _rb.AddForce(force * transform.forward, ForceMode.Acceleration);
-        
+
+        if (_isAtWall )   return;
+
         // Kill velocity to 0 for small car velocities
         if (force == 0 && _c.forwardSpeedAbs < 0.1 && !_inputManager.isDrift)
             _rb.velocity -= Vector3.Dot(_rb.velocity, transform.forward) * transform.forward;
@@ -101,7 +108,10 @@ public class CubeWheel : MonoBehaviour
 
         var ratio = Mathf.Clamp01(Mathf.Abs(_wheelLateralVelocity) /
                                   (Mathf.Abs(_wheelLateralVelocity) + Mathf.Abs(_wheelForwardVelocity)));
-        float slideFriction = (_inputManager.isDrift ? driftImpulseMult : impulseMult) * _curve.Evaluate(ratio);
+        
+
+
+        float slideFriction = (_inputManager.isDrift || _isAtWall ? driftImpulseMult : impulseMult) * _curve.Evaluate(ratio);
         // var groundFriction = _curve2.Evaluate(RoboUtils.Scale(-1, 1, 0, 1, -_c.transform.up.y));
         var groundFriction = 1.0f;
         var friction = slideFriction * groundFriction;
@@ -109,7 +119,15 @@ public class CubeWheel : MonoBehaviour
 
         _lateralForcePosition = transform.position;
         _lateralForcePosition.y = _c.cogLow.position.y;
-        _lateralForcePosition += (_inputManager.isDrift ? 0.0195f : 0.0f) * transform.forward;
+        if(_inputManager.isDrift)
+        {
+            _lateralForcePosition += 0.0195f * transform.forward;
+        }
+        else if (_isAtWall && transform.position.y >= 0.5 )
+        {
+            _lateralForcePosition += (0.0195f/3f) * transform.forward;
+        }
+
 
 
         var impulse = friction * constraint; // + steeringFactor;
@@ -120,12 +138,11 @@ public class CubeWheel : MonoBehaviour
     {
         if (Mathf.Abs(_inputManager.steerInput) <= 0.001f) return;
         if (!isFrontWheel) return;
-
         float force = _inputManager.throttleInput * _inputManager.steerInput * 0.45f;
         
         _lateralForcePosition = transform.position;
         _lateralForcePosition.y = _c.cogLow.position.y;
-        _lateralForcePosition += (_inputManager.isDrift ? 0.55f : 0.0f) * transform.forward;
+        _lateralForcePosition += (_inputManager.isDrift || _isAtWall ? 0.55f : 0.0f) * transform.forward;
 
         _rb.AddForceAtPosition(force * transform.right, _lateralForcePosition, ForceMode.Acceleration);
     }
@@ -134,6 +151,8 @@ public class CubeWheel : MonoBehaviour
     {
         //Applies auto braking if no input, simulates air and ground drag
         if ( _c.forwardSpeedAbs < 0.1 || _inputManager.isDrift) return;
+        if (_isAtWall && _c.forwardSpeedAbs < 10f) return;
+
         var dragInputConstant = Mathf.Max(Mathf.Abs(_inputManager.throttleInput), (_inputManager.isBoost ? 1.0f : 0.0f));
         var dragForce = ((_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4) * _c.forwardSpeedSign * 
                         (1 - dragInputConstant);

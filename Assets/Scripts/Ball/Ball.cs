@@ -15,34 +15,44 @@ public class Ball : Resettable
     private const float MINVelocity = 0.4f;
     private const float MINAngularVelocity = 1.047f;
     private float _lastStoppedTime;
+    private const float Restitution = 0.6f;
     private const float TimeWindowToStop = 2.0f;
+    private const float Friction = 2f;
+    private const float Mu = 0.285f;
+    private const float A = 3f;
+    private const float Radius = 0.9125f; //0.9138625f;
     private Transform _transform;
 
-    public void Start()
+    public override void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        base.Start();
         _transform = this.transform;
         isTouchedGround = false;
         rb.maxAngularVelocity = maxAngluarVelocity;
         rb.maxDepenetrationVelocity = maxVelocity;
     }
 
-    void Update()
-    {
-        //TODO: move inputs to the InputController
-        if (Input.GetKeyDown(KeyCode.T))
-            ShootInRandomDirection(randomSpeed);
-
-        if (Input.GetKeyDown(KeyCode.R))
-            ResetBall();
-
-        if (Input.GetButtonDown("Select"))
-            ResetShot(new Vector3(7.76f, 2.98f, 0f));
-        rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
-    }
+    // void Update()
+    // {
+    //    if (Input.GetKeyDown(KeyCode.T))
+    //         ShootInRandomDirection(randomSpeed);
+    //
+    //     if (Input.GetKeyDown(KeyCode.R))
+    //         ResetBall();
+    //
+    //     if (Input.GetButtonDown("Select"))
+    //         ResetShot(new Vector3(7.76f, 2.98f, 0f));
+    //     rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
+    // }
 
     private void LateUpdate()
     {
+        CapVelocities();
+
+        StopBallIfTooSlow();
+    }
+
+    private void CapVelocities() {
         if (rb.velocity.magnitude > maxVelocity)
         {
             rb.velocity = rb.velocity.normalized * maxVelocity;
@@ -52,8 +62,6 @@ public class Ball : Resettable
         {
             rb.angularVelocity = rb.angularVelocity.normalized * maxAngluarVelocity;
         }
-
-        StopBallIfTooSlow();
     }
 
     private void ResetShot(Vector3 pos)
@@ -102,66 +110,78 @@ public class Ball : Resettable
         }
     }
 
-    private void OnCollisionStay(Collision collision)
-    {
-        /*
-        PerformPlayerHit(collision);
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isTouchedGround = true;
-        }
-        */
-    }
-
-
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            //Debug.Log("Bounce");
+            ApplyBounce(collision);
+            isTouchedGround = true;
+        }
+        else
+        {
+            //Debug.Log("Hit");
+            PerformPlayerHit(collision);
+        }
+    }
 
-        PerformPlayerHit(collision);
-
+    private void OnCollisionStay(Collision collision)
+    {
         if (collision.gameObject.CompareTag("Ground"))
         {
             isTouchedGround = true;
         }
+    }
 
-        //if (col.gameObject.tag == "Ground")
-        //    if (rb.velocity.y > 3)
-        //    {
-        //    //rb.AddForce(Vector3.up * -downForce);
-        //        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - SlowVelocityGround, rb.velocity.z);
-        //    }
+    private void ApplyBounce(Collision col)
+    {
+        Vector3 n = col.GetContact(0).normal;
+        CancelUnityImpulse();
+
+        Vector3 vPerp = Vector3.Dot(rb.velocity, n) * n;
+        Vector3 vPara = rb.velocity - vPerp;
+        Vector3 vSpin = Radius * Vector3.Cross(n, rb.angularVelocity);
+        Vector3 s = vPara + vSpin;
+
+        float ratio = vPerp.magnitude / s.magnitude;
+
+        Vector3 deltaVPerp = -(1 + Restitution) * vPerp;
+        Vector3 deltaVPara = -Math.Min(1, Friction * ratio) * Mu * s;
+
+        rb.velocity += deltaVPara + deltaVPerp;
+        rb.angularVelocity += A * Radius * Vector3.Cross(deltaVPara, n);
     }
 
     private void PerformPlayerHit(Collision col)
     {
-        if (!col.gameObject.CompareTag("Ground"))
-        {
-            Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
-            CancelUnityImpulse();
-            col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
+       
+        
+        CancelUnityImpulse();
+        col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
 
-            //DEBUG
-            // setCarState(col.rigidbody);
+        //setCarState(col.rigidbody);
+        Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
 
-            var jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
-            var jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
+        Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
+        Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
 
+        
+        CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
+        CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
+        CapVelocities();
 
-            CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
-            CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position); // collisionPoint or rb.pos?
-
-            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
-
-
-
-        }
+        CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
     }
 
     private void setCarState(Rigidbody rb)
     {
-        rb.velocity = new Vector3(9.130809f, 0.00191f, 0);
-        rb.angularVelocity = new Vector3(0, 0, 0.00051f);
+        //at time 1.117961 im Ballschuss szenario mit radius 93.15uu
+        rb.velocity = new Vector3(9.130809f,0.00191f,0);
+        rb.position = new Vector3(-11.5511f,0.1701f,15);
+        rb.rotation.eulerAngles.Set(0.5493164f,0,0);
+        rb.angularVelocity = new Vector3(0,0,0.00051f);
     }
+
 
     private void OnCollisionExit(Collision other)
     {
@@ -173,3 +193,4 @@ public class Ball : Resettable
 
 
 }
+

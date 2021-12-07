@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Resettable : MonoBehaviour
 {
-    protected float friction = 2f;
     private Vector3 position;
     private Vector3 velocity;
     private Vector3 inertiaTensor;
@@ -10,6 +10,12 @@ public class Resettable : MonoBehaviour
     private Vector3 angularVelocity;
     private Quaternion inertiaTensorRotation;
     protected Rigidbody rb;
+
+
+    public virtual void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     public void CancelUnityImpulse()
     {
@@ -21,7 +27,7 @@ public class Resettable : MonoBehaviour
         rb.inertiaTensorRotation = inertiaTensorRotation;
     }
 
-    private void FixedUpdate()
+    public virtual void FixedUpdate()
     {
         Clone(rb);
     }

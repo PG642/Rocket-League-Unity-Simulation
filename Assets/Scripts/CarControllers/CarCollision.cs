@@ -24,18 +24,19 @@ public class CarCollision : Resettable
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        base.Start();
         previousState = GetComponent<PreviousCarState>();
         _matchController = transform.GetComponentInParent<MatchController.MatchController>();
         _suspensionColliders = GetComponentsInChildren<SuspensionCollider>();
     }
 
 
-    private void FixedUpdate()
+    public override void FixedUpdate()
     {
-        base.Clone(rb);
+        base.FixedUpdate();
         forwardSpeed = Vector3.Dot(rb.velocity, transform.forward);
         _lastTimeSuperSonic = forwardSpeed >= 22f ? Time.time : _lastTimeSuperSonic;
+
     }
     
     private void OnCollisionEnter(Collision collisionInfo)
@@ -92,20 +93,20 @@ public class CarCollision : Resettable
 
         if (horizontalAngle <= 45 && verticalAngle <= 37 && forwardSpeed >= 21f && Time.time-_lastTimeSuperSonic < 1f)
         {
-            Debug.Log("DEMO!");
+            //Debug.Log("DEMO!");
             _matchController.HandleDemolition(collisionInfo.gameObject);
             RestoreCarPhysics();
         }
         else if (horizontalAngle <= 70 && verticalAngle <= 70)
         {
-            Debug.Log("BUMPING!");
+            //Debug.Log("BUMPING!");
             GameObject bumpedCar = collisionInfo.gameObject;
             RestoreBumperPhysics(bumpedCar, directionToOtherCogLow.normalized, collisionInfo);
 
         }
         else
         {
-            Debug.Log("NOTHING!");
+            //Debug.Log("NOTHING!");
         }
     }
 
@@ -137,8 +138,8 @@ public class CarCollision : Resettable
         Vector3 jBullet = CustomPhysics.CalculateBulletImpulse(rb, bumpedRb, averageContactPoint);
         Vector3 jPsyonix = -CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
 
-        Debug.Log("Bullet" + jBullet.ToString());
-        Debug.Log("Psyonix" + jPsyonix.ToString());
+        //Debug.Log("Bullet" + jBullet.ToString());
+        //Debug.Log("Psyonix" + jPsyonix.ToString());
         CustomPhysics.ApplyImpulseAtPosition(bumpedRb, Vector3.Scale(jBullet, new Vector3(_bumpingForce, _bumpingForce, _bumpingForce)), averageContactPoint); // col.GetContact(0).point-4.0f*Vector3.up);
         CustomPhysics.ApplyImpulseAtPosition(bumpedRb, Vector3.Scale(jPsyonix, new Vector3(1f, 1f, 1f)), bumpedRb.position); // col.GetContact(0).point-4.0f*Vector3.up);
         CustomPhysics.ApplyImpulseAtPosition(rb, -jBullet, averageContactPoint);
@@ -152,9 +153,9 @@ public class CarCollision : Resettable
         directionToOtherCogLow.y = Mathf.Abs(directionToOtherCogLow.y) < 1e-1 ? 0.1f: directionToOtherCogLow.y;
         rb.velocity = previousState.velocity - directionToOtherCogLow * ((rb.mass * bumpervel + bumpedRb.mass * bumpedvel * (2f * bumpedvel - bumpervel))) / (rb.mass + bumpedRb.mass);
         bumpedRb.velocity = bumpedCarPrevious.velocity + _bumpingForce * directionToOtherCogLow * ((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel))) / (bumpedRb.mass + rb.mass);
-        Debug.Log((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel)) / (bumpedRb.mass + rb.mass));
-        Debug.Log(directionToOtherCogLow.ToString());
-        Debug.Log(directionToOtherCogLow * ((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel))) / (bumpedRb.mass + rb.mass));
+        //Debug.Log((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel)) / (bumpedRb.mass + rb.mass));
+        //Debug.Log(directionToOtherCogLow.ToString());
+        //Debug.Log(directionToOtherCogLow * ((bumpedRb.mass * bumpedvel + rb.mass * bumpervel * (2f * bumpervel - bumpedvel))) / (bumpedRb.mass + rb.mass));
 
         //transform.position = previousState.position + Time.deltaTime * rb.velocity;
         //bumpedCar.transform.position = bumpedCarPrevious.position + Time.deltaTime * bumpedRb.velocity;
