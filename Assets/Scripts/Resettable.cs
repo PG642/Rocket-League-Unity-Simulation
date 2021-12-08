@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class Resettable : MonoBehaviour
 {
-    public Vector3 position;
-    public Vector3 velocity;
+    private Vector3 position;
+    private Vector3 velocity;
     private Vector3 inertiaTensor;
-    public Quaternion rotation;
-    public Vector3 angularVelocity;
-    public Quaternion inertiaTensorRotation;
+    private Quaternion rotation;
+    private Vector3 angularVelocity;
+    private Quaternion inertiaTensorRotation;
     protected Rigidbody rb;
 
 
@@ -32,7 +32,7 @@ public class Resettable : MonoBehaviour
         Clone(rb);
     }
 
-    private void Clone(Rigidbody rbToClone)
+    protected void Clone(Rigidbody rbToClone)
     {
         var rbPosition = rbToClone.position;
         position = new Vector3

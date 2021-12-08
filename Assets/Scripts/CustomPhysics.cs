@@ -27,7 +27,7 @@ public static class CustomPhysics
 
         Matrix4x4 Ic = CalculateInertiaTensorMatrix(carRigidBody.inertiaTensor, carRigidBody.inertiaTensorRotation);
         Matrix4x4 Ib = CalculateInertiaTensorMatrix(ballRigidBody.inertiaTensor, ballRigidBody.inertiaTensorRotation);
-        
+
         Matrix4x4 scaleIdentity = Matrix4x4.identity;
         float massScale = ((1 / carRigidBody.mass) + (1 / ballRigidBody.mass));
         scaleIdentity[0, 0] = massScale;
@@ -46,7 +46,7 @@ public static class CustomPhysics
         Vector3 Jperp = Vector3.Dot(J, n) * n;
         Vector3 Jpara = J - Jperp;
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
-        
+
         return J;
     }
 
@@ -69,14 +69,14 @@ public static class CustomPhysics
 
     private static Matrix4x4 CalculateMatrixL(Vector3 rbPosition, Vector3 collisionPoint)
     {
-        Vector3 dist =  collisionPoint - rbPosition ;
+        Vector3 dist = collisionPoint - rbPosition;
         return new Matrix4x4(
             new Vector4(      0, -dist.z,  dist.y, 0),
             new Vector4( dist.z,       0, -dist.x, 0),
             new Vector4(-dist.y,  dist.x,       0, 0),
             new Vector4(      0,       0,       0, 1));
     }
-    
+
 
     private static Matrix4x4 CalculateInertiaTensorMatrix(Vector3 inertiaTensor, Quaternion inertiaTensorRotation)
     {
@@ -92,11 +92,11 @@ public static class CustomPhysics
         {
             for (int j = 0; j < 3; j++)
             {
-                result[i,j] = first[i,j] - second[i,j];
+                result[i, j] = first[i, j] - second[i, j];
             }
         }
         return result;
     }
-    
+
 
 }

@@ -153,10 +153,9 @@ public class CubeWheel : MonoBehaviour
         if ( _c.forwardSpeedAbs < 0.1 || _inputManager.isDrift) return;
         if (_isAtWall && _c.forwardSpeedAbs < 10f) return;
 
-        
-        var dragForce = (_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4 * _c.forwardSpeedSign * 
-                        (1 - Mathf.Abs(_inputManager.throttleInput));
-
+        var dragInputConstant = Mathf.Max(Mathf.Abs(_inputManager.throttleInput), (_inputManager.isBoost ? 1.0f : 0.0f));
+        var dragForce = ((_c.isAllWheelsSurface ? ForwardDragWheels : ForwardDragRoof) / 4) * _c.forwardSpeedSign * 
+                        (1 - dragInputConstant);
         
         _rb.AddForce(-dragForce * transform.forward, ForceMode.Acceleration);
     }

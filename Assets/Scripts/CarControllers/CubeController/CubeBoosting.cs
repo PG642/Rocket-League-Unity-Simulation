@@ -4,7 +4,7 @@
 public class CubeBoosting : MonoBehaviour
 {
     public float BoostForceMultiplier = 1f;
-    const float BoostForce = 991 / 100;
+    const float BoostForce = 991.666f / 100f;
 
     public bool isBoosting = false;
     public float _boostAmount = 32f;
@@ -70,6 +70,11 @@ public class CubeBoosting : MonoBehaviour
             isBoosting = false;
         }
 
+    }
+
+    public void SetInfiniteBoost(bool infiniteBoost)
+    {
+        _infiniteBoosting = infiniteBoost;
     }
 
     //returns true if the boost was alreade 100

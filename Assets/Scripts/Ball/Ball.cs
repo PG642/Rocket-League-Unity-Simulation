@@ -114,13 +114,13 @@ public class Ball : Resettable
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            Debug.Log("Bounce");
+            //Debug.Log("Bounce");
             ApplyBounce(collision);
             isTouchedGround = true;
         }
         else
         {
-            Debug.Log("Hit");
+            //Debug.Log("Hit");
             PerformPlayerHit(collision);
         }
     }
@@ -182,6 +182,7 @@ public class Ball : Resettable
         rb.angularVelocity = new Vector3(0,0,0.00051f);
     }
 
+
     private void OnCollisionExit(Collision other)
     {
         if (other.gameObject.CompareTag("Ground"))
@@ -192,6 +193,4 @@ public class Ball : Resettable
 
 
 }
-
-
 

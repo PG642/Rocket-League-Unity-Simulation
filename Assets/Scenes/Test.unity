@@ -443,6 +443,10 @@ PrefabInstance:
       value: ControllableCar
       objectReference: {fileID: 0}
     - target: {fileID: 6116194479964122941, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6116194479964122941, guid: a53d74f7692c3fb4d95003d2a3de5630, type: 3}
       propertyPath: m_TagString
       value: ControllableCar
       objectReference: {fileID: 0}
@@ -497,6 +501,10 @@ GameObject:
   - component: {fileID: 799813833}
   - component: {fileID: 799813832}
   - component: {fileID: 799813834}
+  - component: {fileID: 799813838}
+  - component: {fileID: 799813837}
+  - component: {fileID: 799813836}
+  - component: {fileID: 799813835}
   m_Layer: 0
   m_Name: env
   m_TagString: Environment
@@ -535,6 +543,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingJson: {fileID: 4900000, guid: 18f8e4633fa2e7148ba2a3adccc17d02, type: 3}
+  controllableCarPrefab: {fileID: 17332315}
 --- !u!114 &799813833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -570,6 +579,60 @@ MonoBehaviour:
   decimalsAngularVelocity: 4
   roundRotation: 0
   decimalsRotation: 4
+--- !u!114 &799813835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799813830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab138f7d1fd6027449f3aa6275ffd9f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TeamSize: 2
+  TeamBlue: []
+  TeamOrange: []
+--- !u!114 &799813836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799813830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbabf819ac10b4e4f8daa26617f73533, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paused: 0
+  matchTimeSeconds: 300
+--- !u!114 &799813837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799813830}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73be25fa26c645ecb890cb2265219c2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &799813838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799813830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b954286e02a4f258a6045f9f3f569ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ExplosionParticleSystem: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664, type: 3}
 --- !u!1 &1392052111
 GameObject:
   m_ObjectHideFlags: 0
