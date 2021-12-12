@@ -27,7 +27,7 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: -EnableHeadlessMode
-          buildMethod: UnityBuilderAction.BuildScript.Build
+          buildMethod: BuildScript.PerformBuild
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.targetPlatform }}
