@@ -7,14 +7,14 @@
 #SBATCH --job-name=ml-agents-job
 #SBATCH --mail-user=smttroet@tu-dortmund.de
 #SBATCH --mail-type=ALL
-#SBATCH --output=goalkeeper.log
+#SBATCH --output=topscorer.log
 #SBATCH --signal=B:SIGINT@90
 
 
 module load python/3.7.7
 
 MLAGENTS_PID=0
-RUN_ID=goalkeeper
+RUN_ID=topscorer
 
 
 cleanup_before_exiting() {

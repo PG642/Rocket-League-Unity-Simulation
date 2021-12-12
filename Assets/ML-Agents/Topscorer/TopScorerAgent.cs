@@ -69,11 +69,12 @@ public class TopScorerAgent : Agent
     public override void OnEpisodeBegin()
     {
         //Reset Car
-        Vector3 startPosition = _midFieldPosition + new Vector3(UnityEngine.Random.Range(-20f, -10f), 0.17f, UnityEngine.Random.Range(-15f, 15f));
-        _controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+        Vector3 startPosition = _midFieldPosition + new Vector3(0f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
+
+        _controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f + UnityEngine.Random.Range(-20f, 20f), 0f), 100f);
 
         //Reset Ball
-        _ball.localPosition = new Vector3(UnityEngine.Random.Range(30f, 50f), UnityEngine.Random.Range(0f, 10f), UnityEngine.Random.Range(-30f, 30f));
+        _ball.localPosition = new Vector3(UnityEngine.Random.Range(30f, 50f), UnityEngine.Random.Range(0f, 10f), UnityEngine.Random.Range(-20f, 20f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
@@ -155,16 +156,16 @@ public class TopScorerAgent : Agent
     /// </summary>
     private void AssignReward()
     {
-        if (Time.time - _lastResetTime > _episodeLength || _rbBall.velocity.normalized.x > 0.3f)
+        if (Time.time - _lastResetTime > _episodeLength || _rb.position.x > _rbBall.position.x + 5.0f)
         {
-            SetReward(1f);
-            //AddReward((_ball.localPosition.x / 53f) / 2f);
+            // Agent didn't score a goal
+            SetReward(-1f);
             Reset();
         }
-        if (_mapData.isScoredOrange)
+        if (_mapData.isScoredBlue)
         {
-            // Agent got scored on
-            SetReward(-1f);
+            // Agent scored a goal
+            SetReward(1f);
             Reset();
         }
     }

@@ -1,6 +1,6 @@
 default_settings: null
 behaviors:
-  GoalKeeping:
+  TopScoring:
     trainer_type: ppo
     hyperparameters:
       batch_size: 64
@@ -26,7 +26,7 @@ behaviors:
     time_horizon: 1000
     summary_freq: 12000
 env_settings:
-  env_path: 9envsgoalkeeper.x86_64
+  env_path: topscorer.x86_64
   env_args: null
   base_port: 5005
   num_envs: 4
@@ -42,7 +42,7 @@ engine_settings:
  
 environment_parameters: null
 checkpoint_settings:
-  run_id: goalkeeper
+  run_id: topscorer
   initialize_from: null
   load_model: false
   resume: true
