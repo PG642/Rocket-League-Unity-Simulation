@@ -18,7 +18,7 @@ public class BuildScript
         var buildScene = names.ToArray();
         foreach (var scene in buildScene)
         {
-            var name = scene.Split('\\').Last().Replace(".unity", "");
+            var name = scene.Split('\\').Last().Split('/').Last().Replace(".unity", "");
             BuildPipeline.BuildPlayer(new[]
                 {
                     PATH + scene
