@@ -1,20 +1,29 @@
-
+using System;
+using System.Linq;
 using UnityEditor;
+using System.IO;
+using UnityEngine;
 
 public class BuildScript
 {
     static void PerformBuild()
     {
-        string[] buildScene = {  "Assets/ML-Agents/Goalkeeper/SaveTraining_single.unity", "Assets/ML-Agents/1v1/1v1.unity"}; //"Assets/Scenes/2v2.unity", "Assets/Scenes/Test.unity",
+        const string PATH = "Assets/ML-Agents";
+        DirectoryInfo d = new DirectoryInfo(PATH);
+        FileInfo[] files = d.GetFiles("*.unity",SearchOption.AllDirectories);
+        string path = UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(0);
+        string[] split = new[] { "ML-Agents" };
+        var names = files.Select(f => f.FullName.Split(split,StringSplitOptions.None).Last()).ToList();
 
+        var buildScene = names.ToArray();
         foreach (var scene in buildScene)
         {
-            
+            var name = scene.Split('\\').Last().Replace(".unity", "");
             BuildPipeline.BuildPlayer(new[]
-            {
-                scene
-            }, $"./builds/{scene}.x86_64", BuildTarget.StandaloneLinux64, BuildOptions.EnableHeadlessMode);
+                {
+                    PATH + scene
+                }, $"./builds/{name}/{name}", BuildTarget.StandaloneLinux64,
+                BuildOptions.EnableHeadlessMode);
         }
     }
 }
-
