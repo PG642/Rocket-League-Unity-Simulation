@@ -52,7 +52,8 @@ public class Ball : Resettable
         StopBallIfTooSlow();
     }
 
-    private void CapVelocities() {
+    private void CapVelocities()
+    {
         if (rb.velocity.magnitude > maxVelocity)
         {
             rb.velocity = rb.velocity.normalized * maxVelocity;
@@ -137,6 +138,10 @@ public class Ball : Resettable
     {
         Vector3 n = col.GetContact(0).normal;
         CancelUnityImpulse();
+        if (rb.velocity.magnitude <= 0.0001f)
+        {
+            return;
+        }
 
         Vector3 vPerp = Vector3.Dot(rb.velocity, n) * n;
         Vector3 vPara = rb.velocity - vPerp;
@@ -154,8 +159,8 @@ public class Ball : Resettable
 
     private void PerformPlayerHit(Collision col)
     {
-       
-        
+
+
         CancelUnityImpulse();
         col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
 
@@ -165,7 +170,7 @@ public class Ball : Resettable
         Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
         Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
 
-        
+
         CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
         CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
         CapVelocities();
@@ -176,10 +181,10 @@ public class Ball : Resettable
     private void setCarState(Rigidbody rb)
     {
         //at time 1.117961 im Ballschuss szenario mit radius 93.15uu
-        rb.velocity = new Vector3(9.130809f,0.00191f,0);
-        rb.position = new Vector3(-11.5511f,0.1701f,15);
-        rb.rotation.eulerAngles.Set(0.5493164f,0,0);
-        rb.angularVelocity = new Vector3(0,0,0.00051f);
+        rb.velocity = new Vector3(9.130809f, 0.00191f, 0);
+        rb.position = new Vector3(-11.5511f, 0.1701f, 15);
+        rb.rotation.eulerAngles.Set(0.5493164f, 0, 0);
+        rb.angularVelocity = new Vector3(0, 0, 0.00051f);
     }
 
 

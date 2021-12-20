@@ -288,6 +288,7 @@ GameObject:
   - component: {fileID: 175047606}
   - component: {fileID: 175047605}
   - component: {fileID: 175047604}
+  - component: {fileID: 175047609}
   m_Layer: 0
   m_Name: TopScorerAgent
   m_TagString: ControllableCar
@@ -422,20 +423,75 @@ MonoBehaviour:
     VectorObservationSize: 20
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 8
-      BranchSizes: 
-    VectorActionSize: 08000000
+      m_NumContinuousActions: 0
+      BranchSizes: 0500000005000000050000000300000002000000020000000200000002000000
+    VectorActionSize: 0500000005000000050000000300000002000000020000000200000002000000
     VectorActionDescriptions: []
-    VectorActionSpaceType: 1
+    VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: GoalKeeping
+  m_BehaviorName: TopScorer
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_ObservableAttributeHandling: 0
+--- !u!114 &175047609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 175047602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d57328d66b70a3d4fa10ca170bdcb747, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  surfaceNormal: {x: 0, y: 0, z: 0}
+  pysionixImpulseCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.65
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0.65
+      inSlope: 0
+      outSlope: -0.049999982
+      tangentMode: 65
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    - serializedVersion: 3
+      time: 2.4
+      value: 0.56
+      inSlope: -0.049999982
+      outSlope: -0.109090924
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 4.6
+      value: 0.32
+      inSlope: -0.109090924
+      outSlope: 0
+      tangentMode: 5
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &462293483
 GameObject:
   m_ObjectHideFlags: 0
