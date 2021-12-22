@@ -161,6 +161,7 @@ public class GoalKeeperAgent : Agent
         {
             // Agent scored a goal
             SetReward(2f);
+
             Reset();
         }
         if (_mapData.isScoredOrange)

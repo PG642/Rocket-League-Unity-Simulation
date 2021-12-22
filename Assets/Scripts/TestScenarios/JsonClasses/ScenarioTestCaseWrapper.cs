@@ -15,6 +15,17 @@ namespace TestScenarios.JsonClasses
     public class GameObjectValue
     {
         public string gameObject;
+        public string id;
+        public bool lead;
+        public string team;
+        public StartValues startValues;
+        public List<Action> actions;
+        public int boost;
+    }
+
+    [Serializable]
+    public class StartValues
+    {
         public SetupPoint position;
         public SetupPoint velocity;
         public SetupPoint angularVelocity;
@@ -34,14 +45,12 @@ namespace TestScenarios.JsonClasses
         public string name;
         public float value;
     }
-    
+
     [Serializable]
     public class Scenario
     {
-        public List<GameObjectValue> startValues;
-        public List<Action> actions;
+        public List<GameObjectValue> gameObjects;
         public float time;
         public string name;
-        public int boost;
     }
 }

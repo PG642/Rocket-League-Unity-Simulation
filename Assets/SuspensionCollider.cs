@@ -27,7 +27,7 @@ public class SuspensionCollider : MonoBehaviour
     }
 
 
-    private void Start()
+    private void Awake()
     {
         _meshCollider = GetComponent<MeshCollider>();
         _wheelSuspension = GetComponentInParent<WheelSuspension>();

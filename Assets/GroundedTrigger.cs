@@ -7,7 +7,7 @@ public class GroundedTrigger : MonoBehaviour
     private GroundTrigger _groundTrigger;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _groundTrigger = GetComponentInParent<GroundTrigger>();
     }
