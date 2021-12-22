@@ -15,6 +15,7 @@ public class Ball : MonoBehaviour
     public float _maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     public bool isTouchedGround = false;
+    public bool stopSlowBall = true;
     private float _minVelocity = 0.4f;
     private float _minAngularVelocity = 1.047f;
     private float _lastStoppedTime;
@@ -88,22 +89,25 @@ public class Ball : MonoBehaviour
 
     private void StopBallIfTooSlow()
     {
-        if (_rb.velocity.magnitude <= _minVelocity && _rb.angularVelocity.magnitude <= _minAngularVelocity)
+        if (stopSlowBall)
         {
-            if (_lastStoppedTime == 0.0f)
+            if (_rb.velocity.magnitude <= _minVelocity && _rb.angularVelocity.magnitude <= _minAngularVelocity)
             {
-                _lastStoppedTime = Time.time;
-            }
+                if (_lastStoppedTime == 0.0f)
+                {
+                    _lastStoppedTime = Time.time;
+                }
 
-            if (_lastStoppedTime < Time.time - _timeWindowToStop && _lastStoppedTime > 0.0f)
-            {
-                _rb.velocity = Vector3.zero;
-                _rb.angularVelocity = Vector3.zero;
+                if (_lastStoppedTime < Time.time - _timeWindowToStop && _lastStoppedTime > 0.0f)
+                {
+                    _rb.velocity = Vector3.zero;
+                    _rb.angularVelocity = Vector3.zero;
+                }
             }
-        }
-        else
-        {
-            _lastStoppedTime = 0.0f;
+            else
+            {
+                _lastStoppedTime = 0.0f;
+            }
         }
     }
 

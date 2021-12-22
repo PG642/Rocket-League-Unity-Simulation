@@ -8,8 +8,8 @@ public class MatchEnvController : MonoBehaviour
 {
     private TeamController _teamController;
     
-    private SimpleMultiAgentGroup _teamBlueAgentGroup;
-    private SimpleMultiAgentGroup _teamOrangeAgentGroup;
+    private HashSet<OneVsOneAgent> _teamBlueAgentGroup;
+    private HashSet<OneVsOneAgent> _teamOrangeAgentGroup;
     private Transform _ball;
 
     private MapData _mapData;
@@ -22,18 +22,27 @@ public class MatchEnvController : MonoBehaviour
     {
         _teamController = transform.GetComponent<TeamController>();
 
-        _teamBlueAgentGroup = new SimpleMultiAgentGroup();
-        foreach (var agent in _teamController.TeamBlue)
+        _teamBlueAgentGroup = new HashSet<OneVsOneAgent>();
+        foreach (var agentGameObject in _teamController.TeamBlue)
         {
-            _teamBlueAgentGroup.RegisterAgent(agent.GetComponent<OneVsOneAgent>());
+            var agent = agentGameObject.GetComponent<OneVsOneAgent>();
+            if (!_teamBlueAgentGroup.Contains(agent))
+            {
+                _teamBlueAgentGroup.Add(agent);
+            }
         }
-        _teamOrangeAgentGroup = new SimpleMultiAgentGroup();
-        foreach (var agent in _teamController.TeamOrange)
+        _teamOrangeAgentGroup = new HashSet<OneVsOneAgent>();
+        foreach (var agentGameObject in _teamController.TeamOrange)
         {
-            _teamOrangeAgentGroup.RegisterAgent(agent.GetComponent<OneVsOneAgent>());
+            var agent = agentGameObject.GetComponent<OneVsOneAgent>();
+            if (!_teamOrangeAgentGroup.Contains(agent))
+            {
+                _teamOrangeAgentGroup.Add(agent);
+            }
         }
         _ball = transform.Find("Ball");
-        
+        _ball.GetComponent<Ball>().stopSlowBall = false;
+
         _mapData = transform.Find("World").Find("Rocket_Map").GetComponent<MapData>();
         
         _episodeLength = transform.GetComponent<MatchTimeController>().matchTimeSeconds;
@@ -43,8 +52,15 @@ public class MatchEnvController : MonoBehaviour
     public void Reset()
     {
         // End episode for all agents
-        _teamBlueAgentGroup.EndGroupEpisode();
-        _teamOrangeAgentGroup.EndGroupEpisode();
+        foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
+        {
+            agent.EndEpisode();
+        }
+
+        foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
+        {
+            agent.EndEpisode();
+        }
         
         // Reset environment
         _teamController.SpawnTeams();
@@ -67,15 +83,29 @@ public class MatchEnvController : MonoBehaviour
         
         if (_mapData.isScoredBlue)
         {
-            _teamBlueAgentGroup.AddGroupReward(5.0f);
-            _teamOrangeAgentGroup.AddGroupReward(-5.0f);
+            foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
+            {
+                agent.AddReward(5.0f);
+            }
+
+            foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
+            {
+                agent.AddReward(-5.0f);
+            }
             
             Reset();
         }
         if (_mapData.isScoredOrange)
         {
-            _teamBlueAgentGroup.AddGroupReward(-5.0f);
-            _teamOrangeAgentGroup.AddGroupReward(5.0f);
+            foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
+            {
+                agent.AddReward(-5.0f);
+            }
+
+            foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
+            {
+                agent.AddReward(5.0f);
+            }
             
             Reset();
         }

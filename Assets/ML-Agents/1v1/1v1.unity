@@ -180,7 +180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8187233145375818463, guid: ce676eaed2a098048b0be4b41963ed72, type: 3}
       propertyPath: TeamId
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8187233145375818463, guid: ce676eaed2a098048b0be4b41963ed72, type: 3}
       propertyPath: m_Model

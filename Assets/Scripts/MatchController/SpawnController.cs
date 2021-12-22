@@ -97,8 +97,12 @@ namespace MatchController
             {
                 teamBlue[i].transform.position = _blueSpawnPositions.GetChild(spawns[i]).position;
                 teamBlue[i].transform.rotation = _blueSpawnPositions.GetChild(spawns[i]).rotation;
+                teamBlue[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                teamBlue[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
                 teamOrane[i].transform.position = _orangeSpawnPositions.GetChild(spawns[i]).position;
                 teamOrane[i].transform.rotation = _orangeSpawnPositions.GetChild(spawns[i]).rotation;
+                teamOrane[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                teamOrane[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             }
         }
 

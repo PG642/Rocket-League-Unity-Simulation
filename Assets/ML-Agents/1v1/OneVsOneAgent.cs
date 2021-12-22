@@ -180,7 +180,7 @@ public class OneVsOneAgent : Agent
         // }
         
         //AddReward(0.001f * Mathf.Sign(Vector3.Dot(_ball.position - transform.position, _rb.velocity)));
-        AddReward(0.001f * Mathf.Sign(Vector3.Dot(_rbBall.position - transform.position, _rb.velocity)));
+        // AddReward(0.001f * Mathf.Sign(Vector3.Dot(_rbBall.position - transform.position, _rb.velocity)));
 
         // float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
         // AddReward(agentBallDistanceReward);
@@ -195,7 +195,8 @@ public class OneVsOneAgent : Agent
     {
         if(other.gameObject.tag.Equals("Ball"))
         {
-            AddReward(2.0f);
+            AddReward(1.0f);
+            _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f);
             _matchEnvController.Reset();
         }
     }
