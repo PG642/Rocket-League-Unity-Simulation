@@ -59,7 +59,7 @@ public class GoalKeeperAgent : Agent
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
 
-        _startPosition = transform.localPosition;
+        _startPosition = transform.position;
 
         _shootAt = transform.parent.Find("ShootAt");
         _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
@@ -155,10 +155,13 @@ public class GoalKeeperAgent : Agent
     /// </summary>
     private void AssignReward()
     {
-        if (Time.time - _lastResetTime > _episodeLength || _rbBall.velocity.normalized.x > 0.3f)
+        AddReward(-0.001f);
+        
+        if (_rbBall.velocity.x > 0 || Time.time - _lastResetTime > _episodeLength)
         {
-            SetReward(1f);
-            //AddReward((_ball.localPosition.x / 53f) / 2f);
+            // Agent scored a goal
+            SetReward(2f);
+
             Reset();
         }
         if (_mapData.isScoredOrange)
