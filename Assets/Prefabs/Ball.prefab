@@ -327,14 +327,51 @@ MonoBehaviour:
   randomSpeed: 40
   initialForce: 0
   hitMultiplier: 1
-  _maxAngluarVelocity: 6
-  _maxVelocity: 60
+  maxAngluarVelocity: 6
+  maxVelocity: 60
   pysionixImpulseCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.65
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0.65
+      inSlope: 0
+      outSlope: -0.049999982
+      tangentMode: 65
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    - serializedVersion: 3
+      time: 2.4
+      value: 0.56
+      inSlope: -0.049999982
+      outSlope: -0.109090924
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 4.6
+      value: 0.32
+      inSlope: -0.109090924
+      outSlope: 0
+      tangentMode: 5
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  isTouchedGround: 0
 --- !u!114 &2532842153811578200
 MonoBehaviour:
   m_ObjectHideFlags: 0
