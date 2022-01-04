@@ -68,6 +68,25 @@ public class TopScorerAgent : Agent
 
     public override void OnEpisodeBegin()
     {
+        Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
+        _controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+
+
+        //Reset Ball
+        float ball_z_pos = UnityEngine.Random.Range(0, 9)%2==0 ? 5f : -5f;
+        _ball.localPosition = new Vector3(45f, UnityEngine.Random.Range(0.93f, 3f), ball_z_pos);
+        //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
+        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+        // Set new Taget Position
+        _shootAt.localPosition = new Vector3(_ball.localPosition.x, 0f, 0f);
+
+        //Throw Ball
+        _ball.GetComponent<ShootBall>().ShootTarget();
+
+        _mapData.ResetIsScored();
+        /*
         //Reset Car
         Vector3 startPosition = _midFieldPosition + new Vector3(0f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
 
@@ -84,8 +103,9 @@ public class TopScorerAgent : Agent
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
-
         _mapData.ResetIsScored();
+        */
+
     }
 
     public override void CollectObservations(VectorSensor sensor)

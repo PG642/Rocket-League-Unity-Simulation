@@ -138,11 +138,6 @@ public class Ball : Resettable
     {
         Vector3 n = col.GetContact(0).normal;
         CancelUnityImpulse();
-        if (rb.velocity.magnitude <= 0.0001f)
-        {
-            return;
-        }
-
         if(rb.velocity.magnitude <= 1e-4f)
         {
             return;
