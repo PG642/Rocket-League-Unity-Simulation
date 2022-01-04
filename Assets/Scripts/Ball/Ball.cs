@@ -143,6 +143,11 @@ public class Ball : Resettable
             return;
         }
 
+        if(rb.velocity.magnitude <= 1e-4f)
+        {
+            return;
+        }
+
         Vector3 vPerp = Vector3.Dot(rb.velocity, n) * n;
         Vector3 vPara = rb.velocity - vPerp;
         Vector3 vSpin = Radius * Vector3.Cross(n, rb.angularVelocity);

@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/ML-Agents/Goalkeeper/SaveTraining_single.unity
     guid: fa79254118a3e124c8d72b9c2c798e23
+  - enabled: 1
+    path: Assets/ML-Agents/1v1/1v1.unity
+    guid: b8759979f85786e4d9b047b51d3c5020
   m_configObjects: {}
