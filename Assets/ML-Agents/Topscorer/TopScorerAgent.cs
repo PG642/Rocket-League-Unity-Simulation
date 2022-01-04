@@ -14,7 +14,7 @@ public class TopScorerAgent : Agent
 
     private Rigidbody _rb, _rbBall;
 
-    private float _episodeLength = 10f;
+    private float _episodeLength = 5f;
     private float _lastResetTime;
 
     private Transform _ball, _shootAt;
@@ -73,8 +73,8 @@ public class TopScorerAgent : Agent
 
 
         //Reset Ball
-        float ball_z_pos = UnityEngine.Random.Range(0, 9)%2==0 ? 5f : -5f;
-        _ball.localPosition = new Vector3(45f, UnityEngine.Random.Range(0.93f, 3f), ball_z_pos);
+        float ball_z_pos = UnityEngine.Random.Range(0, 9)%2==0 ? 6f : -6f;
+        _ball.localPosition = new Vector3(45f, UnityEngine.Random.Range(2f, 5f), ball_z_pos + UnityEngine.Random.Range(-1f, 1f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
@@ -176,7 +176,7 @@ public class TopScorerAgent : Agent
     /// </summary>
     private void AssignReward()
     {
-        if (Time.time - _lastResetTime > _episodeLength || _rb.position.x > _rbBall.position.x + 5.0f)
+        if (Time.time - _lastResetTime > _episodeLength)
         {
             // Agent didn't score a goal
             SetReward(-1f);
@@ -186,8 +186,30 @@ public class TopScorerAgent : Agent
         {
             // Agent scored a goal
             SetReward(1f);
+            // Add reward for scoring fast
+            AddShortEpisodeReward(0.2f);
             Reset();
         }
+    }
+
+    private void AddShortEpisodeReward(float factor)
+    {
+        // adds a reward in range [0, factor]
+        if (Time.time - _lastResetTime > _episodeLength)
+        {
+            return;
+        }
+        AddReward((1 - (Time.time - _lastResetTime / _episodeLength)) * factor);
+    }
+
+    private void AddFastShotReward(float factor)
+    {
+        // adds a reward in range [0, factor]
+        if (Time.time - _lastResetTime > _episodeLength)
+        {
+            return;
+        }
+        AddReward((_rbBall.velocity.magnitude / _ball.GetComponent<Ball>().maxVelocity) * factor);
     }
 
     /// <summary>
