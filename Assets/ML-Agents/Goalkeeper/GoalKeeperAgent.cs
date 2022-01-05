@@ -40,7 +40,7 @@ public class GoalKeeperAgent : Agent
     /// Shows whether the action space of the agent is continuous, multi-discrete or mixed.
     /// </summary>
     private ActionSpaceType _actionSpaceType;
-    
+
     void Start()
     {
         InputManager = GetComponent<InputManager>();
@@ -72,19 +72,62 @@ public class GoalKeeperAgent : Agent
         //Reset Car
         _controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 
-        //Reset Ball
-        _ball.localPosition = new Vector3(UnityEngine.Random.Range(-10f, 0f), UnityEngine.Random.Range(0f, 20f), UnityEngine.Random.Range(-30f, 30f));
-        //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
+        ResetShoot();
+
+        _mapData.ResetIsScored();
+    }
+
+    public static Vector3 GetLocalPositionTarget(Difficulty difficulty)
+    {
+        // Tor ist von 2 bis 8.8
+        switch (difficulty)
+        {
+            case Difficulty.EASY:
+                return new Vector3(-53f, UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(-2f, 2f));
+            case Difficulty.MIDDLE:
+                return new Vector3(-53f, UnityEngine.Random.Range(0f, 2f), UnityEngine.Random.Range(-4f, 4f));
+            case Difficulty.HARD:
+                return new Vector3(-53f, UnityEngine.Random.Range(0f, 3f), UnityEngine.Random.Range(-7f, 7f));
+            default:
+                return new Vector3(-53f, UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(-2f, 2f));
+        }
+        
+          
+    }
+    private void ResetShoot()
+    {
+        var lesson = Academy.Instance.EnvironmentParameters.GetWithDefault("my_environment_parameter", 0.0f);
+        var localPositionBall = new Vector3();
+        var localPositionTarget = new Vector3();
+        var speed = 0.0f;
+
+        switch (lesson)
+        {
+            case <= 0:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.EASY);
+                localPositionBall = new Vector3(UnityEngine.Random.Range(-10f, 0f), UnityEngine.Random.Range(0f, 20f),
+                    UnityEngine.Random.Range(-30f, 30f));
+                speed = UnityEngine.Random.Range(50f, 100f);
+                break;
+            
+            case <= 1:
+                localPositionTarget =
+                    new Vector3(-53f, UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(-3f, 3f));
+                localPositionBall = new Vector3(UnityEngine.Random.Range(-5f, 0f), UnityEngine.Random.Range(0f, 10f),
+                    UnityEngine.Random.Range(-10f, 10f));
+                speed = UnityEngine.Random.Range(30f, 50f);
+                break;
+        }
+        
+        //reset velocities
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
-        // Set new Taget Position
-        _shootAt.localPosition = new Vector3(-53f, UnityEngine.Random.Range(3f, 3f), UnityEngine.Random.Range(-7f, 7f));
-
+        _ball.localPosition = localPositionBall;
+        _shootAt.localPosition = localPositionTarget;
         //Throw Ball
-        _ball.GetComponent<ShootBall>().ShootTarget();
-
-        _mapData.ResetIsScored();
+        _ball.GetComponent<ShootBall>().ShootTarget(speed);
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -99,16 +142,19 @@ public class GoalKeeperAgent : Agent
             Debug.Log("Car: carXNormalized == NaN");
             carXNormalized = -1f;
         }
+
         if (float.IsNaN(carYNormalized))
         {
             Debug.Log("Car: carYNormalized == NaN");
             carYNormalized = -1f;
         }
+
         if (float.IsNaN(carZNormalized))
         {
             Debug.Log("Car: carZNormalized == NaN");
             carZNormalized = -1f;
         }
+
         sensor.AddObservation(new Vector3(carXNormalized, carYNormalized, carZNormalized));
 
         //Car rotation, already normalized
@@ -121,21 +167,25 @@ public class GoalKeeperAgent : Agent
             Debug.Log("Car: car_rotation_x == NaN");
             car_rotation_x = -1f;
         }
+
         if (float.IsNaN(car_rotation_y))
         {
             Debug.Log("Car: car_rotation_y == NaN");
             car_rotation_y = -1f;
         }
+
         if (float.IsNaN(car_rotation_z))
         {
             Debug.Log("Car: car_rotation_z == NaN");
             car_rotation_z = -1f;
         }
+
         if (float.IsNaN(car_rotation_w))
         {
             Debug.Log("Car: car_rotation_w == NaN");
             car_rotation_w = -1f;
         }
+
         sensor.AddObservation(new Quaternion(car_rotation_x, car_rotation_y, car_rotation_z, car_rotation_w));
         //Car velocity
         Vector3 car_velocity = _rb.velocity.normalized * (_rb.velocity.magnitude / 23f);
@@ -144,16 +194,19 @@ public class GoalKeeperAgent : Agent
             Debug.Log("Car: car_velocity.x == NaN");
             car_velocity.x = -1f;
         }
+
         if (float.IsNaN(car_velocity.y))
         {
             Debug.Log("Car: car_velocity.y == NaN");
             car_velocity.y = -1f;
         }
+
         if (float.IsNaN(car_velocity.z))
         {
             Debug.Log("Car: car_velocity.z == NaN");
             car_velocity.z = -1f;
         }
+
         sensor.AddObservation(car_velocity);
 
         //Car angular velocity
@@ -163,16 +216,19 @@ public class GoalKeeperAgent : Agent
             Debug.Log("Car: _rb.angularVelocity.x == NaN");
             car_angularVelocity.x = -1f;
         }
+
         if (float.IsNaN(car_angularVelocity.y))
         {
             Debug.Log("Car: _rb.angularVelocity.y == NaN");
             car_angularVelocity.y = -1f;
         }
+
         if (float.IsNaN(car_angularVelocity.z))
         {
             Debug.Log("Car: _rb.angularVelocity.z == NaN");
             car_angularVelocity.z = -1f;
         }
+
         sensor.AddObservation(car_angularVelocity);
 
         //Ball position
@@ -185,16 +241,19 @@ public class GoalKeeperAgent : Agent
             Debug.Log("Ball: ballXNormalized == NaN");
             ballXNormalized = -1f;
         }
+
         if (float.IsNaN(ballYNormalized))
         {
             Debug.Log("Ball: ballYNormalized == NaN");
             ballYNormalized = -1f;
         }
+
         if (float.IsNaN(ballZNormalized))
         {
             Debug.Log("Ball: ballZNormalized == NaN");
             ballZNormalized = -1f;
         }
+
         sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
 
         //Ball velocity
@@ -204,16 +263,19 @@ public class GoalKeeperAgent : Agent
             Debug.Log("Ball: ball_velocity.x == NaN");
             ball_velocity.x = -1f;
         }
+
         if (float.IsNaN(ball_velocity.y))
         {
             Debug.Log("Ball: ball_velocity.y == NaN");
             ball_velocity.y = -1f;
         }
+
         if (float.IsNaN(ball_velocity.z))
         {
             Debug.Log("Ball: ball_velocity.z == NaN");
             ball_velocity.z = -1f;
         }
+
         sensor.AddObservation(ball_velocity);
 
         // Boost amount
@@ -223,6 +285,7 @@ public class GoalKeeperAgent : Agent
             Debug.Log("Car: boostAmount == NaN");
             boostAmount = -1f;
         }
+
         sensor.AddObservation(boostAmount);
     }
 
@@ -242,13 +305,15 @@ public class GoalKeeperAgent : Agent
                     ProcessMixedActions(actionBuffers);
                     break;
                 default:
-                    throw new InvalidOperationException(string.Format("The method {0} does not support the {1} '{2}'.", nameof(OnActionReceived), typeof(ActionSpaceType), _actionSpaceType.ToString()));
+                    throw new InvalidOperationException(string.Format("The method {0} does not support the {1} '{2}'.",
+                        nameof(OnActionReceived), typeof(ActionSpaceType), _actionSpaceType.ToString()));
                     break;
             }
         }
+
         AssignReward();
     }
-    
+
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         InputManager.isAgent = false;
@@ -266,7 +331,7 @@ public class GoalKeeperAgent : Agent
     private void AssignReward()
     {
         AddReward(-0.001f);
-        
+
         if (_rbBall.velocity.x > 0 || Time.time - _lastResetTime > _episodeLength)
         {
             // Agent scored a goal
@@ -274,6 +339,7 @@ public class GoalKeeperAgent : Agent
 
             Reset();
         }
+
         if (_mapData.isScoredOrange)
         {
             // Agent got scored on
@@ -288,20 +354,20 @@ public class GoalKeeperAgent : Agent
     /// <param name="actionBuffers">The action buffers containing the actions.</param>
     private void ProcessContinuousActions(ActionBuffers actionBuffers)
     {
-            // set inputs
-            InputManager.throttleInput = actionBuffers.ContinuousActions[0];
-            InputManager.steerInput = actionBuffers.ContinuousActions[1];
-            InputManager.yawInput = actionBuffers.ContinuousActions[1];
-            InputManager.pitchInput = actionBuffers.ContinuousActions[2];
-            InputManager.rollInput = 0;
-            if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
-            if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
+        // set inputs
+        InputManager.throttleInput = actionBuffers.ContinuousActions[0];
+        InputManager.steerInput = actionBuffers.ContinuousActions[1];
+        InputManager.yawInput = actionBuffers.ContinuousActions[1];
+        InputManager.pitchInput = actionBuffers.ContinuousActions[2];
+        InputManager.rollInput = 0;
+        if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
+        if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
 
-            InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
-            InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
-            InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
+        InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
+        InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
+        InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
 
-            InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
+        InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
     }
 
     /// <summary>
@@ -326,6 +392,7 @@ public class GoalKeeperAgent : Agent
                 InputManager.rollInput = 0;
                 break;
         }
+
         InputManager.isBoost = actionBuffers.DiscreteActions[4] > 0;
         InputManager.isDrift = actionBuffers.DiscreteActions[5] > 0;
         InputManager.isAirRoll = actionBuffers.DiscreteActions[6] > 0;
@@ -357,6 +424,7 @@ public class GoalKeeperAgent : Agent
                 InputManager.rollInput = 0;
                 break;
         }
+
         InputManager.isBoost = actionBuffers.DiscreteActions[1] > 0;
         InputManager.isDrift = actionBuffers.DiscreteActions[2] > 0;
         InputManager.isAirRoll = actionBuffers.DiscreteActions[3] > 0;
@@ -373,32 +441,41 @@ public class GoalKeeperAgent : Agent
         int requiredNumActions = 8;
 
         // Determine action space type
-        if(actionSpec.NumContinuousActions > 0 && actionSpec.NumDiscreteActions == 0)
+        if (actionSpec.NumContinuousActions > 0 && actionSpec.NumDiscreteActions == 0)
         {
             //Propably continuous, we check the size
-            if(actionSpec.NumContinuousActions != requiredNumActions)
+            if (actionSpec.NumContinuousActions != requiredNumActions)
             {
-                throw new ArgumentException(string.Format("It seems like you tried to use a continuos action space for the agent. In this case the {0} needs 8 continuous actions.", typeof(GoalKeeperAgent)));
+                throw new ArgumentException(string.Format(
+                    "It seems like you tried to use a continuos action space for the agent. In this case the {0} needs 8 continuous actions.",
+                    typeof(GoalKeeperAgent)));
             }
+
             return ActionSpaceType.Continuous;
         }
-        else if(actionSpec.NumContinuousActions == 0 && actionSpec.NumDiscreteActions > 0)
+        else if (actionSpec.NumContinuousActions == 0 && actionSpec.NumDiscreteActions > 0)
         {
             //Propably multi discrete, we check the size
             if (actionSpec.NumDiscreteActions != requiredNumActions)
             {
-                throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches.", typeof(GoalKeeperAgent)));
+                throw new ArgumentException(string.Format(
+                    "It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches.",
+                    typeof(GoalKeeperAgent)));
             }
-            int[] requiredBranchSizes = { DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, 3, 2, 2, 2, 2};
-            for(int i = 0; i < actionSpec.BranchSizes.Length; i++)
+
+            int[] requiredBranchSizes =
+                { DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, 3, 2, 2, 2, 2 };
+            for (int i = 0; i < actionSpec.BranchSizes.Length; i++)
             {
-                if(actionSpec.BranchSizes[i] != requiredBranchSizes[i])
+                if (actionSpec.BranchSizes[i] != requiredBranchSizes[i])
                 {
-                    throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches with sizes ({1}).", 
-                        typeof(GoalKeeperAgent), 
+                    throw new ArgumentException(string.Format(
+                        "It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches with sizes ({1}).",
+                        typeof(GoalKeeperAgent),
                         string.Join(", ", requiredBranchSizes)));
                 }
             }
+
             return ActionSpaceType.MultiDiscrete;
         }
         else
@@ -406,18 +483,23 @@ public class GoalKeeperAgent : Agent
             //Propably multi discrete, we check the size
             if (actionSpec.NumDiscreteActions != 5 || actionSpec.NumContinuousActions != 3)
             {
-                throw new ArgumentException(string.Format("It seems like you tried to use a mixed action space for the agent. In this case the {0} needs 5 discrete action branches and 3 continuous actions.", typeof(GoalKeeperAgent)));
+                throw new ArgumentException(string.Format(
+                    "It seems like you tried to use a mixed action space for the agent. In this case the {0} needs 5 discrete action branches and 3 continuous actions.",
+                    typeof(GoalKeeperAgent)));
             }
+
             int[] requiredBranchSizes = { 3, 2, 2, 2, 2 };
             for (int i = 0; i < actionSpec.BranchSizes.Length; i++)
             {
                 if (actionSpec.BranchSizes[i] != requiredBranchSizes[i])
                 {
-                    throw new ArgumentException(string.Format("It seems like you tried to use a mixed action space for the agent. In this case the {0} needs 5 discrete action branches with sizes ({1}).",
+                    throw new ArgumentException(string.Format(
+                        "It seems like you tried to use a mixed action space for the agent. In this case the {0} needs 5 discrete action branches with sizes ({1}).",
                         typeof(GoalKeeperAgent),
                         string.Join(", ", requiredBranchSizes)));
                 }
             }
+
             return ActionSpaceType.Mixed;
         }
     }
@@ -430,5 +512,12 @@ public class GoalKeeperAgent : Agent
         Continuous,
         MultiDiscrete,
         Mixed
+    }
+
+    public enum Difficulty
+    {
+        EASY,
+        MIDDLE,
+        HARD
     }
 }
