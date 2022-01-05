@@ -148,7 +148,7 @@ public class Ball : Resettable
         Vector3 vSpin = Radius * Vector3.Cross(n, rb.angularVelocity);
         Vector3 s = vPara + vSpin;
 
-        float ratio = vPerp.magnitude / s.magnitude;
+        float ratio = s.magnitude <= 1e-4f ? 0.0f : vPerp.magnitude / s.magnitude;
 
         Vector3 deltaVPerp = -(1 + Restitution) * vPerp;
         Vector3 deltaVPara = -Math.Min(1, Friction * ratio) * Mu * s;

@@ -90,30 +90,140 @@ public class GoalKeeperAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         //Car position
+        // TODO: Welche Normalisierung?? (alle /120f?)
         var carXNormalized = (transform.localPosition.x + 60f) / 120f;
         var carYNormalized = transform.localPosition.y / 20f;
         var carZNormalized = (transform.localPosition.z + 41f) / 82f;
+        if (float.IsNaN(carXNormalized))
+        {
+            Debug.Log("Car: carXNormalized == NaN");
+            carXNormalized = -1f;
+        }
+        if (float.IsNaN(carYNormalized))
+        {
+            Debug.Log("Car: carYNormalized == NaN");
+            carYNormalized = -1f;
+        }
+        if (float.IsNaN(carZNormalized))
+        {
+            Debug.Log("Car: carZNormalized == NaN");
+            carZNormalized = -1f;
+        }
         sensor.AddObservation(new Vector3(carXNormalized, carYNormalized, carZNormalized));
 
         //Car rotation, already normalized
-        sensor.AddObservation(transform.rotation);
+        float car_rotation_x = transform.rotation.x;
+        float car_rotation_y = transform.rotation.y;
+        float car_rotation_z = transform.rotation.z;
+        float car_rotation_w = transform.rotation.w;
+        if (float.IsNaN(car_rotation_x))
+        {
+            Debug.Log("Car: car_rotation_x == NaN");
+            car_rotation_x = -1f;
+        }
+        if (float.IsNaN(car_rotation_y))
+        {
+            Debug.Log("Car: car_rotation_y == NaN");
+            car_rotation_y = -1f;
+        }
+        if (float.IsNaN(car_rotation_z))
+        {
+            Debug.Log("Car: car_rotation_z == NaN");
+            car_rotation_z = -1f;
+        }
+        if (float.IsNaN(car_rotation_w))
+        {
+            Debug.Log("Car: car_rotation_w == NaN");
+            car_rotation_w = -1f;
+        }
+        sensor.AddObservation(new Quaternion(car_rotation_x, car_rotation_y, car_rotation_z, car_rotation_w));
         //Car velocity
-        sensor.AddObservation(_rb.velocity / 23f);
+        Vector3 car_velocity = _rb.velocity.normalized * (_rb.velocity.magnitude / 23f);
+        if (float.IsNaN(car_velocity.x))
+        {
+            Debug.Log("Car: car_velocity.x == NaN");
+            car_velocity.x = -1f;
+        }
+        if (float.IsNaN(car_velocity.y))
+        {
+            Debug.Log("Car: car_velocity.y == NaN");
+            car_velocity.y = -1f;
+        }
+        if (float.IsNaN(car_velocity.z))
+        {
+            Debug.Log("Car: car_velocity.z == NaN");
+            car_velocity.z = -1f;
+        }
+        sensor.AddObservation(car_velocity);
 
         //Car angular velocity
-        sensor.AddObservation(_rb.angularVelocity / 5.5f);
+        Vector3 car_angularVelocity = _rb.angularVelocity.normalized * (_rb.angularVelocity.magnitude / 5.5f);
+        if (float.IsNaN(car_angularVelocity.x))
+        {
+            Debug.Log("Car: _rb.angularVelocity.x == NaN");
+            car_angularVelocity.x = -1f;
+        }
+        if (float.IsNaN(car_angularVelocity.y))
+        {
+            Debug.Log("Car: _rb.angularVelocity.y == NaN");
+            car_angularVelocity.y = -1f;
+        }
+        if (float.IsNaN(car_angularVelocity.z))
+        {
+            Debug.Log("Car: _rb.angularVelocity.z == NaN");
+            car_angularVelocity.z = -1f;
+        }
+        sensor.AddObservation(car_angularVelocity);
 
         //Ball position
+        // TODO: Welche Normalisierung?? (alle /120f?)
         var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
         var ballYNormalized = _ball.localPosition.y / 20f;
         var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
+        if (float.IsNaN(ballXNormalized))
+        {
+            Debug.Log("Ball: ballXNormalized == NaN");
+            ballXNormalized = -1f;
+        }
+        if (float.IsNaN(ballYNormalized))
+        {
+            Debug.Log("Ball: ballYNormalized == NaN");
+            ballYNormalized = -1f;
+        }
+        if (float.IsNaN(ballZNormalized))
+        {
+            Debug.Log("Ball: ballZNormalized == NaN");
+            ballZNormalized = -1f;
+        }
         sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
 
         //Ball velocity
-        sensor.AddObservation(_rbBall.velocity / 60f);
+        Vector3 ball_velocity = _rb.velocity.normalized * (_rbBall.velocity.magnitude / 60f);
+        if (float.IsNaN(ball_velocity.x))
+        {
+            Debug.Log("Ball: ball_velocity.x == NaN");
+            ball_velocity.x = -1f;
+        }
+        if (float.IsNaN(ball_velocity.y))
+        {
+            Debug.Log("Ball: ball_velocity.y == NaN");
+            ball_velocity.y = -1f;
+        }
+        if (float.IsNaN(ball_velocity.z))
+        {
+            Debug.Log("Ball: ball_velocity.z == NaN");
+            ball_velocity.z = -1f;
+        }
+        sensor.AddObservation(ball_velocity);
 
         // Boost amount
-        sensor.AddObservation(_boostControl._boostAmount / 100f);
+        float boostAmount = _boostControl._boostAmount / 100f;
+        if (float.IsNaN(boostAmount))
+        {
+            Debug.Log("Car: boostAmount == NaN");
+            boostAmount = -1f;
+        }
+        sensor.AddObservation(boostAmount);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
