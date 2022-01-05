@@ -79,20 +79,55 @@ public class GoalKeeperAgent : Agent
 
     public static Vector3 GetLocalPositionTarget(Difficulty difficulty)
     {
-        // Tor ist von 2 bis 8.8
+        // Tor ist von -8.8 bis 8.8 breit und von 0 bis 6.5 hoch
         switch (difficulty)
         {
             case Difficulty.EASY:
-                return new Vector3(-53f, UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(-2f, 2f));
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 2.5f), UnityEngine.Random.Range(-2f, 2f));
             case Difficulty.MIDDLE:
-                return new Vector3(-53f, UnityEngine.Random.Range(0f, 2f), UnityEngine.Random.Range(-4f, 4f));
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 4f), UnityEngine.Random.Range(-4f, 4f));
             case Difficulty.HARD:
-                return new Vector3(-53f, UnityEngine.Random.Range(0f, 3f), UnityEngine.Random.Range(-7f, 7f));
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 5.6f), UnityEngine.Random.Range(-7.9f, 7.9f));
             default:
-                return new Vector3(-53f, UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(-2f, 2f));
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 2.5f), UnityEngine.Random.Range(-2f, 2f));
         }
         
           
+    }
+
+    public static Vector3 GetLocalPositionBall(Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case Difficulty.EASY:
+                return new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(0.9315f, 5f), UnityEngine.Random.Range(-10f, 10f));
+            case Difficulty.MIDDLE:
+                return new Vector3(UnityEngine.Random.Range(-20f, 20f), UnityEngine.Random.Range(0.9315f, 10f), UnityEngine.Random.Range(-20f, 20f));
+            case Difficulty.HARD:
+                return new Vector3(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0.9315f, 19f), UnityEngine.Random.Range(-39f, 39f));
+            default:
+                return new Vector3(UnityEngine.Random.Range(-5f, 0f), UnityEngine.Random.Range(0f, 10f),
+                    UnityEngine.Random.Range(-10f, 10f));
+        }
+
+
+    }
+
+    public static float GetSpeed(Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case Difficulty.EASY:
+                return UnityEngine.Random.Range(5f, 20f);
+            case Difficulty.MIDDLE:
+                return UnityEngine.Random.Range(20f, 40f);
+            case Difficulty.HARD:
+                return UnityEngine.Random.Range(40f, 60f);
+            default:
+                return UnityEngine.Random.Range(5f, 20f);
+        }
+
+
     }
     private void ResetShoot()
     {
@@ -101,22 +136,112 @@ public class GoalKeeperAgent : Agent
         var localPositionTarget = new Vector3();
         var speed = 0.0f;
 
+
         switch (lesson)
         {
-            case <= 0:
+            case 0:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.EASY);
-                localPositionBall = new Vector3(UnityEngine.Random.Range(-10f, 0f), UnityEngine.Random.Range(0f, 20f),
-                    UnityEngine.Random.Range(-30f, 30f));
-                speed = UnityEngine.Random.Range(50f, 100f);
+                localPositionBall = GetLocalPositionBall(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.EASY);
                 break;
             
-            case <= 1:
+            case 1:
                 localPositionTarget =
-                    new Vector3(-53f, UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(-3f, 3f));
-                localPositionBall = new Vector3(UnityEngine.Random.Range(-5f, 0f), UnityEngine.Random.Range(0f, 10f),
-                    UnityEngine.Random.Range(-10f, 10f));
-                speed = UnityEngine.Random.Range(30f, 50f);
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.EASY);
+                break;
+
+            case 2:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.EASY);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.EASY);
+                break;
+
+            case 3:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.EASY);
+                localPositionBall = GetLocalPositionBall(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.MIDDLE);
+                break;
+
+            case 4:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.EASY);
+                break;
+
+            case 5:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.MIDDLE);
+                break;
+
+            case 6:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.EASY);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE);
+                break;
+
+            case 7:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE);
+                break;
+
+            case 8:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.HARD);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE);
+                break;
+
+            case 9:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.MIDDLE);
+                break;
+
+            case 10:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.HARD);
+                break;
+
+            case 11:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.HARD);
+                localPositionBall = GetLocalPositionBall(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.MIDDLE);
+                break;
+
+            case 12:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.HARD);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.HARD);
+                break;
+
+            case 13:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.HARD);
+                break;
+
+            case 14:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.HARD);
+                localPositionBall = GetLocalPositionBall(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.HARD);
                 break;
         }
         
