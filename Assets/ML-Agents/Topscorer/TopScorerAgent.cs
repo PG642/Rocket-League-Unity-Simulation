@@ -11,6 +11,7 @@ using Unity.MLAgents.Policies;
 public class TopScorerAgent : Agent
 {
     // Start is called before the first frame update
+    public int Difficulty = 0;
 
     private Rigidbody _rb, _rbBall;
 
@@ -40,7 +41,7 @@ public class TopScorerAgent : Agent
     /// Shows whether the action space of the agent is continuous, multi-discrete or mixed.
     /// </summary>
     private ActionSpaceType _actionSpaceType;
-    
+
     void Start()
     {
         InputManager = GetComponent<InputManager>();
@@ -68,12 +69,58 @@ public class TopScorerAgent : Agent
 
     public override void OnEpisodeBegin()
     {
+        switch (Difficulty)
+        {
+            case 0: OnEpisodeBeginDifficulty0(); break;
+            case 1: OnEpisodeBeginDifficulty1(); break;
+            case 2: OnEpisodeBeginDifficulty2(); break;
+            default: throw new Exception("We don't do that here 💩🚭");
+        }
+        _mapData.ResetIsScored();
+        SetReward(0f);
+    }
+
+    private void OnEpisodeBeginDifficulty0()
+    {
+        Vector3 startPosition = _midFieldPosition + new Vector3(30f, 0.17f, 0f);
+        _controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+
+        _ball.localPosition = new Vector3(45f, 0.93f, UnityEngine.Random.Range(-5f, 5f));
+        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        // _shootAt.localPosition = _ball.localPosition;
+        // _ball.GetComponent<ShootBall>().ShootTarget();
+    }
+
+    private void OnEpisodeBeginDifficulty1()
+    {
+        // Reset Car
+        Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-5f, 5f));
+
+        _controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+
+        //Reset Ball
+        _ball.localPosition = new Vector3(45f, 0.93f, UnityEngine.Random.Range(1, 10) % 2 == 0 ? -7f : 7f);
+        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+        // Set new Taget Position
+        _shootAt.localPosition = new Vector3(_ball.localPosition.x, 0f, 0f);
+
+        //Throw Ball
+        _ball.GetComponent<ShootBall>().ShootTarget();
+
+        _mapData.ResetIsScored();
+    }
+
+    private void OnEpisodeBeginDifficulty2()
+    {
         Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
         _controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
 
 
         //Reset Ball
-        float ball_z_pos = UnityEngine.Random.Range(0, 9)%2==0 ? 6f : -6f;
+        float ball_z_pos = UnityEngine.Random.Range(0, 9) % 2 == 0 ? 6f : -6f;
         _ball.localPosition = new Vector3(45f, UnityEngine.Random.Range(2f, 5f), ball_z_pos + UnityEngine.Random.Range(-1f, 1f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
@@ -86,7 +133,10 @@ public class TopScorerAgent : Agent
         _ball.GetComponent<ShootBall>().ShootTarget();
 
         _mapData.ResetIsScored();
-        /*
+    }
+
+    private void OnEpisodeBeginDifficultyDefault()
+    {
         //Reset Car
         Vector3 startPosition = _midFieldPosition + new Vector3(0f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
 
@@ -104,8 +154,6 @@ public class TopScorerAgent : Agent
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
         _mapData.ResetIsScored();
-        */
-
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -159,7 +207,7 @@ public class TopScorerAgent : Agent
         }
         AssignReward();
     }
-    
+
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         InputManager.isAgent = false;
@@ -176,19 +224,24 @@ public class TopScorerAgent : Agent
     /// </summary>
     private void AssignReward()
     {
-        if (Time.time - _lastResetTime > _episodeLength)
+        if (Time.time - _lastResetTime > _episodeLength)// || _rb.position.x > _rbBall.position.x + 5.0f)
         {
             // Agent didn't score a goal
-            SetReward(-1f);
+            AddReward(-1f);
             Reset();
         }
-        if (_mapData.isScoredBlue)
+        else
         {
-            // Agent scored a goal
-            SetReward(1f);
-            // Add reward for scoring fast
+            float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
+            AddReward(agentBallDistanceReward);
             AddShortEpisodeReward(0.2f);
-            Reset();
+
+            if (_mapData.isScoredBlue)
+            {
+                // Agent scored a goal
+                AddReward(1f);
+                Reset();
+            }
         }
     }
 
@@ -218,20 +271,20 @@ public class TopScorerAgent : Agent
     /// <param name="actionBuffers">The action buffers containing the actions.</param>
     private void ProcessContinuousActions(ActionBuffers actionBuffers)
     {
-            // set inputs
-            InputManager.throttleInput = actionBuffers.ContinuousActions[0];
-            InputManager.steerInput = actionBuffers.ContinuousActions[1];
-            InputManager.yawInput = actionBuffers.ContinuousActions[1];
-            InputManager.pitchInput = actionBuffers.ContinuousActions[2];
-            InputManager.rollInput = 0;
-            if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
-            if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
+        // set inputs
+        InputManager.throttleInput = actionBuffers.ContinuousActions[0];
+        InputManager.steerInput = actionBuffers.ContinuousActions[1];
+        InputManager.yawInput = actionBuffers.ContinuousActions[1];
+        InputManager.pitchInput = actionBuffers.ContinuousActions[2];
+        InputManager.rollInput = 0;
+        if (actionBuffers.ContinuousActions[3] > 0) InputManager.rollInput = 1;
+        if (actionBuffers.ContinuousActions[3] < 0) InputManager.rollInput = -1;
 
-            InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
-            InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
-            InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
+        InputManager.isBoost = actionBuffers.ContinuousActions[4] > 0;
+        InputManager.isDrift = actionBuffers.ContinuousActions[5] > 0;
+        InputManager.isAirRoll = actionBuffers.ContinuousActions[6] > 0;
 
-            InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
+        InputManager.isJump = actionBuffers.ContinuousActions[7] > 0;
     }
 
     /// <summary>
@@ -303,29 +356,29 @@ public class TopScorerAgent : Agent
         int requiredNumActions = 8;
 
         // Determine action space type
-        if(actionSpec.NumContinuousActions > 0 && actionSpec.NumDiscreteActions == 0)
+        if (actionSpec.NumContinuousActions > 0 && actionSpec.NumDiscreteActions == 0)
         {
             //Propably continuous, we check the size
-            if(actionSpec.NumContinuousActions != requiredNumActions)
+            if (actionSpec.NumContinuousActions != requiredNumActions)
             {
                 throw new ArgumentException(string.Format("It seems like you tried to use a continuos action space for the agent. In this case the {0} needs 8 continuous actions.", typeof(GoalKeeperAgent)));
             }
             return ActionSpaceType.Continuous;
         }
-        else if(actionSpec.NumContinuousActions == 0 && actionSpec.NumDiscreteActions > 0)
+        else if (actionSpec.NumContinuousActions == 0 && actionSpec.NumDiscreteActions > 0)
         {
             //Propably multi discrete, we check the size
             if (actionSpec.NumDiscreteActions != requiredNumActions)
             {
                 throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches.", typeof(GoalKeeperAgent)));
             }
-            int[] requiredBranchSizes = { DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, 3, 2, 2, 2, 2};
-            for(int i = 0; i < actionSpec.BranchSizes.Length; i++)
+            int[] requiredBranchSizes = { DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, DISCRETE_ACTIONS.Length, 3, 2, 2, 2, 2 };
+            for (int i = 0; i < actionSpec.BranchSizes.Length; i++)
             {
-                if(actionSpec.BranchSizes[i] != requiredBranchSizes[i])
+                if (actionSpec.BranchSizes[i] != requiredBranchSizes[i])
                 {
-                    throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches with sizes ({1}).", 
-                        typeof(GoalKeeperAgent), 
+                    throw new ArgumentException(string.Format("It seems like you tried to use a multi-discrete action space for the agent. In this case the {0} needs 8 discrete action branches with sizes ({1}).",
+                        typeof(GoalKeeperAgent),
                         string.Join(", ", requiredBranchSizes)));
                 }
             }

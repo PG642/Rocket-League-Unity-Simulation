@@ -1,6 +1,6 @@
 default_settings: null
 behaviors:
-  TopScoring:
+  TopScorer:
     trainer_type: ppo
     hyperparameters:
       batch_size: 64
@@ -25,12 +25,7 @@ behaviors:
     max_steps: 10000000
     time_horizon: 1000
     summary_freq: 12000
-env_settings:
-  env_path: topscorer.x86_64
-  env_args: null
-  base_port: 5005
-  num_envs: 4
-  seed: -1
+
 engine_settings:
   width: 500
   height: 500
@@ -45,7 +40,7 @@ checkpoint_settings:
   run_id: topscorer
   initialize_from: null
   load_model: false
-  resume: true
+  resume: false
   force: true
   train_model: false
   inference: false
