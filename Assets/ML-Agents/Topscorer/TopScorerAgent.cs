@@ -232,13 +232,13 @@ public class TopScorerAgent : Agent
         }
         else
         {
-            float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
-            AddReward(agentBallDistanceReward);
-            AddShortEpisodeReward(0.2f);
+            // float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
+            // AddReward(agentBallDistanceReward);
 
             if (_mapData.isScoredBlue)
             {
                 // Agent scored a goal
+                AddShortEpisodeReward(0.2f);
                 AddReward(1f);
                 Reset();
             }
