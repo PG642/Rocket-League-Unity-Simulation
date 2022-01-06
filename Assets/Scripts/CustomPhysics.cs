@@ -46,7 +46,32 @@ public static class CustomPhysics
         Vector3 Jperp = Vector3.Dot(J, n) * n;
         Vector3 Jpara = J - Jperp;
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
-
+        if(float.IsNaN(J.x) || float.IsNaN(J.y) || float.IsNaN(J.z))
+        {
+            Debug.Log("Tried to calculate NaN impulse, set to zero instead:");
+            Debug.Log("CollisionPoint: " + collisionPoint);
+            Debug.Log("ballPosition: " + ballRigidBody.position);
+            Debug.Log("n: " + n);
+            Debug.Log("Jpara: " + Jpara);
+            Debug.Log("Jperp: " + Jperp);
+            Debug.Log("J: " + J);
+            Debug.Log("BallVelocity: " + ballRigidBody.velocity);
+            Debug.Log("CarVelocity: " + carRigidBody.velocity);
+            Debug.Log("BallAngularVelocity: " + ballRigidBody.angularVelocity);
+            Debug.Log("CarAngularVelocity: " + carRigidBody.angularVelocity);
+            Debug.Log("BallV: " + ballV);
+            Debug.Log("CarV: " + carV);
+            Debug.Log("deltaV: " + deltaV);
+            Debug.Log("BallMass: " + ballRigidBody.mass);
+            Debug.Log("CarMass: " + carRigidBody.mass);
+            Debug.Log("massScale: " + massScale);
+            Debug.Log("massScale: " + massScale);
+            Debug.Log("BallInertiaTensor: " + ballRigidBody.inertiaTensor);
+            Debug.Log("BallInertiaTensorRotation: " + ballRigidBody.inertiaTensorRotation);
+            Debug.Log("CarInertiaTensor: " + carRigidBody.inertiaTensor);
+            Debug.Log("CarInertiaTensorRotation: " + carRigidBody.inertiaTensorRotation);
+            return new Vector3(0,0,0);
+        }
         return J;
     }
 
