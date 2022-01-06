@@ -1061,6 +1061,10 @@ PrefabInstance:
       propertyPath: m_Model
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
+      propertyPath: Difficulty
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857196, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: m_Name
       value: TopScorerAgent
