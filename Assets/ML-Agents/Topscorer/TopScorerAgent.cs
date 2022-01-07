@@ -109,8 +109,6 @@ public class TopScorerAgent : Agent
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
-
-        _mapData.ResetIsScored();
     }
 
     private void OnEpisodeBeginDifficulty2()
@@ -131,8 +129,6 @@ public class TopScorerAgent : Agent
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
-
-        _mapData.ResetIsScored();
     }
 
     private void OnEpisodeBeginDifficultyDefault()
@@ -153,7 +149,6 @@ public class TopScorerAgent : Agent
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
-        _mapData.ResetIsScored();
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -252,7 +247,7 @@ public class TopScorerAgent : Agent
         {
             return;
         }
-        AddReward((1 - (Time.time - _lastResetTime / _episodeLength)) * factor);
+        AddReward((1 - ((Time.time - _lastResetTime) / _episodeLength)) * factor);
     }
 
     private void AddFastShotReward(float factor)
