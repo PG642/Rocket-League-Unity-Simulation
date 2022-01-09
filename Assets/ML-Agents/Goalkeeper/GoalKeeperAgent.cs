@@ -87,12 +87,11 @@ public class GoalKeeperAgent : Agent
             case Difficulty.MIDDLE:
                 return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 4f), UnityEngine.Random.Range(-4f, 4f));
             case Difficulty.HARD:
-                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 5.6f), UnityEngine.Random.Range(-7.9f, 7.9f));
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 5.6f),
+                    UnityEngine.Random.Range(-7.9f, 7.9f));
             default:
                 return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 2.5f), UnityEngine.Random.Range(-2f, 2f));
         }
-        
-          
     }
 
     public static Vector3 GetLocalPositionBall(Difficulty difficulty)
@@ -100,17 +99,18 @@ public class GoalKeeperAgent : Agent
         switch (difficulty)
         {
             case Difficulty.EASY:
-                return new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(0.9315f, 5f), UnityEngine.Random.Range(-10f, 10f));
+                return new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(0.9315f, 5f),
+                    UnityEngine.Random.Range(-10f, 10f));
             case Difficulty.MIDDLE:
-                return new Vector3(UnityEngine.Random.Range(-20f, 20f), UnityEngine.Random.Range(0.9315f, 10f), UnityEngine.Random.Range(-20f, 20f));
+                return new Vector3(UnityEngine.Random.Range(-20f, 20f), UnityEngine.Random.Range(0.9315f, 10f),
+                    UnityEngine.Random.Range(-20f, 20f));
             case Difficulty.HARD:
-                return new Vector3(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0.9315f, 19f), UnityEngine.Random.Range(-39f, 39f));
+                return new Vector3(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0.9315f, 19f),
+                    UnityEngine.Random.Range(-39f, 39f));
             default:
                 return new Vector3(UnityEngine.Random.Range(-5f, 0f), UnityEngine.Random.Range(0f, 10f),
                     UnityEngine.Random.Range(-10f, 10f));
         }
-
-
     }
 
     public static float GetSpeed(Difficulty difficulty)
@@ -122,16 +122,15 @@ public class GoalKeeperAgent : Agent
             case Difficulty.MIDDLE:
                 return UnityEngine.Random.Range(20f, 40f);
             case Difficulty.HARD:
-                return UnityEngine.Random.Range(40f, 60f);
+                return UnityEngine.Random.Range(10f, 60f);
             default:
                 return UnityEngine.Random.Range(5f, 20f);
         }
-
-
     }
+
     private void ResetShoot()
     {
-        var lesson = Academy.Instance.EnvironmentParameters.GetWithDefault("my_environment_parameter", 0.0f);
+        var lesson = Academy.Instance.EnvironmentParameters.GetWithDefault("my_environment_parameter", 14.0f);
         var localPositionBall = new Vector3();
         var localPositionTarget = new Vector3();
         var speed = 0.0f;
@@ -145,7 +144,7 @@ public class GoalKeeperAgent : Agent
                 localPositionBall = GetLocalPositionBall(Difficulty.EASY);
                 speed = GetSpeed(Difficulty.EASY);
                 break;
-            
+
             case 1:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.MIDDLE);
@@ -244,7 +243,7 @@ public class GoalKeeperAgent : Agent
                 speed = GetSpeed(Difficulty.HARD);
                 break;
         }
-        
+
         //reset velocities
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
