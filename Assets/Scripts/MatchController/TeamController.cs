@@ -1,7 +1,9 @@
+using System;
 using MatchController;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class TeamController : MonoBehaviour
 {
@@ -122,6 +124,11 @@ public class TeamController : MonoBehaviour
         }
         // if the gameobject wasn't in the orange team nor in the blue team it's team value is undefined
         return Team.UNDEFINED;
+    }
+
+    public void SwapTeams()
+    { 
+        (TeamBlue, TeamOrange) = (TeamOrange, TeamBlue);
     }
 
 }

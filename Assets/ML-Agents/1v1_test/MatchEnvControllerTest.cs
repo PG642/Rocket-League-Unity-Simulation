@@ -56,6 +56,8 @@ public class MatchEnvControllerTest : MonoBehaviour
 
     public void Reset()
     {
+        SwapTeams();
+
         _ball.localPosition = new Vector3(Random.Range(-25f, 25f), Random.Range(1f, 15f), Random.Range(-20f, 20f));
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
@@ -63,31 +65,12 @@ public class MatchEnvControllerTest : MonoBehaviour
         // End episode for all agents
         foreach (OneVsOneAgentTest agent in _teamBlueAgentGroup)
         {
-            agent.EndEpisode();
-            agent.transform.localPosition = new Vector3(Random.Range(-45f, -15f), 0.0f, Random.Range(-25.0f, 25.0f));
-            Vector3 agentToBall = _ball.localPosition - agent.transform.localPosition;
-            var rotationToBall =
-                Quaternion.LookRotation((agentToBall - Vector3.Dot(agentToBall, Vector3.up) * Vector3.up).normalized, Vector3.up);
-            agent.transform.localRotation = rotationToBall;
-            
-            agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            agent.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-
-            agent.GetComponentInChildren<CubeJumping>().Reset();
+            ResetAgent(agent, TeamController.Team.BLUE);
         }
 
         foreach (OneVsOneAgentTest agent in _teamOrangeAgentGroup)
         {
-            agent.EndEpisode();
-            agent.transform.localPosition = new Vector3(Random.Range(15f, 45f), 0.0f, Random.Range(-25.0f, 25.0f));
-            var rotationToBall =
-                Quaternion.LookRotation((_ball.position - agent.transform.position).normalized, Vector3.up);
-            agent.transform.rotation = rotationToBall;
-            
-            agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            agent.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-
-            agent.GetComponentInChildren<CubeJumping>().Reset();
+            ResetAgent(agent, TeamController.Team.ORANGE);
         }
         
         // Reset environment
@@ -112,7 +95,13 @@ public class MatchEnvControllerTest : MonoBehaviour
             {
                 var reward = 1.0f / (_ball.localPosition - agentTest.transform.localPosition).magnitude;
                 agentTest.SetReward(reward);
-                Debug.Log($"End of episode reward: {reward}");
+                Debug.Log($"End of episode reward: {reward}; Team: Blue");
+            }
+            foreach (OneVsOneAgentTest agentTest in _teamOrangeAgentGroup)
+            {
+                var reward = 1.0f / (_ball.localPosition - agentTest.transform.localPosition).magnitude;
+                agentTest.SetReward(reward);
+                Debug.Log($"End of episode reward: {reward}; Team: Orange");
             }
             Reset();
         }
@@ -145,5 +134,29 @@ public class MatchEnvControllerTest : MonoBehaviour
             
             Reset();
         }
+    }
+
+    private void SwapTeams()
+    {
+        _teamController.SwapTeams();
+        (_teamOrangeAgentGroup, _teamBlueAgentGroup) = (_teamBlueAgentGroup, _teamOrangeAgentGroup);
+    }
+
+    private void ResetAgent(OneVsOneAgentTest agent, TeamController.Team team)
+    {
+        agent.EndEpisode(); 
+        agent.transform.localPosition = (team == TeamController.Team.BLUE) ? 
+            new Vector3(Random.Range(-45f, -15f), 0.0f, Random.Range(-25.0f, 25.0f)) : 
+            new Vector3(Random.Range(45f, 15f), 0.0f, Random.Range(-25.0f, 25.0f));
+        
+        Vector3 agentToBall = _ball.localPosition - agent.transform.localPosition;
+        var rotationToBall =
+            Quaternion.LookRotation((agentToBall - Vector3.Dot(agentToBall, Vector3.up) * Vector3.up).normalized, Vector3.up);
+        agent.transform.localRotation = rotationToBall;
+            
+        agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        agent.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+        agent.GetComponentInChildren<CubeJumping>().Reset();
     }
 }
