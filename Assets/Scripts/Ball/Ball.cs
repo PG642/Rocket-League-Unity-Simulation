@@ -73,7 +73,8 @@ public class Ball : MonoBehaviour
     public void ResetBall()
     {
         var desired = new Vector3(0, 12.23f, 0f);
-        _transform.SetPositionAndRotation(desired, Quaternion.identity);
+        _transform.localPosition = desired;
+        _transform.rotation = Quaternion.identity;
         _rb.velocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
     }
