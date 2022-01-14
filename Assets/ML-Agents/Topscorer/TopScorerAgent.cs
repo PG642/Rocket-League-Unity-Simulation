@@ -15,7 +15,8 @@ public class TopScorerAgent : PGBaseAgent
 
     private Rigidbody rbBall;
 
-    private float _episodeLength = 5f;
+    private static float _episodeLength = 5f;
+    private static float _maxStepsPerEpisode = 120f * _episodeLength;
     private float _lastResetTime;
 
     private Transform _ball, _shootAt;
@@ -151,7 +152,7 @@ public class TopScorerAgent : PGBaseAgent
     /// </summary>
     protected override void AssignReward()
     {
-        if (Time.time - _lastResetTime > _episodeLength)// || rb.position.x > rbBall.position.x + 5.0f)
+        if (StepCount > _maxStepsPerEpisode)// || rb.position.x > rbBall.position.x + 5.0f)
         {
             // Agent didn't score a goal
             AddReward(-1f);
@@ -175,11 +176,11 @@ public class TopScorerAgent : PGBaseAgent
     private void AddShortEpisodeReward(float factor)
     {
         // adds a reward in range [0, factor]
-        if (Time.time - _lastResetTime > _episodeLength)
+        if (StepCount > _maxStepsPerEpisode)
         {
             return;
         }
-        AddReward((1f - ((Time.time - _lastResetTime) / _episodeLength)) * factor);
+        AddReward((1f - (StepCount / _maxStepsPerEpisode)) * factor);
     }
 
     private void AddFastShotReward(float factor)
