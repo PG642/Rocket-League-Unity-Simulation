@@ -84,6 +84,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   InputManager: {fileID: 0}
+  Difficulty: 0
 --- !u!114 &7270290807663857192
 MonoBehaviour:
   m_ObjectHideFlags: 0
