@@ -8,7 +8,7 @@ using System;
 using Unity.MLAgents.Policies;
 using Random = UnityEngine.Random;
 
-public class OneVsOneAgent : Agent
+public class OneVsOneAgentTest : Agent
 {
     // Start is called before the first frame update
 
@@ -21,7 +21,7 @@ public class OneVsOneAgent : Agent
     private float _episodeLength;
     private float _lastResetTime;
 
-    private MatchEnvController _matchEnvController;
+    private MatchEnvControllerTest _matchEnvController;
 
     private Transform _ball, _enemy;
 
@@ -41,7 +41,7 @@ public class OneVsOneAgent : Agent
     {
         _episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
 
-        _matchEnvController = transform.parent.GetComponent<MatchEnvController>();
+        _matchEnvController = transform.parent.GetComponent<MatchEnvControllerTest>();
 
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
@@ -69,18 +69,18 @@ public class OneVsOneAgent : Agent
         // transform.parent.GetComponent<TeamController>().SpawnTeams();
 
         //Define Enemy
-        if (gameObject.Equals(_teamController.TeamBlue[0]))
-        {
-            _enemy = _teamController.TeamOrange[0].transform;
-            _team = TeamController.Team.BLUE;
-        }
-        else
-        {
-            _enemy = _teamController.TeamBlue[0].transform;
-            _team = TeamController.Team.ORANGE;
-        }
+        // if (gameObject.Equals(_teamController.TeamBlue[0]))
+        // {
+        //     _enemy = _teamController.TeamOrange[0].transform;
+        //     _team = TeamController.Team.BLUE;
+        // }
+        // else
+        // {
+        //     _enemy = _teamController.TeamBlue[0].transform;
+        //     _team = TeamController.Team.ORANGE;
+        // }
 
-        _rbEnemy = _enemy.GetComponent<Rigidbody>();
+        // _rbEnemy = _enemy.GetComponent<Rigidbody>();
 
         //Reset Ball
         // _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
@@ -126,10 +126,10 @@ public class OneVsOneAgent : Agent
         // sensor.AddObservation(_rbBall.velocity / 60f);
 
         var localPosition = transform.localPosition;
-        var relativePositionToEnemy = (_enemy.localPosition - localPosition) / _mapData.diag;
+        // var relativePositionToEnemy = (_enemy.localPosition - localPosition) / _mapData.diag;
         var relativePositionToBall = (_ball.localPosition - localPosition) / _mapData.diag;
 
-        sensor.AddObservation(relativePositionToEnemy);
+        // sensor.AddObservation(relativePositionToEnemy);
         sensor.AddObservation(relativePositionToBall);
     }
 
@@ -190,7 +190,7 @@ public class OneVsOneAgent : Agent
         if(other.gameObject.tag.Equals("Ball"))
         {
             AddReward(1.0f);
-            _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f);
+            // _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f);
             _matchEnvController.Reset();
         }
     }

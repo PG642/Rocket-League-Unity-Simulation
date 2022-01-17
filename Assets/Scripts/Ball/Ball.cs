@@ -12,6 +12,7 @@ public class Ball : Resettable
     public float maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     public bool isTouchedGround = false;
+    public bool stopSlowBall = true;
     private const float MINVelocity = 0.4f;
     private const float MINAngularVelocity = 1.047f;
     private float _lastStoppedTime;
@@ -75,7 +76,8 @@ public class Ball : Resettable
     public void ResetBall()
     {
         var desired = new Vector3(0, 12.23f, 0f);
-        _transform.SetPositionAndRotation(desired, Quaternion.identity);
+        _transform.localPosition = desired;
+        _transform.rotation = Quaternion.identity;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }
@@ -91,6 +93,9 @@ public class Ball : Resettable
 
     private void StopBallIfTooSlow()
     {
+        if (!stopSlowBall)
+            return;
+        
         if (rb.velocity.magnitude <= MINVelocity && rb.angularVelocity.magnitude <= MINAngularVelocity)
         {
             if (_lastStoppedTime == 0.0f)

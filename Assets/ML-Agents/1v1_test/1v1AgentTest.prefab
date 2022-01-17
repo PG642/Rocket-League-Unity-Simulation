@@ -10,13 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4653520720998499147}
   - component: {fileID: 8187233145375818463}
-  - component: {fileID: 2169797012101128497}
   - component: {fileID: 7659776554297155933}
   - component: {fileID: 1877891310782255659}
   - component: {fileID: 1497669336329352222}
-  - component: {fileID: 7561271079128213888}
+  - component: {fileID: 4562140032757865069}
+  - component: {fileID: 8456622640833707394}
   m_Layer: 0
-  m_Name: 1v1Agent
+  m_Name: 1v1AgentTest
   m_TagString: ControllableCar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,20 +67,6 @@ MonoBehaviour:
   m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_ObservableAttributeHandling: 0
---- !u!114 &2169797012101128497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7634803191168904133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DecisionPeriod: 10
-  TakeActionsBetweenDecisions: 1
 --- !u!54 &7659776554297155933
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -159,13 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   surfaceNormal: {x: 0, y: 0, z: 0}
-  pysionixImpulseCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!114 &7561271079128213888
+--- !u!114 &4562140032757865069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,7 +154,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7634803191168904133}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 476d939c1bd282746b231920bd314016, type: 3}
+  m_Script: {fileID: 11500000, guid: 5ff42714d5fab464e852cf3e5ce1132a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentParameters:
@@ -182,6 +162,20 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   InputManager: {fileID: 0}
+--- !u!114 &8456622640833707394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7634803191168904133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 10
+  TakeActionsBetweenDecisions: 1
 --- !u!1001 &4477629620189644563
 PrefabInstance:
   m_ObjectHideFlags: 0
