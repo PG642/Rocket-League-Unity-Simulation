@@ -1,72 +1,74 @@
 ﻿using System;
-using System.Diagnostics;
-using Consolation;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
-public class Ball : MonoBehaviour
+public class Ball : Resettable
 {
     [SerializeField] [Range(10, 80)] float randomSpeed = 40;
     [SerializeField] float initialForce;
     [SerializeField] float hitMultiplier;
-    public float _maxAngluarVelocity = 6.0f;
-    public float _maxVelocity = 60.0f;
+    public float maxAngluarVelocity = 6.0f;
+    public float maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     public bool isTouchedGround = false;
-    public bool stopSlowBall = true;
-    private float _minVelocity = 0.4f;
-    private float _minAngularVelocity = 1.047f;
+    private const float MINVelocity = 0.4f;
+    private const float MINAngularVelocity = 1.047f;
     private float _lastStoppedTime;
+    private const float Restitution = 0.6f;
+    private const float TimeWindowToStop = 2.0f;
+    private const float Friction = 2f;
+    private const float Mu = 0.285f;
+    private const float A = 3f;
+    private const float Radius = 0.9125f; //0.9138625f;
+    private Transform _transform;
 
-    Rigidbody _rb;
-    Transform _transform;
-    private float _timeWindowToStop = 2.0f;
-
-    void Start()
+    public override void Start()
     {
-        _rb = GetComponent<Rigidbody>();
+        base.Start();
         _transform = this.transform;
         isTouchedGround = false;
-        _rb.maxAngularVelocity = _maxAngluarVelocity;
-        _rb.maxDepenetrationVelocity = _maxVelocity;
+        rb.maxAngularVelocity = maxAngluarVelocity;
+        rb.maxDepenetrationVelocity = maxVelocity;
     }
 
-    void Update()
-    {
-        //TODO: move inputs to the InputController
-        if (Input.GetKeyDown(KeyCode.T))
-            ShootInRandomDirection(randomSpeed);
-
-        if (Input.GetKeyDown(KeyCode.R))
-            ResetBall();
-
-        if (Input.GetButtonDown("Select"))
-            ResetShot(new Vector3(7.76f, 2.98f, 0f));
-        _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _maxVelocity);
-    }
+    // void Update()
+    // {
+    //    if (Input.GetKeyDown(KeyCode.T))
+    //         ShootInRandomDirection(randomSpeed);
+    //
+    //     if (Input.GetKeyDown(KeyCode.R))
+    //         ResetBall();
+    //
+    //     if (Input.GetButtonDown("Select"))
+    //         ResetShot(new Vector3(7.76f, 2.98f, 0f));
+    //     rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
+    // }
 
     private void LateUpdate()
     {
-        if (_rb.velocity.magnitude > _maxVelocity)
-        {
-            _rb.velocity = _rb.velocity.normalized * _maxVelocity;
-        }
-
-        if (_rb.angularVelocity.magnitude > _maxAngluarVelocity)
-        {
-            _rb.angularVelocity = _rb.angularVelocity.normalized * _maxVelocity;
-        }
+        CapVelocities();
 
         StopBallIfTooSlow();
+    }
+
+    private void CapVelocities() {
+        if (rb.velocity.magnitude > maxVelocity)
+        {
+            rb.velocity = rb.velocity.normalized * maxVelocity;
+        }
+
+        if (rb.angularVelocity.magnitude > maxAngluarVelocity)
+        {
+            rb.angularVelocity = rb.angularVelocity.normalized * maxAngluarVelocity;
+        }
     }
 
     private void ResetShot(Vector3 pos)
     {
         _transform.position = pos;
-        _rb.velocity = new Vector3(30, 10, 0);
-        _rb.angularVelocity = Vector3.zero;
+        rb.velocity = new Vector3(30, 10, 0);
+        rb.angularVelocity = Vector3.zero;
     }
 
     [ContextMenu("ResetBall")]
@@ -85,12 +87,12 @@ public class Ball : MonoBehaviour
         float speedRange = Random.Range(speed - 10, speed + 10);
         var randomDirection = Random.insideUnitCircle.normalized;
         var direction = new Vector3(randomDirection.x, Random.Range(-0.5f, 0.5f), randomDirection.y).normalized;
-        _rb.velocity = direction * speedRange;
+        rb.velocity = direction * speedRange;
     }
 
     private void StopBallIfTooSlow()
     {
-        if (stopSlowBall)
+        if (rb.velocity.magnitude <= MINVelocity && rb.angularVelocity.magnitude <= MINAngularVelocity)
         {
             if (_rb.velocity.magnitude <= _minVelocity && _rb.angularVelocity.magnitude <= _minAngularVelocity)
             {
@@ -105,37 +107,92 @@ public class Ball : MonoBehaviour
                     _rb.angularVelocity = Vector3.zero;
                 }
             }
-            else
+
+            if (_lastStoppedTime < Time.time - TimeWindowToStop && _lastStoppedTime > 0.0f)
             {
-                _lastStoppedTime = 0.0f;
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
         }
     }
 
-    private void OnCollisionEnter(Collision col)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (col.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Ground"))
         {
-            float force = initialForce + col.relativeVelocity.magnitude * hitMultiplier;
-            //Vector3 dir = transform.position - col.contacts[0].point;
-            var dir = _rb.position - col.transform.position;
-            _rb.AddForce(CalculatePsyonixImpulse(col), ForceMode.Impulse);
-            _rb.AddForce(dir.normalized * force);
-            Debug.Log($" Force : {dir.normalized * force}");
+            //Debug.Log("Bounce");
+            ApplyBounce(collision);
+            isTouchedGround = true;
         }
+        else
+        {
+            //Debug.Log("Hit");
+            PerformPlayerHit(collision);
+        }
+    }
 
-        if (col.gameObject.CompareTag("Ground"))
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
         {
             isTouchedGround = true;
         }
-
-        //if (col.gameObject.tag == "Ground")
-        //    if (rb.velocity.y > 3)
-        //    {
-        //    //rb.AddForce(Vector3.up * -downForce);
-        //        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - SlowVelocityGround, rb.velocity.z);
-        //    }
     }
+
+    private void ApplyBounce(Collision col)
+    {
+        Vector3 n = col.GetContact(0).normal;
+        CancelUnityImpulse();
+
+        if(rb.velocity.magnitude <= 1e-4f)
+        {
+            return;
+        }
+
+        Vector3 vPerp = Vector3.Dot(rb.velocity, n) * n;
+        Vector3 vPara = rb.velocity - vPerp;
+        Vector3 vSpin = Radius * Vector3.Cross(n, rb.angularVelocity);
+        Vector3 s = vPara + vSpin;
+
+        float ratio = s.magnitude <= 1e-4f ? 0.0f : vPerp.magnitude / s.magnitude;
+
+        Vector3 deltaVPerp = -(1 + Restitution) * vPerp;
+        Vector3 deltaVPara = -Math.Min(1, Friction * ratio) * Mu * s;
+
+        rb.velocity += deltaVPara + deltaVPerp;
+        rb.angularVelocity += A * Radius * Vector3.Cross(deltaVPara, n);
+    }
+
+    private void PerformPlayerHit(Collision col)
+    {
+       
+        
+        CancelUnityImpulse();
+        col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
+
+        //setCarState(col.rigidbody);
+        Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
+
+        Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
+        Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
+
+        
+        CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
+        CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
+        CapVelocities();
+
+        CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
+    }
+
+    private void setCarState(Rigidbody rb)
+    {
+        //at time 1.117961 im Ballschuss szenario mit radius 93.15uu
+        rb.velocity = new Vector3(9.130809f,0.00191f,0);
+        rb.position = new Vector3(-11.5511f,0.1701f,15);
+        rb.rotation.eulerAngles.Set(0.5493164f,0,0);
+        rb.angularVelocity = new Vector3(0,0,0.00051f);
+    }
+
 
     private void OnCollisionExit(Collision other)
     {
@@ -145,25 +202,6 @@ public class Ball : MonoBehaviour
         }
     }
 
-    Vector3 CalculatePsyonixImpulse(Collision col)
-    {
-        var n = _rb.position - col.transform.position;
-        n.y *= 0.35f;
-        var f = col.transform.forward;
-        var dot = Vector3.Dot(n, f);
-        n = Vector3.Normalize(n - 0.35f * dot * f);
-        var impulse = _rb.mass * Math.Abs(col.relativeVelocity.magnitude) * scaling(col.relativeVelocity.magnitude) *
-                      n; // TODO scaling
-        //Debug.Log(impulse);
-        //Debug.Log(col.relativeVelocity.magnitude);
-        return impulse;
-    }
 
-    float scaling(float magninute)
-    {
-        var test = pysionixImpulseCurve.Evaluate(magninute);
-
-        Debug.Log($"{Time.time}: Curve {test} : Value {magninute}");
-        return test;
-    }
 }
+

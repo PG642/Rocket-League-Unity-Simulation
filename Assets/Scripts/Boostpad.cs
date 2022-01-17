@@ -40,6 +40,10 @@ public class Boostpad : MonoBehaviour
             Vector3 relativePosition = gameObject.transform.position - car.transform.position;
             float dist = new Vector2(relativePosition.x, relativePosition.z).magnitude;
             float relativeHeight = Mathf.Abs(relativePosition.y);
+            if (_carsInRadius == null)
+            {
+                _carsInRadius = new Dictionary<GameObject, float>();
+            }
             if (_carsInRadius.ContainsKey(car))
             {
                 _carsInRadius[car] = dist;

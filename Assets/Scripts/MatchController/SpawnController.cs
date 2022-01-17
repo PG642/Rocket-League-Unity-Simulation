@@ -81,6 +81,9 @@ namespace MatchController
             var spawnLocation = GetSpawnPosition(car, team, wasDemolished);
             car.transform.position = spawnLocation.position;
             car.transform.rotation = spawnLocation.rotation;
+            Rigidbody rb = car.GetComponent<Rigidbody>();
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
 
             return car;
         }

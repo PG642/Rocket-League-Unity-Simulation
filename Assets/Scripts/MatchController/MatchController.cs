@@ -88,8 +88,10 @@ namespace MatchController
             explosion.GetComponent<ParticleSystem>().Play();
             Destroy(explosion, 2f);
             demolishedCar.transform.localPosition = new Vector3(0f, -5f, 0f);
+            demolishedCar.GetComponent<InputManager>().enabled = false;
             yield return new WaitForSeconds(3f);
             GetComponent<SpawnController>().SpawnCar(demolishedCar, team, true);
+            demolishedCar.GetComponent<InputManager>().enabled = true;
         }
 
     }

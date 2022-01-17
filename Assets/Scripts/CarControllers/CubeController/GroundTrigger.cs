@@ -43,10 +43,7 @@ public class GroundTrigger : MonoBehaviour
     private void ApplyStickyForces(float stickyForce, Vector3 position, Vector3 dir)
     {
         var force = stickyForce / 4 * dir;
-
-        //_rb.AddForceAtPosition(stickyForce, _contactPoint, ForceMode.Acceleration);
         _rb.AddForceAtPosition(force, position, ForceMode.Acceleration);
-        //Debug.DrawRay(position, force, Color.blue, 0, true);
     }
 
     public void TriggerEnter(Collider other)

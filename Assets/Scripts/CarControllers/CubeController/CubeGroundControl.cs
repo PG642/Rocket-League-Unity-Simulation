@@ -35,15 +35,24 @@ public class CubeGroundControl : MonoBehaviour
 
     private void FixedUpdate()
     {
-        ApplyStabilization();
+        ApplyStabilizationFloor();
+        ApplyStabilizationWall();
         var forwardAcceleration = CalcForwardForce(_inputManager.throttleInput);
         ApplyWheelForwardForce(forwardAcceleration);
 
         currentSteerAngle = CalculateSteerAngle();
         ApplyWheelRotation(currentSteerAngle);
     }
+    private void ApplyStabilizationWall()
+    {
+        if(Mathf.Abs(Vector3.Dot(Vector3.up, transform.up)) > 0.95f || _controller.carState == CubeController.CarStates.Air || _controller.numWheelsSurface < 2)
+        {
+            return;
+        }
+        _rb.AddForce(-transform.up * 5f, ForceMode.Acceleration);
 
-    private void ApplyStabilization()
+    }
+    private void ApplyStabilizationFloor()
     {
         if (Mathf.Abs(_inputManager.throttleInput) <= 0.0001f)
         {
@@ -80,7 +89,7 @@ public class CubeGroundControl : MonoBehaviour
         {
             //TODO: Func. call like this below OR Wheel class fetches data from this class?
             // Also probably should be an interface to a concrete implementation. Same for the NaiveGroundControl below.
-            if (_controller.isCanDrive)
+            if (_controller.isCanDrive && Mathf.Abs(_inputManager.throttleInput) >= 0.0001f)
                 wheel.ApplyForwardForce(forwardAcceleration / 4);
         }
     }

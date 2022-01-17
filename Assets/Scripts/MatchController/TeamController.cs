@@ -18,17 +18,26 @@ public class TeamController : MonoBehaviour
     public int TeamSize = 2;
     public GameObject[] TeamBlue;
     public GameObject[] TeamOrange;
+
     public void Initialize()
     {
         // Set a team for each car in the environment
         InitializeTeams();
         // Set team colors for the walls
         DyeWalls();
-        // Spawn each car
-        SpawnTeams();
+        if (TeamSize > 0)
+        {
+            // Spawn each car
+            SpawnTeams();
+        }
+
     }
 
-
+    public void SetTeams(List<GameObject> teamBlue, List<GameObject> teamOrange)
+    {
+        TeamBlue = teamBlue.ToArray();
+        TeamOrange = teamOrange.ToArray();
+    }
 
     void DyeWalls()
     {
@@ -67,8 +76,8 @@ public class TeamController : MonoBehaviour
     // searches for all cars in the environment and selects a team for them
     void InitializeTeams()
     {
-        TeamBlue = new GameObject[TeamSize];
-        TeamOrange = new GameObject[TeamSize];
+        var TeamBlueList = new List<GameObject>();
+        var TeamOrangeList = new List<GameObject>();
         int playerCount = 0;
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -77,19 +86,22 @@ public class TeamController : MonoBehaviour
             {
                 if (playerCount % 2 == 0)
                 {
-                    TeamBlue[playerCount / 2] = child.gameObject;
+                    TeamBlueList.Add( child.gameObject );
                     Material[] materials = child.Find("CubeController").Find("Body Mesh").Find("Octane").GetComponent<Renderer>().materials;
                     FindAndDyeMaterial(materials, "Red", new Color(0.0f, 0.48f, 1.0f));
                 }
                 else
                 {
-                    TeamOrange[playerCount / 2] = child.gameObject;
+                    TeamOrangeList.Add( child.gameObject );
                     Material[] materials = child.Find("CubeController").Find("Body Mesh").Find("Octane").GetComponent<Renderer>().materials;
                     FindAndDyeMaterial(materials, "Red", new Color(0.8f, 0.4f, 0.0f));
                 }
                 playerCount++;
             }
         }
+
+        TeamBlue = TeamBlueList.ToArray();
+        TeamOrange = TeamOrangeList.ToArray();
 
 
     }
