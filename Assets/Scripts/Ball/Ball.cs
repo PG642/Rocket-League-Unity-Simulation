@@ -12,6 +12,7 @@ public class Ball : Resettable
     public float maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     public bool isTouchedGround = false;
+    public bool stopSlowBall = true;
     private const float MINVelocity = 0.4f;
     private const float MINAngularVelocity = 1.047f;
     private float _lastStoppedTime;
@@ -77,8 +78,8 @@ public class Ball : Resettable
         var desired = new Vector3(0, 12.23f, 0f);
         _transform.localPosition = desired;
         _transform.rotation = Quaternion.identity;
-        _rb.velocity = Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     [ContextMenu("ShootInRandomDirection")]
@@ -92,20 +93,14 @@ public class Ball : Resettable
 
     private void StopBallIfTooSlow()
     {
+        if (!stopSlowBall)
+            return;
+        
         if (rb.velocity.magnitude <= MINVelocity && rb.angularVelocity.magnitude <= MINAngularVelocity)
         {
-            if (_rb.velocity.magnitude <= _minVelocity && _rb.angularVelocity.magnitude <= _minAngularVelocity)
+            if (_lastStoppedTime == 0.0f)
             {
-                if (_lastStoppedTime == 0.0f)
-                {
-                    _lastStoppedTime = Time.time;
-                }
-
-                if (_lastStoppedTime < Time.time - _timeWindowToStop && _lastStoppedTime > 0.0f)
-                {
-                    _rb.velocity = Vector3.zero;
-                    _rb.angularVelocity = Vector3.zero;
-                }
+                _lastStoppedTime = Time.time;
             }
 
             if (_lastStoppedTime < Time.time - TimeWindowToStop && _lastStoppedTime > 0.0f)
@@ -113,6 +108,10 @@ public class Ball : Resettable
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
             }
+        }
+        else
+        {
+            _lastStoppedTime = 0.0f;
         }
     }
 
