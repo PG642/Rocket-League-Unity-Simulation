@@ -95,13 +95,13 @@ public class MatchEnvControllerTest : MonoBehaviour
             {
                 var reward = 1.0f / (_ball.localPosition - agentTest.transform.localPosition).magnitude;
                 agentTest.SetReward(reward);
-                Debug.Log($"End of episode reward: {reward}; Team: Blue");
+                // Debug.Log($"End of episode reward: {reward}; Team: Blue");
             }
             foreach (OneVsOneAgentTest agentTest in _teamOrangeAgentGroup)
             {
                 var reward = 1.0f / (_ball.localPosition - agentTest.transform.localPosition).magnitude;
                 agentTest.SetReward(reward);
-                Debug.Log($"End of episode reward: {reward}; Team: Orange");
+                // Debug.Log($"End of episode reward: {reward}; Team: Orange");
             }
             Reset();
         }

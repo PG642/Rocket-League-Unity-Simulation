@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using TestScenarios.JsonClasses;
 using Unity.MLAgents;
 using UnityEngine;
@@ -22,6 +23,7 @@ public class MatchEnvController : MonoBehaviour
     void Start()
     {
         _teamController = transform.GetComponent<TeamController>();
+        _teamController.Initialize();
 
         _teamBlueAgentGroup = new HashSet<OneVsOneAgent>();
         foreach (var agentGameObject in _teamController.TeamBlue)
@@ -52,48 +54,32 @@ public class MatchEnvController : MonoBehaviour
 
     public void Reset()
     {
+        SwapTeams();
+        
+        _ball.localPosition = new Vector3(Random.Range(-25f, 25f), Random.Range(1f, 15f), Random.Range(-20f, 20f));
+        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        
         // End episode for all agents
         foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
         {
-            agent.EndEpisode();
-            agent.transform.localPosition = new Vector3(Random.Range(-45f, -15f), 0.0f, Random.Range(-25.0f, 25.0f));
-            var rotationToBall =
-                Quaternion.LookRotation(_ball.position - agent.transform.position, Vector3.up);
-            agent.transform.rotation = rotationToBall;
-            
-            agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            agent.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-            
-            agent.GetComponentInChildren<CubeJumping>().Reset();
+            ResetAgent(agent, TeamController.Team.BLUE);
         }
 
         foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
         {
-            agent.EndEpisode();
-            agent.transform.localPosition = new Vector3(Random.Range(15f, 45f), 0.0f, Random.Range(-25.0f, 25.0f));
-            var rotationToBall =
-                Quaternion.LookRotation(_ball.localPosition - agent.transform.localPosition, Vector3.up);
-            agent.transform.rotation = rotationToBall;
-            
-            agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            agent.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-
-            agent.GetComponentInChildren<CubeJumping>().Reset();
+            ResetAgent(agent, TeamController.Team.ORANGE);
         }
         
         // Reset environment
         // _teamController.SpawnTeams();
 
-        _ball.localPosition = new Vector3(Random.Range(-25f, 25f), Random.Range(1f, 15f), Random.Range(-20f, 20f));
-        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-        
         _mapData.ResetIsScored();
 
         // rotate the whole environment
-        var rotation = Random.Range(1, 3);
-        var rotationAngle = rotation * 90.0f;
-        transform.Rotate(0.0f, rotationAngle, 0.0f);
+        // var rotation = Random.Range(1, 3);
+        // var rotationAngle = rotation * 90.0f;
+        // transform.Rotate(0.0f, rotationAngle, 0.0f);
 
         // Reset start time of episode to now
         _lastResetTime = Time.time;
@@ -102,6 +88,18 @@ public class MatchEnvController : MonoBehaviour
     void FixedUpdate()
     {
         if (Time.time - _lastResetTime > _episodeLength){
+            foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
+            {
+                var reward = 1.0f / (_ball.localPosition - agent.transform.localPosition).magnitude;
+                agent.SetReward(reward);
+                // Debug.Log($"End of episode reward: {reward}; Team: Blue");
+            }
+            foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
+            {
+                var reward = 1.0f / (_ball.localPosition - agent.transform.localPosition).magnitude;
+                agent.SetReward(reward);
+                // Debug.Log($"End of episode reward: {reward}; Team: Orange");
+            }
             Reset();
         }
         
@@ -133,5 +131,29 @@ public class MatchEnvController : MonoBehaviour
             
             Reset();
         }
+    }
+    
+    private void SwapTeams()
+    {
+        _teamController.SwapTeams();
+        (_teamOrangeAgentGroup, _teamBlueAgentGroup) = (_teamBlueAgentGroup, _teamOrangeAgentGroup);
+    }
+
+    private void ResetAgent(OneVsOneAgent agent, TeamController.Team team)
+    {
+        agent.EndEpisode(); 
+        agent.transform.localPosition = (team == TeamController.Team.BLUE) ? 
+            new Vector3(Random.Range(-45f, -15f), 0.0f, Random.Range(-25.0f, 25.0f)) : 
+            new Vector3(Random.Range(45f, 15f), 0.0f, Random.Range(-25.0f, 25.0f));
+        
+        Vector3 agentToBall = _ball.localPosition - agent.transform.localPosition;
+        var rotationToBall =
+            Quaternion.LookRotation((agentToBall - Vector3.Dot(agentToBall, Vector3.up) * Vector3.up).normalized, Vector3.up);
+        agent.transform.localRotation = rotationToBall;
+            
+        agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        agent.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+        agent.GetComponentInChildren<CubeJumping>().Reset();
     }
 }
