@@ -2,7 +2,7 @@
 {
     public abstract class EnvironmentHandler<T> where T : struct
     {
-        public T defaultParameter;
+        protected T _defaultParameter;
         public T currentParameter;
         public abstract void ResetParameter();
         public abstract void UpdateEnvironmentParameters();    

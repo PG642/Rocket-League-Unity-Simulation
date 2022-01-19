@@ -5,22 +5,25 @@ using Unity.MLAgents;
 namespace ML_Agents.Goalkeeper
 {
     [Serializable]
-    public class GoalkeeperEvironmentHandler
+    public class GoalkeeperEvironmentHandler: EnvironmentHandler<GoalkeeperEnvironmentParameters>
     {
-        public GoalkeeperEnvironmentParameters currentParameter;
-        private GoalkeeperEnvironmentParameters _defaultParameter;
+
         public GoalkeeperEvironmentHandler(GoalkeeperEnvironmentParameters defaultParameter)
         {
             _defaultParameter = defaultParameter;
         }
-        public void ResetParameter()
+        public override void ResetParameter()
         {
             UpdateEnvironmentParameters();
             //TODO ändere Environment
+            if (currentParameter.doubleJump)
+            {
+                
+            }
             
         }
 
-        public void UpdateEnvironmentParameters()
+        public override void UpdateEnvironmentParameters()
         {
             currentParameter.difficulty =
                 (int)Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", _defaultParameter.difficulty);
