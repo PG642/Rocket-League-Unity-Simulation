@@ -48,6 +48,8 @@ public class GoalKeeperAgent : Agent
     
     void Start()
     {
+        defaultParameter.difficulty = 4.0f;
+        defaultParameter.canBoost = -1.0f;
         _handler = new GoalkeeperEvironmentHandler(defaultParameter);
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;

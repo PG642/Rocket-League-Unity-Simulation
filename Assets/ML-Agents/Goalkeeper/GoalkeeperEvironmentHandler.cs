@@ -55,11 +55,6 @@ namespace ML_Agents.Goalkeeper
 
         }
 
-        public override void UpdateEnvironmentParameters()
-        {
-            currentParameter.difficulty =
-                (int)Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", _defaultParameter.difficulty);
 
-        }
     }
 }

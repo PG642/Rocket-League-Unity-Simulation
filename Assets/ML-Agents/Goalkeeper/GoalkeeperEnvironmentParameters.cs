@@ -3,7 +3,7 @@
 namespace ML_Agents.Goalkeeper
 {
     [Serializable]
-    public struct GoalkeeperEnvironmentParameters
+    public class GoalkeeperEnvironmentParameters
     {
         public float difficulty;
         public float canDoubleJump;
