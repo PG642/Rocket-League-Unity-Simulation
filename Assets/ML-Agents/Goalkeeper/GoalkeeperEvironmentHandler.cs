@@ -10,7 +10,7 @@ namespace ML_Agents.Goalkeeper
 
         public GoalkeeperEvironmentHandler(GoalkeeperEnvironmentParameters defaultParameter)
         {
-            _defaultParameter = defaultParameter;
+            base.defaultParameter = defaultParameter;
         }
         public override void ResetParameter()
         {
