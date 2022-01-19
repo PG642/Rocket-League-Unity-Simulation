@@ -16,11 +16,43 @@ namespace ML_Agents.Goalkeeper
         {
             UpdateEnvironmentParameters();
             //TODO ändere Environment
-            if (currentParameter.doubleJump)
+            if (currentParameter.canDoubleJump == 0)
             {
                 
             }
-            
+            if (currentParameter.canBoost == 0)
+            {
+
+            }
+            if (currentParameter.canDrift == 0)
+            {
+
+            }
+            if (currentParameter.useBulletImpulse == 0)
+            {
+
+            }
+            if (currentParameter.useCustomBounce == 0)
+            {
+
+            }
+            if (currentParameter.useGroundStabilization == 0)
+            {
+
+            }
+            if (currentParameter.usePsyonixImpulse == 0)
+            {
+
+            }
+            if (currentParameter.useSuspension == 0)
+            {
+
+            }
+            if (currentParameter.useWallStabilization == 0)
+            {
+
+            }
+
         }
 
         public override void UpdateEnvironmentParameters()

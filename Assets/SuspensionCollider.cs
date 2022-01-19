@@ -19,6 +19,7 @@ public class SuspensionCollider : MonoBehaviour
     const float PenetrationTolerance = 0.001f;
     public float damper;
     private float maxAcceleration = 0.0f;
+    public bool disabled;
 
 
     public SuspensionCollider()
@@ -38,6 +39,11 @@ public class SuspensionCollider : MonoBehaviour
 
     public void CalculateContactdepth(Collider other)
     {
+        if (disabled)
+        {
+            return;
+        }
+
         lastcontactDepth = contactDepth;
         contactDepth = -_wheelSuspension.extensionDistance;
         transform.localPosition = new Vector3(0, contactDepth, 0);
