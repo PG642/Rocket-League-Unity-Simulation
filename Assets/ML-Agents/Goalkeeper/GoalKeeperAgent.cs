@@ -1,6 +1,8 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using ML_Agents.Goalkeeper;
+using ML_Agents.Handler;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
@@ -11,7 +13,10 @@ using Unity.MLAgents.Policies;
 public class GoalKeeperAgent : Agent
 {
     // Start is called before the first frame update
+    [SerializeField]
+    public GoalkeeperEnvironmentParameters defaultParameter;
 
+    private GoalkeeperEvironmentHandler _handler;
     private Rigidbody _rb, _rbBall;
 
     private float _episodeLength = 10f;
@@ -43,6 +48,7 @@ public class GoalKeeperAgent : Agent
     
     void Start()
     {
+        _handler = new GoalkeeperEvironmentHandler(defaultParameter);
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
 
@@ -65,6 +71,10 @@ public class GoalKeeperAgent : Agent
         _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
 
         _lastResetTime = Time.time;
+        
+        _handler.UpdateEnvironmentParameters();
+        
+        
     }
 
     public override void OnEpisodeBegin()
@@ -258,6 +268,7 @@ public class GoalKeeperAgent : Agent
     {
         _lastResetTime = Time.time;
         EndEpisode();
+        _handler.ResetParameter();
     }
 
     /// <summary>
@@ -432,3 +443,5 @@ public class GoalKeeperAgent : Agent
         Mixed
     }
 }
+
+
