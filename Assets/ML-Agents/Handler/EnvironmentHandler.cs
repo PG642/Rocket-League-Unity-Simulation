@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.MLAgents;
+using UnityEngine;
 
 namespace ML_Agents.Handler
 {
@@ -7,6 +8,13 @@ namespace ML_Agents.Handler
     {
         protected T defaultParameter;
         public T currentParameter = new T();
+        public GameObject environment;
+
+        public EnvironmentHandler(GameObject env, T defaultParameter)
+        {
+            this.environment = env;
+            this.defaultParameter = defaultParameter;
+        }
         public abstract void ResetParameter();
 
         public void UpdateEnvironmentParameters()

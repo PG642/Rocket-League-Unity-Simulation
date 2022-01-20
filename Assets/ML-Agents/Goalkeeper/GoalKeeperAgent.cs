@@ -50,7 +50,7 @@ public class GoalKeeperAgent : Agent
     {
         defaultParameter.difficulty = 4.0f;
         defaultParameter.canBoost = -1.0f;
-        _handler = new GoalkeeperEvironmentHandler(defaultParameter);
+        _handler = new GoalkeeperEvironmentHandler(GameObject.Find("env"), defaultParameter);
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
 
