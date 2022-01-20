@@ -18,6 +18,8 @@ public class CubeGroundControl : MonoBehaviour
     InputManager _inputManager;
     CubeWheel[] _wheelArray;
     private CarCollision _carCollision;
+    public bool disableGroundStabilization = false;
+    public bool disableWallStabilization = false;
 
     void Start()
     {
@@ -45,6 +47,10 @@ public class CubeGroundControl : MonoBehaviour
     }
     private void ApplyStabilizationWall()
     {
+        if (disableWallStabilization)
+        {
+            return;
+        }
         if(Mathf.Abs(Vector3.Dot(Vector3.up, transform.up)) > 0.95f || _controller.carState == CubeController.CarStates.Air || _controller.numWheelsSurface < 2)
         {
             return;
@@ -54,6 +60,10 @@ public class CubeGroundControl : MonoBehaviour
     }
     private void ApplyStabilizationFloor()
     {
+        if (disableGroundStabilization)
+        {
+            return;
+        }
         if (Mathf.Abs(_inputManager.throttleInput) <= 0.0001f)
         {
             return;

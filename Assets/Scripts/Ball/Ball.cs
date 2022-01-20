@@ -23,6 +23,9 @@ public class Ball : Resettable
     private const float A = 3f;
     private const float Radius = 0.9125f; //0.9138625f;
     private Transform _transform;
+    public bool disableCustomBounce = false;
+    public bool disableBulletImpulse = false;
+    public bool disablePsyonixImpulse = false;
 
     public override void Start()
     {
@@ -140,6 +143,10 @@ public class Ball : Resettable
 
     private void ApplyBounce(Collision col)
     {
+        if (disableCustomBounce)
+        {
+            return;
+        }
         Vector3 n = col.GetContact(0).normal;
         CancelUnityImpulse();
 
@@ -164,23 +171,22 @@ public class Ball : Resettable
 
     private void PerformPlayerHit(Collision col)
     {
-       
-        
-        CancelUnityImpulse();
-        col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
-
-        //setCarState(col.rigidbody);
-        Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
-
-        Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
-        Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
-
-        
-        CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
-        CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
+        if (!disableBulletImpulse)
+        {
+            CancelUnityImpulse();
+            col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
+            //setCarState(col.rigidbody);
+            Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
+            Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
+            CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
+            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
+        }
+        if (!disablePsyonixImpulse)
+        {
+            Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
+            CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
+        }
         CapVelocities();
-
-        CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
     }
 
     private void setCarState(Rigidbody rb)

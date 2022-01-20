@@ -19,7 +19,7 @@ public class SuspensionCollider : MonoBehaviour
     const float PenetrationTolerance = 0.001f;
     public float damper;
     private float maxAcceleration = 0.0f;
-    public bool disabled;
+    public bool disableSuspension;
 
 
     public SuspensionCollider()
@@ -35,11 +35,12 @@ public class SuspensionCollider : MonoBehaviour
         _rb = GetComponentInParent<Rigidbody>();
         stiffnes = _wheelSuspension.stiffness;
         damper = _wheelSuspension.damper;
+        disableSuspension = false;
     }
 
     public void CalculateContactdepth(Collider other)
     {
-        if (disabled)
+        if (disableSuspension)
         {
             return;
         }
