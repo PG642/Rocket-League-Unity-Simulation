@@ -49,7 +49,7 @@ public class CubeJumping : MonoBehaviour
 
     private void UpdateJumpVariables()
     {
-        bool carIsGrounded = _controller.carState is CubeController.CarStates.AllWheelsSurface or CubeController.CarStates.AllWheelsGround;
+        bool carIsGrounded = _controller.carState == CubeController.CarStates.AllWheelsSurface || _controller.carState == CubeController.CarStates.AllWheelsGround;
         
         // reset timer and second jump if the car is grounded 
         if(carIsGrounded)

@@ -13,9 +13,8 @@ using Unity.MLAgents.Policies;
 public class GoalKeeperAgent : Agent
 {
     // Start is called before the first frame update
-    [SerializeField]
-    public GoalkeeperEnvironmentParameters defaultParameter;
-
+    [SerializeField] public GoalkeeperEnvironmentParameters defaultParameter;
+    
     private GoalkeeperEvironmentHandler _handler;
     private Rigidbody _rb, _rbBall;
 
@@ -48,8 +47,7 @@ public class GoalKeeperAgent : Agent
     
     void Start()
     {
-        defaultParameter.difficulty = 4.0f;
-        defaultParameter.canBoost = -1.0f;
+        
         _handler = new GoalkeeperEvironmentHandler(GameObject.Find("env"), defaultParameter);
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;

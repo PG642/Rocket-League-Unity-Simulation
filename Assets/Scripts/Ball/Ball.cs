@@ -23,7 +23,7 @@ public class Ball : Resettable
     public bool stopSlowBall = true;
     public float maxAngularVelocity = 6.0f;
     public float maxVelocity = 60.0f;
-    public AnimationCurve pysionixImpulseCurve = new();
+    public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
     
    
 

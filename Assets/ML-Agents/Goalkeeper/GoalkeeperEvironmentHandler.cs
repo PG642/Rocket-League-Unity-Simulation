@@ -15,6 +15,7 @@ namespace ML_Agents.Goalkeeper
         public override void ResetParameter()
         {
             UpdateEnvironmentParameters();
+            //TODO after merge with difficulty, add difficulty parameter
             if (currentParameter.canDoubleJump == 0)
             {
                 environment.GetComponentInChildren<CubeJumping>().disableDoubleJump = true;
@@ -22,6 +23,10 @@ namespace ML_Agents.Goalkeeper
             if (currentParameter.canBoost == 0)
             {
                 environment.GetComponentInChildren<CubeBoosting>().disableBoosting = true;
+            }
+            else
+            {
+                environment.GetComponentInChildren<CubeBoosting>().boostAmount = currentParameter.initialBoost;
             }
             if (currentParameter.canDrift == 0)
             {
