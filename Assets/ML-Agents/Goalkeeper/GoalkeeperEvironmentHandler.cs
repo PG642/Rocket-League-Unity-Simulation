@@ -15,18 +15,17 @@ namespace ML_Agents.Goalkeeper
         public override void ResetParameter()
         {
             UpdateEnvironmentParameters();
-            //TODO ändere Environment
             if (currentParameter.canDoubleJump == 0)
             {
-                
+                environment.GetComponentInChildren<CubeJumping>().disableDoubleJump = true;
             }
             if (currentParameter.canBoost == 0)
             {
-
+                environment.GetComponentInChildren<CubeBoosting>().disableBoosting = true;
             }
             if (currentParameter.canDrift == 0)
             {
-
+                environment.GetComponentInChildren<CubeGroundControl>().disableDrift = true;
             }
             if (currentParameter.useBulletImpulse == 0)
             {

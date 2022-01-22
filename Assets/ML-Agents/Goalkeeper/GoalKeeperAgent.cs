@@ -229,7 +229,7 @@ public class GoalKeeperAgent : Agent
         sensor.AddObservation(ball_velocity);
 
         // Boost amount
-        float boostAmount = _boostControl._boostAmount / 100f;
+        float boostAmount = _boostControl.boostAmount / 100f;
         if (float.IsNaN(boostAmount))
         {
             Debug.Log("Car: boostAmount == NaN");

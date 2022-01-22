@@ -19,9 +19,8 @@ namespace ML_Agents.Handler
 
         public void UpdateEnvironmentParameters()
         {
+            
             var fields = typeof(T).GetFields();
-
-
             foreach (var field in fields)
             {
                 field.SetValue(currentParameter, Academy.Instance.EnvironmentParameters.GetWithDefault(field.Name,

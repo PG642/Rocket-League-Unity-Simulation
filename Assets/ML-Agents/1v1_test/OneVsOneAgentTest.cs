@@ -103,7 +103,7 @@ public class OneVsOneAgentTest : Agent
         sensor.AddObservation(_rb.angularVelocity / 5.5f);
 
         // Boost amount
-        sensor.AddObservation(_boostControl._boostAmount / 100f);
+        sensor.AddObservation(_boostControl.boostAmount / 100f);
         
         //Enemy position
         // var enemyXNormalized = (_enemy.localPosition.x + 60f) / 120f;

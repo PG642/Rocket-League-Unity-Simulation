@@ -5,6 +5,7 @@ namespace ML_Agents.Goalkeeper
     [Serializable]
     public class GoalkeeperEnvironmentParameters
     {
+        
         public float difficulty;
         public float canDoubleJump;
         public float useSuspension;

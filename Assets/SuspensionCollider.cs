@@ -1,25 +1,22 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.MLAgents.Integrations.Match3;
 using UnityEngine;
 
 public class SuspensionCollider : MonoBehaviour
 {
-    private MeshCollider _meshCollider;
-    private int _lastFrameCollision;
-    private WheelSuspension _wheelSuspension;
-
-
-    public float contactDepth; //How much the suspension is compressed/extended
-    public float lastcontactDepth;
-    private Rigidbody _rb;
-    public float stiffnes;
     const float RaycastOffset = 0.01f;
     const float PenetrationTolerance = 0.001f;
-    public float damper;
-    private float maxAcceleration = 0.0f;
+
+    private int _lastFrameCollision;
+    private float _maxAcceleration;
+    private MeshCollider _meshCollider;
+    private WheelSuspension _wheelSuspension;
+    private Rigidbody _rb;
+
     public bool disableSuspension;
+    public float contactDepth; //How much the suspension is compressed/extended
+    public float lastContactDepth;
+    public float stiffness;
+    public float damper;
 
 
     public SuspensionCollider()
@@ -33,25 +30,19 @@ public class SuspensionCollider : MonoBehaviour
         _meshCollider = GetComponent<MeshCollider>();
         _wheelSuspension = GetComponentInParent<WheelSuspension>();
         _rb = GetComponentInParent<Rigidbody>();
-        stiffnes = _wheelSuspension.stiffness;
+        stiffness = _wheelSuspension.stiffness;
         damper = _wheelSuspension.damper;
         disableSuspension = false;
     }
 
-    public void CalculateContactdepth(Collider other)
+    public void CalculateContactDepth(Collider other)
     {
-        if (disableSuspension)
-        {
-            return;
-        }
+        if (disableSuspension) return;
 
-        lastcontactDepth = contactDepth;
+        lastContactDepth = contactDepth;
         contactDepth = -_wheelSuspension.extensionDistance;
         transform.localPosition = new Vector3(0, contactDepth, 0);
-        if (other == null)
-        {
-            return;
-        }
+        if (other == null) return;
 
         bool significantOverlap;
         RayCastCollision();
@@ -60,38 +51,34 @@ public class SuspensionCollider : MonoBehaviour
             significantOverlap = PenetrativeCollision(other);
         } while (significantOverlap);
 
-        if (contactDepth > 0)
-        {
-            
-            float speed = (contactDepth - lastcontactDepth) / Time.fixedDeltaTime;
-            var springAcceleration = Math.Min(contactDepth * stiffnes + speed * damper,6f);
-            // var springAcceleration = contactDepth * stiffnes + speed * damper;
-            if (maxAcceleration < springAcceleration)
-            {
-                maxAcceleration = springAcceleration;
-            }
-            // Debug.Log($"Speed:{speed} --- ConatactDepth:{contactDepth} --- MaxAxx:{springAcceleration} timeFrame:{Time.frameCount} Wheel:{_wheelSuspension.name}");
+        if (!(contactDepth > 0)) return;
 
-            var worldSpringAcceleration = transform.TransformVector(new Vector3(springAcceleration, 0.0f, 0.0f));
-            _rb.AddForceAtPosition(worldSpringAcceleration, _wheelSuspension.displacementCollider.transform.position,
-                ForceMode.Acceleration);
+        var speed = (contactDepth - lastContactDepth) / Time.fixedDeltaTime;
+        var springAcceleration = Math.Min(contactDepth * stiffness + speed * damper, 6f);
+        if (_maxAcceleration < springAcceleration)
+        {
+            _maxAcceleration = springAcceleration;
         }
+
+        var worldSpringAcceleration = transform.TransformVector(new Vector3(springAcceleration, 0.0f, 0.0f));
+        _rb.AddForceAtPosition(worldSpringAcceleration, _wheelSuspension.displacementCollider.transform.position,
+            ForceMode.Acceleration);
     }
+
     //Calculate Collision with a Physics.ComputePenetration and transforms the wheel in y-Direction.
     private bool PenetrativeCollision(Collider other)
     {
         var ownBodyTransform = _meshCollider.transform;
         var collisionBodyTransform = other.transform;
-        var isSignificantOverlap = false;
+
         var isOverlap = Physics.ComputePenetration(_meshCollider, ownBodyTransform.position,
             ownBodyTransform.rotation,
-            other, collisionBodyTransform.position, collisionBodyTransform.rotation, out Vector3 direction,
-            out float distance);
-        if (isOverlap)
-        {
-            float penetration = Vector3.Dot(direction * distance, _meshCollider.transform.right);
-            isSignificantOverlap = MoveWheel(penetration);
-        }
+            other, collisionBodyTransform.position, collisionBodyTransform.rotation, out var direction,
+            out var distance);
+        if (!isOverlap) return false;
+
+        var penetration = Vector3.Dot(direction * distance, _meshCollider.transform.right);
+        var isSignificantOverlap = MoveWheel(penetration);
 
         return isSignificantOverlap;
     }
@@ -107,25 +94,24 @@ public class SuspensionCollider : MonoBehaviour
                 new Vector3(0.0f, -1.0f, 0.0f)),
             maxDistance: _wheelSuspension.extensionDistance + _wheelSuspension.compressionDistance + RaycastOffset,
             hitInfo: out var hitRay);
-        if (hit)
-        {
-            var contactDepth = _wheelSuspension.compressionDistance - (hitRay.distance - RaycastOffset);
-            MoveWheelContactDepth(contactDepth);
-        }
+        if (!hit) return;
+
+        var calculatedContactDepth = _wheelSuspension.compressionDistance - (hitRay.distance - RaycastOffset);
+        MoveWheelContactDepth(calculatedContactDepth);
     }
 
     private bool MoveWheel(float penetration)
     {
         contactDepth = Math.Min(contactDepth + penetration, _wheelSuspension.compressionDistance);
         _meshCollider.transform.localPosition = new Vector3(0, contactDepth, 0);
-        bool significantOverlap =
+        var significantOverlap =
             penetration > PenetrationTolerance && _wheelSuspension.compressionDistance > contactDepth;
         return significantOverlap;
     }
 
-    private void MoveWheelContactDepth(float contactDepth)
+    private void MoveWheelContactDepth(float calculatedContactDepth)
     {
-        this.contactDepth = contactDepth;
+        contactDepth = calculatedContactDepth;
         _meshCollider.transform.localPosition = new Vector3(0, this.contactDepth, 0);
     }
 }

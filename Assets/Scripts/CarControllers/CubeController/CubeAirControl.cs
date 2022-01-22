@@ -48,7 +48,7 @@ public class CubeAirControl : MonoBehaviour
     {
         if (_controller.numWheelsSurface >= 3) return;
 
-        if (!_cubeJumping.IsDodge || _cubeJumping.IsCancelled)
+        if (!_cubeJumping.isDodge || _cubeJumping.isCancelled)
         {
             // pitch
             _rb.AddTorque(Tp * _inputPitch * -_cogLow.right, ForceMode.Acceleration);
@@ -61,7 +61,7 @@ public class CubeAirControl : MonoBehaviour
             }
         }
 
-        if (!_cubeJumping.IsDodge)
+        if (!_cubeJumping.isDodge)
         {
             // roll
             _rb.AddTorque(Tr * _inputRoll * _cogLow.forward, ForceMode.Acceleration);
