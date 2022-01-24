@@ -267,14 +267,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8187233145375818463, guid: ce676eaed2a098048b0be4b41963ed72, type: 3}
-      propertyPath: m_Model
-      value: 
-      objectReference: {fileID: 5022602860645237092, guid: 797f247b637ee3f49b0f0bcb68ed86af, type: 3}
-    - target: {fileID: 8187233145375818463, guid: ce676eaed2a098048b0be4b41963ed72, type: 3}
-      propertyPath: m_BehaviorType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8187233145375818463, guid: ce676eaed2a098048b0be4b41963ed72, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
       value: 20
       objectReference: {fileID: 0}
@@ -590,10 +582,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: 1v1Agent0
       objectReference: {fileID: 0}
-    - target: {fileID: 8187233145375818463, guid: ce676eaed2a098048b0be4b41963ed72, type: 3}
-      propertyPath: m_Model
-      value: 
-      objectReference: {fileID: 5022602860645237092, guid: 797f247b637ee3f49b0f0bcb68ed86af, type: 3}
     - target: {fileID: 8187233145375818463, guid: ce676eaed2a098048b0be4b41963ed72, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
       value: 20

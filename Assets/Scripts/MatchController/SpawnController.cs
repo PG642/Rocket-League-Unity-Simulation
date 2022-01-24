@@ -100,7 +100,7 @@ namespace MatchController
 
             for (int i = 0; i < maxTeamSize; i++)
             {
-                if (teamBlue[i])
+                if (i < blueTeamSize)
                 {
                     teamBlue[i].transform.position = _blueSpawnPositions.GetChild(spawns[i]).position;
                     teamBlue[i].transform.rotation = _blueSpawnPositions.GetChild(spawns[i]).rotation;
@@ -108,7 +108,7 @@ namespace MatchController
                     teamBlue[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
                 }
 
-                if (teamOrane[i])
+                if (i < orangeTeamSize)
                 {
                     teamOrane[i].transform.position = _orangeSpawnPositions.GetChild(spawns[i]).position;
                     teamOrane[i].transform.rotation = _orangeSpawnPositions.GetChild(spawns[i]).rotation;

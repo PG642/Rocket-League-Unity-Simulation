@@ -144,6 +144,7 @@ public class MatchEnvControllerTest : MonoBehaviour
 
     private void ResetAgent(OneVsOneAgentTest agent, TeamController.Team team)
     {
+        // agent.AddReward(-((Time.time - _lastResetTime) / _episodeLength));
         agent.EndEpisode(); 
         agent.transform.localPosition = (team == TeamController.Team.BLUE) ? 
             new Vector3(Random.Range(-45f, -15f), 0.0f, Random.Range(-25.0f, 25.0f)) : 

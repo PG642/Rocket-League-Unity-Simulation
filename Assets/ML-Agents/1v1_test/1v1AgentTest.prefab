@@ -145,6 +145,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   surfaceNormal: {x: 0, y: 0, z: 0}
+  pysionixImpulseCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &4562140032757865069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,6 +189,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4653520720998499147}
     m_Modifications:
+    - target: {fileID: 2116498333786674321, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3769989915629870467, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
       propertyPath: m_Name
       value: CubeController

@@ -63,6 +63,11 @@ public class OneVsOneAgent : Agent
         _actionSpaceType = DetermineActionSpaceType(actionSpec);
     }
 
+    public void FixedUpdate()
+    {
+        AddReward(- (Time.fixedDeltaTime / _episodeLength));
+    }
+
     public override void OnEpisodeBegin()
     {
         //Respawn Cars
