@@ -48,7 +48,7 @@ public class GoalKeeperAgent : Agent
     void Start()
     {
         
-        _handler = new GoalkeeperEvironmentHandler(GameObject.Find("env"), defaultParameter);
+        _handler = new GoalkeeperEvironmentHandler(GameObject.Find("Environment"), defaultParameter);
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
 
@@ -73,8 +73,8 @@ public class GoalKeeperAgent : Agent
         _lastResetTime = Time.time;
         
         _handler.UpdateEnvironmentParameters();
-        
-        
+        _handler.ResetParameter();
+
     }
 
     public override void OnEpisodeBegin()
