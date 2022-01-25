@@ -135,7 +135,7 @@ public class CarCollision : Resettable
         averageContactPoint /= col.contacts.Length;
         averageContactNormal /= col.contacts.Length;
         Debug.DrawRay(averageContactPoint, averageContactNormal * 3f, Color.red, 3f);
-        Vector3 jBullet = CustomPhysics.CalculateBulletImpulse(rb, bumpedRb, averageContactPoint);
+        Vector3 jBullet = CustomPhysics.CalculateBulletImpulse(rb, bumpedRb, averageContactPoint).Value;
         Vector3 jPsyonix = -CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
 
         //Debug.Log("Bullet" + jBullet.ToString());

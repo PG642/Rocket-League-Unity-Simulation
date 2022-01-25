@@ -53,10 +53,13 @@ public abstract class PGBaseAgent : Agent
 
     protected void AddPositionNormalized(VectorSensor sensor, Transform objTransform)
     {
-        var xPosNormalized = (objTransform.localPosition.x + 60f) / 120f;
-        var yPosNormalized = objTransform.localPosition.y / 20f;
-        var zPosNormalized = (objTransform.localPosition.z + 41f) / 82f;
-        sensor.AddObservation(new Vector3(xPosNormalized, yPosNormalized, zPosNormalized));
+        var vec = new Vector3(objTransform.localPosition.x, objTransform.localPosition.y, objTransform.localPosition.z);
+        checkVec(vec, objTransform.name + "_localPosition", -1f);
+
+        vec.x = (vec.x + 60f) / 120f;
+        vec.y = vec.y / 20f;
+        vec.z = (vec.z + 41f) / 82f;
+        sensor.AddObservation(vec);
     }
 
     protected void AddRelativePositionNormalized(VectorSensor sensor, Transform otherTransform)
@@ -228,6 +231,30 @@ public abstract class PGBaseAgent : Agent
                 }
             }
             return ActionSpaceType.Mixed;
+        }
+    }
+
+    protected void checkVec(Vector3 vec, string name, float defaultValue)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            if (float.IsNaN(vec[i]) || float.IsInfinity(vec[i]))
+            {
+                Debug.Log(name + "[" + i + "] is NaN or Infinity");
+                vec[i] = defaultValue;
+            }
+        }
+    }
+
+    protected void checkQuaternion(Quaternion quat, string name, float defaultValue)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (float.IsNaN(quat[i]) || float.IsInfinity(quat[i]))
+            {
+                Debug.Log(name + "[" + i + "] is NaN or Infinity");
+                quat[i] = defaultValue;
+            }
         }
     }
 

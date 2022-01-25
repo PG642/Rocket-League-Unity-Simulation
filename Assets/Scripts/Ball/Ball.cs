@@ -23,6 +23,8 @@ public class Ball : Resettable
     private const float Radius = 0.9125f; //0.9138625f;
     private Transform _transform;
 
+    public bool BallStuck;
+
     public override void Start()
     {
         base.Start();
@@ -30,6 +32,7 @@ public class Ball : Resettable
         isTouchedGround = false;
         rb.maxAngularVelocity = maxAngluarVelocity;
         rb.maxDepenetrationVelocity = maxVelocity;
+        BallStuck = false;
     }
 
     // void Update()
@@ -138,7 +141,7 @@ public class Ball : Resettable
     {
         Vector3 n = col.GetContact(0).normal;
         CancelUnityImpulse();
-        if(rb.velocity.magnitude <= 1e-4f)
+        if (rb.velocity.magnitude <= 1e-4f)
         {
             return;
         }
@@ -167,7 +170,17 @@ public class Ball : Resettable
         //setCarState(col.rigidbody);
         Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
 
-        Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
+        Nullable<Vector3> jBulletResult = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
+        Vector3 jBullet;
+        if (jBulletResult.HasValue)
+        {
+            jBullet = jBulletResult.Value;
+        }
+        else
+        {
+            BallStuck = true;
+            jBullet = new Vector3(0f, 0f, 0f);
+        }
         Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
 
 
