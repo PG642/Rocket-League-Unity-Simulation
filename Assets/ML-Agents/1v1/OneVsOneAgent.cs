@@ -36,6 +36,7 @@ public class OneVsOneAgent : Agent
     private readonly float[] DISCRETE_ACTIONS = { -1f, -0.5f, 0f, 0.5f, 1f };
     private ActionSpaceType _actionSpaceType;
 
+    private int _nBallTouches = 0;
 
     void Start()
     {
@@ -194,9 +195,19 @@ public class OneVsOneAgent : Agent
     {
         if(other.gameObject.tag.Equals("Ball"))
         {
-            AddReward(1.0f);
-            _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f);
-            _matchEnvController.Reset();
+            int maxBallTouches = 10;
+            AddReward(1.0f / maxBallTouches);
+            _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f/maxBallTouches);
+            if (_nBallTouches < maxBallTouches)
+            {
+                _matchEnvController.ResetBall();
+                ++_nBallTouches;
+            }
+            else
+            {
+                _matchEnvController.Reset();
+                _nBallTouches = 0;
+            }
         }
     }
 

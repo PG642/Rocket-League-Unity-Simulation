@@ -56,10 +56,8 @@ public class MatchEnvController : MonoBehaviour
     {
         SwapTeams();
         
-        _ball.localPosition = new Vector3(Random.Range(-25f, 25f), Random.Range(1f, 15f), Random.Range(-20f, 20f));
-        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-        
+        ResetBall();
+
         // End episode for all agents
         foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
         {
@@ -84,7 +82,7 @@ public class MatchEnvController : MonoBehaviour
         // Reset start time of episode to now
         _lastResetTime = Time.time;
     }
-    
+
     void FixedUpdate()
     {
         if (Time.time - _lastResetTime > _episodeLength){
@@ -137,6 +135,13 @@ public class MatchEnvController : MonoBehaviour
     {
         _teamController.SwapTeams();
         (_teamOrangeAgentGroup, _teamBlueAgentGroup) = (_teamBlueAgentGroup, _teamOrangeAgentGroup);
+    }
+    
+    public void ResetBall()
+    {
+        _ball.localPosition = new Vector3(Random.Range(-25f, 25f), Random.Range(1f, 15f), Random.Range(-20f, 20f));
+        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
     }
 
     private void ResetAgent(OneVsOneAgent agent, TeamController.Team team)

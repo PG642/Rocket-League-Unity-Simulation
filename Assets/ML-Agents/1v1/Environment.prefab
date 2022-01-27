@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paused: 0
-  matchTimeSeconds: 20
+  matchTimeSeconds: 300
 --- !u!114 &5943083373906032858
 MonoBehaviour:
   m_ObjectHideFlags: 0
