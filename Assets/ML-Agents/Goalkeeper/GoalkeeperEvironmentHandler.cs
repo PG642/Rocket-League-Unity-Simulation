@@ -16,6 +16,7 @@ namespace ML_Agents.Goalkeeper
         {
             UpdateEnvironmentParameters();
             //TODO after merge with difficulty, add difficulty parameter
+            environment.GetComponentInChildren<GoalKeeperAgent>().difficulty = currentParameter.difficulty;
             if (currentParameter.canDoubleJump == 0)
             {
                 environment.GetComponentInChildren<CubeJumping>().disableDoubleJump = true;

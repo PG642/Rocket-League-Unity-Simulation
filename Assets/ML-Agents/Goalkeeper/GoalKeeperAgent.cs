@@ -30,6 +30,7 @@ public class GoalKeeperAgent : Agent
     private CubeBoosting _boostControl;
     private CubeGroundControl _groundControl;
     private CubeAirControl _airControl;
+    public float difficulty;
 
     private MapData _mapData;
 
@@ -44,6 +45,8 @@ public class GoalKeeperAgent : Agent
     /// Shows whether the action space of the agent is continuous, multi-discrete or mixed.
     /// </summary>
     private ActionSpaceType _actionSpaceType;
+
+    private Vector3 zero = Vector3.zero;
 
     void Start()
     {
@@ -123,134 +126,142 @@ public class GoalKeeperAgent : Agent
         }
     }
 
-    public static float GetSpeed(Difficulty difficulty)
+    public float GetSpeed(Difficulty difficulty, Vector3 ballPosition, Vector3 targetPosition)
     {
+        float scale;
+        float dist = (ballPosition - targetPosition).magnitude;
+        float minTime = 2f;
+        float maxTime = Math.Max(minTime,Math.Min(_episodeLength, dist / 5f));
         switch (difficulty)
         {
             case Difficulty.EASY:
-                return UnityEngine.Random.Range(5f, 20f);
+                scale = UnityEngine.Random.Range(0.7f, 1f);
+                break;
             case Difficulty.MIDDLE:
-                return UnityEngine.Random.Range(20f, 40f);
+                scale = UnityEngine.Random.Range(0.4f, 0.7f);
+                break;
             case Difficulty.HARD:
-                return UnityEngine.Random.Range(10f, 60f);
+                scale = UnityEngine.Random.Range(0.1f, 4f);
+                break;
             default:
-                return UnityEngine.Random.Range(5f, 20f);
+                scale = UnityEngine.Random.Range(0.7f, 1f);
+                break;
         }
+        return dist * Math.Max(1 / minTime,scale / maxTime);
     }
 
     private void ResetShoot()
     {
-        var lesson = Academy.Instance.EnvironmentParameters.GetWithDefault("my_environment_parameter", 14.0f);
         var localPositionBall = new Vector3();
         var localPositionTarget = new Vector3();
         var speed = 0.0f;
 
 
-        switch (lesson)
+        switch ((int) difficulty)
         {
             case 0:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.EASY);
                 localPositionBall = GetLocalPositionBall(Difficulty.EASY);
-                speed = GetSpeed(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.EASY, localPositionBall, localPositionTarget);
                 break;
 
             case 1:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.MIDDLE);
                 localPositionBall = GetLocalPositionBall(Difficulty.EASY);
-                speed = GetSpeed(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.EASY, localPositionBall, localPositionTarget);
                 break;
 
             case 2:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.EASY);
                 localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
-                speed = GetSpeed(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.EASY, localPositionBall, localPositionTarget);
                 break;
 
             case 3:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.EASY);
                 localPositionBall = GetLocalPositionBall(Difficulty.EASY);
-                speed = GetSpeed(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
                 break;
 
             case 4:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.MIDDLE);
                 localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
-                speed = GetSpeed(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.EASY, localPositionBall, localPositionTarget);
                 break;
 
             case 5:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.MIDDLE);
                 localPositionBall = GetLocalPositionBall(Difficulty.EASY);
-                speed = GetSpeed(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
                 break;
 
             case 6:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.EASY);
                 localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
-                speed = GetSpeed(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
                 break;
 
             case 7:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.MIDDLE);
                 localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
-                speed = GetSpeed(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
                 break;
 
             case 8:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.HARD);
                 localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
-                speed = GetSpeed(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
                 break;
 
             case 9:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.MIDDLE);
                 localPositionBall = GetLocalPositionBall(Difficulty.HARD);
-                speed = GetSpeed(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
                 break;
 
             case 10:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.MIDDLE);
                 localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
-                speed = GetSpeed(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.HARD, localPositionBall, localPositionTarget);
                 break;
 
             case 11:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.HARD);
                 localPositionBall = GetLocalPositionBall(Difficulty.HARD);
-                speed = GetSpeed(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
                 break;
 
             case 12:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.HARD);
                 localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
-                speed = GetSpeed(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.HARD, localPositionBall, localPositionTarget);
                 break;
 
             case 13:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.MIDDLE);
                 localPositionBall = GetLocalPositionBall(Difficulty.HARD);
-                speed = GetSpeed(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.HARD, localPositionBall, localPositionTarget);
                 break;
 
             case 14:
                 localPositionTarget =
                     GetLocalPositionTarget(Difficulty.HARD);
                 localPositionBall = GetLocalPositionBall(Difficulty.HARD);
-                speed = GetSpeed(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.HARD, localPositionBall, localPositionTarget);
                 break;
         }
 
