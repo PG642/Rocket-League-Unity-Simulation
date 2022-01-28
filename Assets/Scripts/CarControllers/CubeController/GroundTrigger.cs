@@ -50,13 +50,13 @@ public class GroundTrigger : MonoBehaviour
     {
         groundedTriggers++;
         _isColliderContact = true;
-        _sc.CalculateContactdepth(other);
+        _sc.CalculateContactDepth(other);
     }
 
     public void TriggerStay(Collider other)
     {
         _isColliderContact = true;
-        _sc.CalculateContactdepth(other);
+        _sc.CalculateContactDepth(other);
     }
 
     public void TriggerExit()
@@ -65,7 +65,7 @@ public class GroundTrigger : MonoBehaviour
         if (groundedTriggers <= 0)
         {
             _isColliderContact = false;
-            _sc.CalculateContactdepth(null);
+            _sc.CalculateContactDepth(null);
         }
     }
 

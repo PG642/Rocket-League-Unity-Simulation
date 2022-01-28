@@ -90,18 +90,31 @@ namespace MatchController
 
         public void SpawnOppositeCars(GameObject[] teamBlue, GameObject[] teamOrane)
         {
-            var teamSize = teamBlue.Length;
+            var blueTeamSize = teamBlue.Length;
+            var orangeTeamSize = teamOrane.Length;
+            var maxTeamSize = blueTeamSize > orangeTeamSize ? blueTeamSize : orangeTeamSize;
             var spawnNum = _blueSpawnPositions.childCount;
 
             var rnd = new System.Random();
-            var spawns = Enumerable.Range(0, spawnNum).ToList().OrderBy(x=>rnd.Next()).Take(teamSize).ToList();
+            var spawns = Enumerable.Range(0, spawnNum).ToList().OrderBy(x=>rnd.Next()).Take(maxTeamSize).ToList();
 
-            for(int i=0; i<teamSize; i++)
+            for (int i = 0; i < maxTeamSize; i++)
             {
-                teamBlue[i].transform.position = _blueSpawnPositions.GetChild(spawns[i]).position;
-                teamBlue[i].transform.rotation = _blueSpawnPositions.GetChild(spawns[i]).rotation;
-                teamOrane[i].transform.position = _orangeSpawnPositions.GetChild(spawns[i]).position;
-                teamOrane[i].transform.rotation = _orangeSpawnPositions.GetChild(spawns[i]).rotation;
+                if (teamBlue[i])
+                {
+                    teamBlue[i].transform.position = _blueSpawnPositions.GetChild(spawns[i]).position;
+                    teamBlue[i].transform.rotation = _blueSpawnPositions.GetChild(spawns[i]).rotation;
+                    teamBlue[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    teamBlue[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                }
+
+                if (teamOrane[i])
+                {
+                    teamOrane[i].transform.position = _orangeSpawnPositions.GetChild(spawns[i]).position;
+                    teamOrane[i].transform.rotation = _orangeSpawnPositions.GetChild(spawns[i]).rotation;
+                    teamOrane[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    teamOrane[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                }
             }
         }
 

@@ -3,21 +3,23 @@
 [RequireComponent(typeof(CubeController))]
 public class CubeGroundControl : MonoBehaviour
 {
-    [Header("Steering")]
-    [Range(0, 100)]
-    public float turnRadiusCoefficient = 50;
-    public float currentSteerAngle;
+    private const float NaiveRotationForce = 5;
+    private const float NaiveRotationDampeningForce = -10;
 
-    [Header("Drift")]
-    public float driftTime = 3;
-    public float wheelSideFriction = 8;
-    public float wheelSideFrictionDrift = 0.5f;
 
-    Rigidbody _rb;
-    CubeController _controller;
-    InputManager _inputManager;
-    CubeWheel[] _wheelArray;
+    private Rigidbody _rb;
+    private CubeController _controller;
+    private InputManager _inputManager;
+    private CubeWheel[] _wheelArray;
     private CarCollision _carCollision;
+
+    public bool disableGroundStabilization;
+    public bool disableWallStabilization;
+    public bool disableDrift;
+    [Header("Steering")] [Range(0, 100)] public float turnRadiusCoefficient = 50;
+    public float currentSteerAngle;
+    public float driftFactor = 0.5f;
+
 
     void Start()
     {
@@ -28,10 +30,6 @@ public class CubeGroundControl : MonoBehaviour
         _carCollision = GetComponentInParent<CarCollision>();
     }
 
-    private void Update()
-    {
-
-    }
 
     private void FixedUpdate()
     {
@@ -43,38 +41,56 @@ public class CubeGroundControl : MonoBehaviour
         currentSteerAngle = CalculateSteerAngle();
         ApplyWheelRotation(currentSteerAngle);
     }
+
     private void ApplyStabilizationWall()
     {
-        if(Mathf.Abs(Vector3.Dot(Vector3.up, transform.up)) > 0.95f || _controller.carState == CubeController.CarStates.Air || _controller.numWheelsSurface < 2)
+        if (disableWallStabilization)
         {
             return;
         }
-        _rb.AddForce(-transform.up * 5f, ForceMode.Acceleration);
 
+        if (Mathf.Abs(Vector3.Dot(Vector3.up, transform.up)) > 0.95f ||
+            _controller.carState == CubeController.CarStates.Air || _controller.numWheelsSurface < 2)
+        {
+            return;
+        }
+
+        _rb.AddForce(-transform.up * 5f, ForceMode.Acceleration);
     }
+
     private void ApplyStabilizationFloor()
     {
+        if (disableGroundStabilization)
+        {
+            return;
+        }
+
         if (Mathf.Abs(_inputManager.throttleInput) <= 0.0001f)
         {
             return;
         }
+
         if (_controller.carState == CubeController.CarStates.Air
             || _controller.numWheelsSurface >= 3)
         {
             return;
         }
+
         if (_carCollision == null || _carCollision.surfaceNormal == null)
         {
             return;
         }
-        var torqueDirection = -Mathf.Sign(Vector3.SignedAngle(_carCollision.surfaceNormal, _rb.transform.up, _controller.cogLow.transform.forward));
-        ForceMode torqueForceMode = ForceMode.Acceleration;
-        float factor = 50.0f;
+
+        var torqueDirection = -Mathf.Sign(Vector3.SignedAngle(_carCollision.surfaceNormal, _rb.transform.up,
+            _controller.cogLow.transform.forward));
+        var torqueForceMode = ForceMode.Acceleration;
+        var factor = 50.0f;
         if (_controller.carState == CubeController.CarStates.BodyGroundDead)
         {
             torqueForceMode = ForceMode.VelocityChange;
             factor = 0.4f;
         }
+
         _rb.AddTorque(_controller.cogLow.transform.forward * factor * torqueDirection, torqueForceMode);
         if (_controller.carState == CubeController.CarStates.SomeWheelsSurface)
         {
@@ -115,13 +131,13 @@ public class CubeGroundControl : MonoBehaviour
         else
             forwardAcceleration = throttleInput * GetForwardAcceleration(_controller.forwardSpeedAbs);
 
-        if (_inputManager.isDrift)
-            forwardAcceleration *= 0.5f;
-        else 
-            if (_controller.forwardSpeedSign != Mathf.Sign(throttleInput) && throttleInput != 0)
-                forwardAcceleration += -1 * _controller.forwardSpeedSign * 35; // Braking
+        if (_inputManager.isDrift && !disableDrift)
+            forwardAcceleration *= driftFactor;
+        else if (_controller.forwardSpeedSign != Mathf.Sign(throttleInput) && throttleInput != 0)
+            forwardAcceleration += -1 * _controller.forwardSpeedSign * 35; // Braking
         return forwardAcceleration;
     }
+
 
     private float CalculateForwardForce(float input, float speed)
     {
@@ -152,8 +168,7 @@ public class CubeGroundControl : MonoBehaviour
 
     static float GetTurnRadius(float speed)
     {
-        float forwardSpeed = Mathf.Abs(speed);
-        float turnRadius = 0;
+        var forwardSpeed = Mathf.Abs(speed);
 
         var curvature = RoboUtils.Scale(0, 5, 0.0069f, 0.00398f, forwardSpeed);
 
@@ -169,12 +184,10 @@ public class CubeGroundControl : MonoBehaviour
         if (forwardSpeed >= 1750 / 100)
             curvature = RoboUtils.Scale(17.5f, 23, 0.0011f, 0.00088f, forwardSpeed);
 
-        turnRadius = 1 / (curvature * 100);
+        float turnRadius = 1 / (curvature * 100);
         return turnRadius;
     }
 
-    float _naiveRotationForce = 5;
-    float _naiveRotationDampeningForce = -10;
     private void NaiveGroundControl()
     {
         if (_controller.carState != CubeController.CarStates.AllWheelsSurface &&
@@ -183,18 +196,22 @@ public class CubeGroundControl : MonoBehaviour
         // Throttle
         var throttleInput = Input.GetAxis("Vertical");
         float Fx = throttleInput * GetForwardAcceleration(_controller.forwardSpeedAbs);
-        _rb.AddForceAtPosition(Fx * transform.forward, _rb.transform.TransformPoint(_rb.centerOfMass),
+        var forward = transform.forward;
+        _rb.AddForceAtPosition(Fx * forward, _rb.transform.TransformPoint(_rb.centerOfMass),
             ForceMode.Acceleration);
 
         // Auto dampening
-        _rb.AddForce(transform.forward * (5.25f * -Mathf.Sign(_controller.forwardSpeed) * (1 - Mathf.Abs(throttleInput))),
+        _rb.AddForce(
+            forward * (5.25f * -Mathf.Sign(_controller.forwardSpeed) * (1 - Mathf.Abs(throttleInput))),
             ForceMode.Acceleration);
         // alternative auto dampening
         //if (throttleInput == 0) _rb.AddForce(transform.forward * (5.25f * -Mathf.Sign(forwardSpeed)), ForceMode.Acceleration); 
 
         // Steering
-        _rb.AddTorque(transform.up * (Input.GetAxis("Horizontal") * _naiveRotationForce), ForceMode.Acceleration);
-        _rb.AddTorque(transform.up * (_naiveRotationDampeningForce * (1 - Mathf.Abs(Input.GetAxis("Horizontal"))) *
-                                      transform.InverseTransformDirection(_rb.angularVelocity).y), ForceMode.Acceleration);
+        var up = transform.up;
+        _rb.AddTorque(up * (Input.GetAxis("Horizontal") * NaiveRotationForce), ForceMode.Acceleration);
+        _rb.AddTorque(up * (NaiveRotationDampeningForce * (1 - Mathf.Abs(Input.GetAxis("Horizontal"))) *
+                            transform.InverseTransformDirection(_rb.angularVelocity).y),
+            ForceMode.Acceleration);
     }
 }

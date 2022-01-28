@@ -157,6 +157,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  SteeringCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &893074890267919795
 GameObject:
   m_ObjectHideFlags: 0
@@ -10292,7 +10298,6 @@ MonoBehaviour:
   turnRadiusCoefficient: 50
   currentSteerAngle: 0
   driftTime: 3
-  currentWheelSideFriction: 10
   wheelSideFriction: 8
   wheelSideFrictionDrift: 0.5
 --- !u!114 &8156201382413549511

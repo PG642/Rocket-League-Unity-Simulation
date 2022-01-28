@@ -1,49 +1,40 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Ball : Resettable
 {
-    [SerializeField] [Range(10, 80)] float randomSpeed = 40;
-    [SerializeField] float initialForce;
-    [SerializeField] float hitMultiplier;
-    public float maxAngluarVelocity = 6.0f;
-    public float maxVelocity = 60.0f;
-    public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
-    public bool isTouchedGround = false;
-    private const float MINVelocity = 0.4f;
-    private const float MINAngularVelocity = 1.047f;
-    private float _lastStoppedTime;
+    private const float MinVelocity = 0.4f;
+    private const float MinAngularVelocity = 1.047f;
     private const float Restitution = 0.6f;
     private const float TimeWindowToStop = 2.0f;
     private const float Friction = 2f;
     private const float Mu = 0.285f;
     private const float A = 3f;
     private const float Radius = 0.9125f; //0.9138625f;
+    
+    private float _lastStoppedTime;
     private Transform _transform;
+    
+    public bool disableCustomBounce;
+    public bool disableBulletImpulse;
+    public bool disablePsyonixImpulse;
+    public bool isTouchedGround;
+    public bool stopSlowBall = true;
+    public float maxAngularVelocity = 6.0f;
+    public float maxVelocity = 60.0f;
+    public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
+    
+   
 
     public override void Start()
     {
         base.Start();
-        _transform = this.transform;
+        _transform = transform;
         isTouchedGround = false;
-        rb.maxAngularVelocity = maxAngluarVelocity;
+        rb.maxAngularVelocity = maxAngularVelocity;
         rb.maxDepenetrationVelocity = maxVelocity;
     }
-
-    // void Update()
-    // {
-    //    if (Input.GetKeyDown(KeyCode.T))
-    //         ShootInRandomDirection(randomSpeed);
-    //
-    //     if (Input.GetKeyDown(KeyCode.R))
-    //         ResetBall();
-    //
-    //     if (Input.GetButtonDown("Select"))
-    //         ResetShot(new Vector3(7.76f, 2.98f, 0f));
-    //     rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
-    // }
 
     private void LateUpdate()
     {
@@ -58,24 +49,18 @@ public class Ball : Resettable
             rb.velocity = rb.velocity.normalized * maxVelocity;
         }
 
-        if (rb.angularVelocity.magnitude > maxAngluarVelocity)
+        if (rb.angularVelocity.magnitude > maxAngularVelocity)
         {
-            rb.angularVelocity = rb.angularVelocity.normalized * maxAngluarVelocity;
+            rb.angularVelocity = rb.angularVelocity.normalized * maxAngularVelocity;
         }
-    }
-
-    private void ResetShot(Vector3 pos)
-    {
-        _transform.position = pos;
-        rb.velocity = new Vector3(30, 10, 0);
-        rb.angularVelocity = Vector3.zero;
     }
 
     [ContextMenu("ResetBall")]
     public void ResetBall()
     {
         var desired = new Vector3(0, 12.23f, 0f);
-        _transform.SetPositionAndRotation(desired, Quaternion.identity);
+        _transform.localPosition = desired;
+        _transform.rotation = Quaternion.identity;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }
@@ -91,7 +76,10 @@ public class Ball : Resettable
 
     private void StopBallIfTooSlow()
     {
-        if (rb.velocity.magnitude <= MINVelocity && rb.angularVelocity.magnitude <= MINAngularVelocity)
+        if (!stopSlowBall)
+            return;
+        
+        if (rb.velocity.magnitude <= MinVelocity && rb.angularVelocity.magnitude <= MinAngularVelocity)
         {
             if (_lastStoppedTime == 0.0f)
             {
@@ -135,6 +123,10 @@ public class Ball : Resettable
 
     private void ApplyBounce(Collision col)
     {
+        if (disableCustomBounce)
+        {
+            return;
+        }
         Vector3 n = col.GetContact(0).normal;
         CancelUnityImpulse();
 
@@ -159,34 +151,23 @@ public class Ball : Resettable
 
     private void PerformPlayerHit(Collision col)
     {
-       
-        
-        CancelUnityImpulse();
-        col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
-
-        //setCarState(col.rigidbody);
-        Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
-
-        Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
-        Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
-
-        
-        CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
-        CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
+        if (!disableBulletImpulse)
+        {
+            CancelUnityImpulse();
+            col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
+            //setCarState(col.rigidbody);
+            Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
+            Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
+            CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
+            CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
+        }
+        if (!disablePsyonixImpulse)
+        {
+            Vector3 jPsyonix = CustomPhysics.CalculatePsyonixImpulse(rb, col, pysionixImpulseCurve);
+            CustomPhysics.ApplyImpulseAtPosition(rb, jPsyonix, rb.position);
+        }
         CapVelocities();
-
-        CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
     }
-
-    private void setCarState(Rigidbody rb)
-    {
-        //at time 1.117961 im Ballschuss szenario mit radius 93.15uu
-        rb.velocity = new Vector3(9.130809f,0.00191f,0);
-        rb.position = new Vector3(-11.5511f,0.1701f,15);
-        rb.rotation.eulerAngles.Set(0.5493164f,0,0);
-        rb.angularVelocity = new Vector3(0,0,0.00051f);
-    }
-
 
     private void OnCollisionExit(Collision other)
     {

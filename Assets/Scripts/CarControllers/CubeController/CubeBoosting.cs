@@ -3,17 +3,21 @@
 [RequireComponent(typeof(CubeController))]
 public class CubeBoosting : MonoBehaviour
 {
-    public float BoostForceMultiplier = 1f;
-    const float BoostForce = 991.666f / 100f;
-
-    public bool isBoosting = false;
-    public float _boostAmount = 32f;
+    private const float BoostForce = 991.666f / 100f;
+    
     private int _boostCountdown = 13;
-    public bool _infiniteBoosting = false;
-    CubeController _c;
-    InputManager _inputManager;
-    Rigidbody _rb;
-    GUIStyle _style;
+    private CubeController _c;
+    private InputManager _inputManager;
+    private Rigidbody _rb;
+    private GUIStyle _style;
+    
+    public bool isBoosting;
+    public bool infiniteBoosting;
+    public bool disableBoosting;
+    public float boostForceMultiplier = 1f;
+    public float boostAmount = 32f;
+
+
 
     private void Start()
     {
@@ -22,9 +26,9 @@ public class CubeBoosting : MonoBehaviour
         _style.fontSize = 25;
         _style.fontStyle = FontStyle.Bold;
 
-        if (_infiniteBoosting)
+        if (infiniteBoosting)
         {
-            _boostAmount = 100f;
+            boostAmount = 100f;
         }
 
         _inputManager = GetComponentInParent<InputManager>();
@@ -41,23 +45,24 @@ public class CubeBoosting : MonoBehaviour
         Boosting();
     }
 
-    void Boosting()
+    private void Boosting()
     {
-        if (_inputManager.isBoost || (_boostCountdown < 13 && _boostCountdown > 0))
+        if(disableBoosting) return;
+        if (_inputManager.isBoost || (_boostCountdown < 13 && _boostCountdown > 0) )
         {
             _boostCountdown--;
-            if (_boostAmount > 0)
+            if (boostAmount > 0)
             {
                 isBoosting = true;
                 if (_c.forwardSpeed < CubeController.MaxSpeedBoost)
                 {
-                    _rb.AddForce(BoostForce * BoostForceMultiplier * transform.forward, ForceMode.Acceleration);
-                }
-                if (!_infiniteBoosting)
-                {
-                    _boostAmount = Mathf.Max(0.0f, _boostAmount - 0.27f);
+                    _rb.AddForce(BoostForce * boostForceMultiplier * transform.forward, ForceMode.Acceleration);
                 }
 
+                if (!infiniteBoosting)
+                {
+                    boostAmount = Mathf.Max(0.0f, boostAmount - 0.27f);
+                }
             }
             else
             {
@@ -69,31 +74,27 @@ public class CubeBoosting : MonoBehaviour
             _boostCountdown = 13;
             isBoosting = false;
         }
-
     }
 
     public void SetInfiniteBoost(bool infiniteBoost)
     {
-        _infiniteBoosting = infiniteBoost;
+        infiniteBoosting = infiniteBoost;
     }
 
     //returns true if the boost was alreade 100
     public bool IncreaseBoost(float boost)
     {
-        if(_boostAmount == 100)
+        if (boostAmount == 100)
         {
             return true;
         }
-        else
-        {
-            _boostAmount = Mathf.Min(100f, _boostAmount + boost);
-            return false;
-        }
+
+        boostAmount = Mathf.Min(100f, boostAmount + boost);
+        return false;
     }
 
     void OnGUI()
     {
-        GUI.Label(new Rect(Screen.width - 140, Screen.height - 50, 150, 130), $"Boost {(int)_boostAmount}", _style);
-
+        GUI.Label(new Rect(Screen.width - 140, Screen.height - 50, 150, 130), $"Boost {(int)boostAmount}", _style);
     }
 }

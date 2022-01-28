@@ -4,33 +4,33 @@ using UnityEngine;
 [RequireComponent(typeof(CubeController))]
 public class CubeJumping : MonoBehaviour
 {
-    float _timerJumpButtonHeld = 0;
-    float _timerSecondJump = 0;
+    const float DodgeDeadzone = 0.50f;
 
-    bool _isFirstJumpPress = false;
-    public bool IsFirstJump = false;
-    public bool IsSecondJump = false;
-    bool _isSecondJumpUsed = false;
-    bool _lowerSecondJumpTimer = false;
-    bool _lastFrameNoButton = true;
 
-    public bool IsDodge = false;
-    public float TimerDodge = 0f;
-    const float _dodgeDeadzone = 0.50f;
-    public bool IsCancelled = false;
-
-    float _pitch = 0.0f;
-    float _yaw = 0.0f;
+    private bool _isFirstJumpPress = false;
+    private bool _isSecondJumpUsed = false;
+    private bool _lowerSecondJumpTimer = false;
+    private bool _lastFrameNoButton = true;
+    private bool _unflip = false;
+    private float _timerJumpButtonHeld = 0;
+    private float _timerSecondJump = 0;
+    private float _pitch = 0.0f;
+    private float _yaw = 0.0f;
+    private float _unflipStart;
+    private Rigidbody _rb;
+    private InputManager _inputManager;
+    private CubeController _controller;
+    private Transform _cogLow;
     
+    
+    public bool disableDoubleJump;
+    public bool isFirstJump = false;
+    public bool isSecondJump = false;
+    public bool isDodge = false;
+    public bool isCancelled = false;
+    public float timerDodge = 0f;
     public float upForce = 0.03f;
     public int upTorque = 100;
-    private bool _unflip = false;
-    private float _unflipStart;
-
-    Rigidbody _rb;
-    InputManager _inputManager;
-    CubeController _controller;
-    private Transform _cogLow;
 
     void Start()
     {
@@ -66,48 +66,48 @@ public class CubeJumping : MonoBehaviour
         }
 
         // lower _timerJumpButtonHeld if the car is in air and the first jump is active
-        if (IsFirstJump)
+        if (isFirstJump)
         {
             _timerJumpButtonHeld -= Time.deltaTime;
         }
 
         // if the interval of the first jump ended or the button was released: end first jump, start lowering the secondjumptimer from here and reset it before lowering it
-        if(IsFirstJump && (_timerJumpButtonHeld <= 0f || !_inputManager.isJump))
+        if(isFirstJump && (_timerJumpButtonHeld <= 0f || !_inputManager.isJump))
         {
-            IsFirstJump = false;
+            isFirstJump = false;
             _lowerSecondJumpTimer = true;
             _timerSecondJump = 1.25f;
         }
 
         // if the car is grounded, is not already jumping and the jump button is pressed again: start first jump, reset _timerJumpButtonHeld
-        if (!IsFirstJump && carIsGrounded && _inputManager.isJump && _lastFrameNoButton)
+        if (!isFirstJump && carIsGrounded && _inputManager.isJump && _lastFrameNoButton)
         {
             _isFirstJumpPress = true;
-            IsFirstJump = true;
+            isFirstJump = true;
             _timerJumpButtonHeld = 0.195f;
         }
 
         // if the first jump is over, the car is not grounded and has the second jump left: start second jump / dodge
-        if(!IsFirstJump && !carIsGrounded && _inputManager.isJump && !_isSecondJumpUsed && _timerSecondJump > 0f && _lastFrameNoButton)
+        if(!isFirstJump && !carIsGrounded && _inputManager.isJump && !_isSecondJumpUsed && _timerSecondJump > 0f && _lastFrameNoButton && !disableDoubleJump)
         {
-            IsSecondJump = true;
+            isSecondJump = true;
             // if the dodge deadzone is exceeded the second jump is a dodge: start dodge, reset TimerDodge and raise the maxAngularVelocity during the dodge
-            if (Mathf.Abs(_inputManager.yawInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.rollInput) > _dodgeDeadzone || Mathf.Abs(_inputManager.pitchInput) > _dodgeDeadzone)
+            if (Mathf.Abs(_inputManager.yawInput) > DodgeDeadzone || Mathf.Abs(_inputManager.rollInput) > DodgeDeadzone || Mathf.Abs(_inputManager.pitchInput) > DodgeDeadzone)
             {
-                IsDodge = true;
+                isDodge = true;
                 _rb.maxAngularVelocity = 7.3f;
-                TimerDodge = 0f;
+                timerDodge = 0f;
             }
         }
 
         // dodges can be cancelled by pulling the stick in the opposit pitch direction
-        if (IsDodge && TimerDodge >= 0.04f && Math.Sign(_pitch) != Math.Sign(_inputManager.pitchInput) && Mathf.Abs(_inputManager.pitchInput) > 0.999f)
+        if (isDodge && timerDodge >= 0.04f && Math.Sign(_pitch) != Math.Sign(_inputManager.pitchInput) && Mathf.Abs(_inputManager.pitchInput) > 0.999f)
         {
-            IsCancelled = true;
+            isCancelled = true;
         }
         else
         {
-            IsCancelled = false;
+            isCancelled = false;
         }
 
         // track if the jump putton was pressed in the last frame
@@ -117,7 +117,7 @@ public class CubeJumping : MonoBehaviour
     private void Jump()
     {
         //First Jump
-        if(IsFirstJump)
+        if(isFirstJump)
         {
             // add initial forces
             if(_isFirstJumpPress)
@@ -134,10 +134,10 @@ public class CubeJumping : MonoBehaviour
         
 
         //Second Jump
-        if(IsSecondJump)
+        if(isSecondJump)
         {
             // start dodge routine
-            if (IsDodge)
+            if (isDodge)
             {
                 // only if the second jump is not used in an earlier frame: get the direction of the dodge
                 if(!_isSecondJumpUsed)
@@ -155,23 +155,23 @@ public class CubeJumping : MonoBehaviour
                 }
                 // add torque over the full dodge time
                 AddTorque();
-                if (TimerDodge >= 0.15f && TimerDodge <= 0.65f )
+                if (timerDodge >= 0.15f && timerDodge <= 0.65f )
                 {
                     _rb.velocity = Vector3.Scale(_rb.velocity, new Vector3(1f, 0.65f, 1f));
                 }
                 // stop the dodge after the dodge time was exceeded and restore the default maxAngularVelocity
-                if(TimerDodge >= 0.65f)
+                if(timerDodge >= 0.65f)
                 {
-                    IsDodge = false;
+                    isDodge = false;
                     _rb.maxAngularVelocity = 5.5f;
-                    IsSecondJump = false; 
+                    isSecondJump = false; 
                 }
-                TimerDodge += Time.deltaTime;
+                timerDodge += Time.deltaTime;
             }
             // add initial forces for a non-dodge second jump
             else
             { 
-                IsSecondJump = false;
+                isSecondJump = false;
                 _rb.AddForce(_rb.transform.up * 2.92f, ForceMode.VelocityChange);
             }
             _isSecondJumpUsed = true;
@@ -181,7 +181,7 @@ public class CubeJumping : MonoBehaviour
     private void AddTorque()
     {
         // only add pitch torque if the dodge is not cancelled
-        if (!IsCancelled)
+        if (!isCancelled)
         {
             _rb.AddTorque(-_cogLow.right * (220.0f * _pitch), ForceMode.Acceleration);
         }
@@ -195,7 +195,7 @@ public class CubeJumping : MonoBehaviour
         forwardVelocity.y = 0;
 
         Vector3 forwardDirection = forwardVelocity.normalized;
-        Vector3 sidewardDirection = (Quaternion.Euler(0.0f, 90.0f, 0.0f) * forwardVelocity).normalized;
+        Vector3 sidewardsDirection = (Quaternion.Euler(0.0f, 90.0f, 0.0f) * forwardVelocity).normalized;
 
         Vector3 carForwardDirection = _cogLow.forward;
         carForwardDirection.y = 0;
@@ -204,7 +204,7 @@ public class CubeJumping : MonoBehaviour
         if (forwardVelocity.magnitude <= 1.0e-4)
         {
             forwardDirection = carForwardDirection;
-            sidewardDirection = Quaternion.Euler(0.0f, 90.0f, 0.0f) * forwardDirection;
+            sidewardsDirection = Quaternion.Euler(0.0f, 90.0f, 0.0f) * forwardDirection;
         }
         // transform the input direction (aligned with the car) to the global space to compare it to the cars velocity directions
         Vector3 input = new Vector3(-_pitch, 0.0f, _yaw);
@@ -224,7 +224,7 @@ public class CubeJumping : MonoBehaviour
             _rb.velocity += forwardDirection * Vector3.Dot(inputCarAligned, forwardDirection) * 5.33f * (1.0f + 1.5f * forwardVelocity.magnitude / 23.0f);
         }
         // sideward dodge
-        _rb.velocity += sidewardDirection * Vector3.Dot(inputCarAligned, sidewardDirection) * 5.0f * (1.0f + 0.9f * forwardVelocity.magnitude / 23.0f);
+        _rb.velocity += sidewardsDirection * Vector3.Dot(inputCarAligned, sidewardsDirection) * 5.0f * (1.0f + 0.9f * forwardVelocity.magnitude / 23.0f);
 
         // limit the speed of the car directly after adding the velocity to keep consistency
         if (_rb.velocity.magnitude >= 23.0f)
@@ -265,22 +265,22 @@ public class CubeJumping : MonoBehaviour
     public void Reset()
     {
         // add reset logic to restore default values (e.g. OnEpisodeBegin() for training)
-        _timerJumpButtonHeld = 0;
-        _timerSecondJump = 0;
-
+        
         _isFirstJumpPress = false;
-        IsFirstJump = false;
-        IsSecondJump = false;
         _isSecondJumpUsed = false;
         _lowerSecondJumpTimer = false;
         _lastFrameNoButton = true;
-
-        IsDodge = false;
-        TimerDodge = 0f;
-        IsCancelled = false;
-
+        _timerJumpButtonHeld = 0;
+        _timerSecondJump = 0;
         _pitch = 0.0f;
         _yaw = 0.0f;
+        
+        isFirstJump = false;
+        isSecondJump = false;
+        isDodge = false;
+        isCancelled = false;
+        timerDodge = 0f;
+        
     }
 
 }
