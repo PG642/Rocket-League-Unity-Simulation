@@ -14,6 +14,7 @@ public class TopScorerAgent : PGBaseAgent
     public int Difficulty = 0;
 
     private Rigidbody rbBall;
+    private Ball ball;
 
     private static float _episodeLength = 5f;
     private static float _maxStepsPerEpisode = 120f * _episodeLength;
@@ -27,6 +28,7 @@ public class TopScorerAgent : PGBaseAgent
         base.Start();
         _ball = transform.parent.Find("Ball");
         rbBall = _ball.GetComponent<Rigidbody>();
+        ball = _ball.GetComponent<Ball>();
 
         _midFieldPosition = Vector3.zero;
         _shootAt = transform.parent.Find("ShootAt");
@@ -41,8 +43,9 @@ public class TopScorerAgent : PGBaseAgent
             case 0: OnEpisodeBeginDifficulty0(); break;
             case 1: OnEpisodeBeginDifficulty1(); break;
             case 2: OnEpisodeBeginDifficulty2(); break;
-            default: throw new Exception("We don't do that here 💩🚭");
+            default: throw new Exception("Difficulty does not exist");
         }
+        ball.ResetValues();
         mapData.ResetIsScored();
         SetReward(0f);
     }
@@ -52,11 +55,11 @@ public class TopScorerAgent : PGBaseAgent
         Vector3 startPosition = _midFieldPosition + new Vector3(30f, 0.17f, 0f);
         controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
 
-        _ball.localPosition = new Vector3(45f, 0.93f, UnityEngine.Random.Range(-5f, 5f));
-        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-        // _shootAt.localPosition = _ball.localPosition;
-        // _ball.GetComponent<ShootBall>().ShootTarget();
+        _ball.localPosition = new Vector3(45f, 0.9315f, UnityEngine.Random.Range(-5f, 5f));
+        rbBall.velocity = Vector3.zero;
+        rbBall.angularVelocity = Vector3.zero;
+        //_shootAt.localPosition = _ball.localPosition;
+        //_ball.GetComponent<ShootBall>().ShootTarget();
     }
 
     private void OnEpisodeBeginDifficulty1()
@@ -120,25 +123,68 @@ public class TopScorerAgent : PGBaseAgent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        if (ball.BallStuck)
+        {
+            SetReward(0f);
+            Reset();
+        }
         //Car position
-        AddPositionNormalized(sensor, transform);
+        if (AddPositionNormalized(sensor, transform))
+        {
+            SetReward(0f);
+            Reset();
+        }
 
         //Car rotation, already normalized
-        sensor.AddObservation(transform.rotation);
+        Quaternion rotation = new Quaternion(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+        checkQuaternion(rotation, "rotation", -1f);
+        sensor.AddObservation(rotation);
         //Car velocity
-        sensor.AddObservation(rb.velocity / 23f);
+        Vector3 velocity = new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z) / 23f;
+        if (checkVec(velocity, "velocity", -1f))
+        {
+            SetReward(0f);
+            Reset();
+        }
+        sensor.AddObservation(velocity);
 
         //Car angular velocity
-        sensor.AddObservation(rb.angularVelocity / 5.5f);
+        Vector3 angular_velocity = new Vector3(rb.angularVelocity.x, rb.angularVelocity.y, rb.angularVelocity.z) / 7.3f;
+        if (checkVec(angular_velocity, "angular_velocity", -1f))
+        {
+            SetReward(0f);
+            Reset();
+        }
+        sensor.AddObservation(angular_velocity);
 
         //Ball position
-        AddPositionNormalized(sensor, _ball);
+        if (AddPositionNormalized(sensor, _ball))
+        {
+            SetReward(0f);
+            Reset();
+        }
 
         //Ball velocity
-        sensor.AddObservation(rbBall.velocity / 60f);
+        Vector3 ball_velocity = new Vector3(rbBall.velocity.x, rbBall.velocity.y, rbBall.velocity.z) / 60f;
+        if (checkVec(ball_velocity, "ball_velocity", -1f))
+        {
+            SetReward(0f);
+            Reset();
+        }
+        sensor.AddObservation(ball_velocity);
 
         // Boost amount
-        sensor.AddObservation(boostControl._boostAmount / 100f);
+        var boostAmount = boostControl._boostAmount / 100f;
+        if (float.IsNaN(boostAmount) || float.IsInfinity(boostAmount))
+        {
+            Debug.Log("boost_amount is inf or nan");
+            boostAmount = 0f;
+        }
+        if (boostAmount < 0f || boostAmount > 1f)
+        {
+            Debug.LogWarning($"boostAmount is {boostAmount}, was expected to be in interval [0, 1]");
+        }
+        sensor.AddObservation(boostAmount);
     }
 
     private void Reset()
@@ -160,13 +206,13 @@ public class TopScorerAgent : PGBaseAgent
         }
         else
         {
-            // float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
-            // AddReward(agentBallDistanceReward);
+            float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
+            AddReward(agentBallDistanceReward);
 
             if (mapData.isScoredBlue)
             {
                 // Agent scored a goal
-                AddShortEpisodeReward(0.2f);
+                //AddShortEpisodeReward(0.2f);
                 AddReward(1f);
                 Reset();
             }

@@ -51,15 +51,16 @@ public abstract class PGBaseAgent : Agent
         mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
     }
 
-    protected void AddPositionNormalized(VectorSensor sensor, Transform objTransform)
+    protected bool AddPositionNormalized(VectorSensor sensor, Transform objTransform)
     {
         var vec = new Vector3(objTransform.localPosition.x, objTransform.localPosition.y, objTransform.localPosition.z);
-        checkVec(vec, objTransform.name + "_localPosition", -1f);
 
         vec.x = (vec.x + 60f) / 120f;
         vec.y = vec.y / 20f;
         vec.z = (vec.z + 41f) / 82f;
+        bool reset = checkVec(vec, objTransform.name + "_localPosition", -1f);
         sensor.AddObservation(vec);
+        return reset;
     }
 
     protected void AddRelativePositionNormalized(VectorSensor sensor, Transform otherTransform)
@@ -234,16 +235,28 @@ public abstract class PGBaseAgent : Agent
         }
     }
 
-    protected void checkVec(Vector3 vec, string name, float defaultValue)
+    protected bool checkVec(Vector3 vec, string name, float defaultValue)
     {
+        bool reset = false;
         for (int i = 0; i < 3; i++)
         {
             if (float.IsNaN(vec[i]) || float.IsInfinity(vec[i]))
             {
-                Debug.Log(name + "[" + i + "] is NaN or Infinity");
+                Debug.Log($"{name}[{i}] is NaN or Infinity");
                 vec[i] = defaultValue;
             }
+            if (vec[i] < -5f || vec[i] > 5f)
+            {
+                Debug.LogWarning($"{name}[{i}] is {vec[i]}, was expected to be in interval [-5, 5]");
+                reset = true;
+            }
         }
+        if (vec.magnitude < -1f || vec.magnitude > 5f)
+        {
+            Debug.LogWarning($"{name}.magnitude is {vec.magnitude}, was expected to be in interval [-1, 5]");
+            reset = true;
+        }
+        return reset;
     }
 
     protected void checkQuaternion(Quaternion quat, string name, float defaultValue)
