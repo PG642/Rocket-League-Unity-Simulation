@@ -195,7 +195,7 @@ public class OneVsOneAgent : Agent
     {
         if(other.gameObject.tag.Equals("Ball"))
         {
-            int maxBallTouches = 10;
+            int maxBallTouches = 5;
             AddReward(1.0f / maxBallTouches);
             _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f/maxBallTouches);
             if (_nBallTouches < maxBallTouches)

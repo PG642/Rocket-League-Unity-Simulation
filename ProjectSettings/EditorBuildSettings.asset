@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Test.unity
     guid: f152eb73906dffc48bd3037e56860530
-  - enabled: 1
+  - enabled: 0
     path: Assets/ML-Agents/Goalkeeper/SaveTraining_single.unity
     guid: fa79254118a3e124c8d72b9c2c798e23
   - enabled: 1
