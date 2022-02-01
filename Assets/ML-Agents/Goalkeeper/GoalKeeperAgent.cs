@@ -476,12 +476,9 @@ public class GoalKeeperAgent : Agent
     /// </summary>
     private void AssignReward()
     {
-        AddReward(-0.001f);
-
         if (_rbBall.velocity.x > 0 || Time.time - _lastResetTime > _episodeLength)
         {
-            // Agent scored a goal
-            SetReward(2f);
+            SetReward(1f);
 
             Reset();
         }
