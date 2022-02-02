@@ -57,6 +57,9 @@ public class CubeJumping : MonoBehaviour
             _isSecondJumpUsed = false;
             _lowerSecondJumpTimer = false;
             _timerSecondJump = 1.25f;
+            
+            IsDodge = false;
+            TimerDodge = 0f;
         }
 
         // lower _timerSecondJump if the car is in air
