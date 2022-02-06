@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/ML-Agents/1v1/1v1.unity
     guid: b8759979f85786e4d9b047b51d3c5020
+  - enabled: 0
+    path: Assets/ML-Agents/1v1_test/1v1Test.unity
+    guid: 3e1f91ba155df81459ddb30b15396e0a
   m_configObjects: {}

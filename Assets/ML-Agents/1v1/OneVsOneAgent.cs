@@ -195,13 +195,13 @@ public class OneVsOneAgent : Agent
     {
         if(other.gameObject.tag.Equals("Ball"))
         {
-            int maxBallTouches = 5;
+            int maxBallTouches = 3;
             AddReward(1.0f / maxBallTouches);
-            _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f/maxBallTouches);
+            // _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f/maxBallTouches);
+            ++_nBallTouches;
             if (_nBallTouches < maxBallTouches)
             {
                 _matchEnvController.ResetBall();
-                ++_nBallTouches;
             }
             else
             {

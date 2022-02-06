@@ -36,6 +36,7 @@ public class OneVsOneAgentTest : Agent
     private readonly float[] DISCRETE_ACTIONS = { -1f, -0.5f, 0f, 0.5f, 1f };
     private ActionSpaceType _actionSpaceType;
 
+    private int _nBallTouches = 0;
 
     void Start()
     {
@@ -91,6 +92,8 @@ public class OneVsOneAgentTest : Agent
         // _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
         // _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         // _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+        _nBallTouches = 0;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -194,9 +197,19 @@ public class OneVsOneAgentTest : Agent
     {
         if(other.gameObject.tag.Equals("Ball"))
         {
-            AddReward(1.0f);
-            // _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f);
-            _matchEnvController.Reset();
+            int maxBallTouches = 1;
+            AddReward(1.0f / maxBallTouches);
+            // _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f/maxBallTouches);
+            ++_nBallTouches;
+            if (_nBallTouches < maxBallTouches)
+            {
+                _matchEnvController.ResetBall();
+            }
+            else
+            {
+                _matchEnvController.Reset();
+                _nBallTouches = 0;
+            }
         }
     }
 
