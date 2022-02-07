@@ -10,13 +10,13 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 
 
-public class GoalKeeperAgent : Agent
+public class GoalKeeperAgent : PGBaseAgent
 {
     // Start is called before the first frame update
     [SerializeField] public GoalkeeperEnvironmentParameters defaultParameter;
-    
+
     private GoalkeeperEvironmentHandler _handler;
-    private Rigidbody _rb, _rbBall;
+    private Rigidbody _rbBall;
 
     private float _episodeLengthSeconds = 10f;
     private float _episodeLengthFrames;
@@ -66,6 +66,8 @@ public class GoalKeeperAgent : Agent
         _controller = GetComponentInChildren<CubeController>();
         _boostControl = GetComponentInChildren<CubeBoosting>();
         _groundControl = GetComponentInChildren<CubeGroundControl>();
+        base.Start();
+        _handler = new GoalkeeperEvironmentHandler(GameObject.Find("Environment"), defaultParameter);
 
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();
@@ -73,7 +75,6 @@ public class GoalKeeperAgent : Agent
         _startPosition = transform.position;
 
         _shootAt = transform.parent.Find("ShootAt");
-        _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
 
         _lastResetFrame = Time.frameCount;
         
@@ -85,7 +86,7 @@ public class GoalKeeperAgent : Agent
     public override void OnEpisodeBegin()
     {
         //Reset Car
-        _controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
+        controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 
         ResetShoot();
 
@@ -275,6 +276,8 @@ public class GoalKeeperAgent : Agent
         _shootAt.localPosition = localPositionTarget;
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget(speed);
+
+        mapData.ResetIsScored();
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -335,7 +338,7 @@ public class GoalKeeperAgent : Agent
 
         sensor.AddObservation(new Quaternion(car_rotation_x, car_rotation_y, car_rotation_z, car_rotation_w));
         //Car velocity
-        Vector3 car_velocity = _rb.velocity.normalized * (_rb.velocity.magnitude / 23f);
+        Vector3 car_velocity = rb.velocity.normalized * (rb.velocity.magnitude / 23f);
         if (float.IsNaN(car_velocity.x))
         {
             Debug.Log("Car: car_velocity.x == NaN");
@@ -357,22 +360,22 @@ public class GoalKeeperAgent : Agent
         sensor.AddObservation(car_velocity);
 
         //Car angular velocity
-        Vector3 car_angularVelocity = _rb.angularVelocity.normalized * (_rb.angularVelocity.magnitude / 5.5f);
+        Vector3 car_angularVelocity = rb.angularVelocity.normalized * (rb.angularVelocity.magnitude / 5.5f);
         if (float.IsNaN(car_angularVelocity.x))
         {
-            Debug.Log("Car: _rb.angularVelocity.x == NaN");
+            Debug.Log("Car: rb.angularVelocity.x == NaN");
             car_angularVelocity.x = -1f;
         }
 
         if (float.IsNaN(car_angularVelocity.y))
         {
-            Debug.Log("Car: _rb.angularVelocity.y == NaN");
+            Debug.Log("Car: rb.angularVelocity.y == NaN");
             car_angularVelocity.y = -1f;
         }
 
         if (float.IsNaN(car_angularVelocity.z))
         {
-            Debug.Log("Car: _rb.angularVelocity.z == NaN");
+            Debug.Log("Car: rb.angularVelocity.z == NaN");
             car_angularVelocity.z = -1f;
         }
 
@@ -404,7 +407,7 @@ public class GoalKeeperAgent : Agent
         sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
 
         //Ball velocity
-        Vector3 ball_velocity = _rb.velocity.normalized * (_rbBall.velocity.magnitude / 60f);
+        Vector3 ball_velocity = rb.velocity.normalized * (_rbBall.velocity.magnitude / 60f);
         if (float.IsNaN(ball_velocity.x))
         {
             Debug.Log("Ball: ball_velocity.x == NaN");
@@ -426,7 +429,7 @@ public class GoalKeeperAgent : Agent
         sensor.AddObservation(ball_velocity);
 
         // Boost amount
-        float boostAmount = _boostControl.boostAmount / 100f;
+        float boostAmount = boostControl.boostAmount / 100f;
         if (float.IsNaN(boostAmount))
         {
             Debug.Log("Car: boostAmount == NaN");
@@ -476,7 +479,7 @@ public class GoalKeeperAgent : Agent
     /// <summary>
     /// Assigns a reward if the maximum episode length is reached or a goal is scored by any team.
     /// </summary>
-    private void AssignReward()
+    protected override void AssignReward()
     {
         if (_rbBall.velocity.x > 0 || Time.frameCount - _lastResetFrame > _episodeLengthFrames)
         {
