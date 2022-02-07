@@ -20,6 +20,8 @@ public class OneVsOneAgent : PGBaseAgent
     private float _episodeLength;
     private float _lastResetTime;
 
+    private MatchEnvController _matchEnvController;
+
     private Transform _ball, _enemy;
 
 
@@ -28,6 +30,7 @@ public class OneVsOneAgent : PGBaseAgent
     {
         _episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
 
+        _matchEnvController = transform.parent.GetComponent<MatchEnvController>();
         _teamController = GetComponentInParent<TeamController>();
 
 
@@ -38,7 +41,7 @@ public class OneVsOneAgent : PGBaseAgent
     public override void OnEpisodeBegin()
     {
         //Respawn Cars
-        transform.parent.GetComponent<TeamController>().SpawnTeams();
+        // transform.parent.GetComponent<TeamController>().SpawnTeams();
 
         //Define Enemy
         if (gameObject.Equals(_teamController.TeamBlue[0]))
@@ -55,9 +58,9 @@ public class OneVsOneAgent : PGBaseAgent
         _rbEnemy = _enemy.GetComponent<Rigidbody>();
 
         //Reset Ball
-        _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
-        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        // _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
+        // _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        // _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -70,78 +73,72 @@ public class OneVsOneAgent : PGBaseAgent
         //Car rotation, already normalized
         sensor.AddObservation(transform.rotation);
         //Car velocity
-        sensor.AddObservation(rb.velocity / 23f);
+        sensor.AddObservation(_rb.velocity / 23f);
         //Car angular velocity
-        sensor.AddObservation(rb.angularVelocity / 5.5f);
-
-        //Enemy position
-        var enemyXNormalized = (_enemy.localPosition.x + 60f) / 120f;
-        var enemyYNormalized = _enemy.localPosition.y / 20f;
-        var enemyZNormalized = (_enemy.localPosition.z + 41f) / 82f;
-        sensor.AddObservation(new Vector3(enemyXNormalized, enemyYNormalized, enemyZNormalized));
-        //Enemy rotation, already normalized
-        sensor.AddObservation(_enemy.rotation);
-        //Enemy velocity
-        sensor.AddObservation(_rbEnemy.velocity / 23f);
-        //Enemy angular velocity
-        sensor.AddObservation(_rbEnemy.angularVelocity / 5.5f);
-
-        //Ball position
-        var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
-        var ballYNormalized = _ball.localPosition.y / 20f;
-        var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
-        sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
-        //Ball velocity
-        sensor.AddObservation(_rbBall.velocity / 60f);
+        sensor.AddObservation(_rb.angularVelocity / 5.5f);
 
         // Boost amount
-        sensor.AddObservation(boostControl._boostAmount / 100f);
+        sensor.AddObservation(_boostControl.boostAmount / 100f);
+        
+        //Enemy position
+        // var enemyXNormalized = (_enemy.localPosition.x + 60f) / 120f;
+        // var enemyYNormalized = _enemy.localPosition.y / 20f;
+        // var enemyZNormalized = (_enemy.localPosition.z + 41f) / 82f;
+        // sensor.AddObservation(new Vector3(enemyXNormalized, enemyYNormalized, enemyZNormalized));
+        // //Enemy rotation, already normalized
+        // sensor.AddObservation(_enemy.rotation);
+        // //Enemy velocity
+        // sensor.AddObservation(_rbEnemy.velocity / 23f);
+        // //Enemy angular velocity
+        // sensor.AddObservation(_rbEnemy.angularVelocity / 5.5f);
+
+        //Ball position
+        // var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
+        // var ballYNormalized = _ball.localPosition.y / 20f;
+        // var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
+        // sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
+        // //Ball velocity
+        // sensor.AddObservation(_rbBall.velocity / 60f);
+
+        var localPosition = transform.localPosition;
+        var relativePositionToEnemy = (_enemy.localPosition - localPosition) / _mapData.diag;
+        var relativePositionToBall = (_ball.localPosition - localPosition) / _mapData.diag;
+
+        sensor.AddObservation(relativePositionToEnemy);
+        sensor.AddObservation(relativePositionToBall);
     }
 
-    private void Reset()
+    private void AssignReward()
     {
-        _lastResetTime = Time.time;
-        EndEpisode();
+        // if (_team.Equals(TeamController.Team.BLUE) && _rb.transform.localPosition.x > 0 ||
+        //     _team.Equals(TeamController.Team.ORANGE) && _rb.transform.localPosition.x < 0)
+        // {
+        //     AddReward(0.001f);
+        // }
+        // else
+        // {
+        //     AddReward(-0.001f);
+        // }
+        
+        //AddReward(0.001f * Mathf.Sign(Vector3.Dot(_ball.position - transform.position, _rb.velocity)));
+        // AddReward(0.001f * Mathf.Sign(Vector3.Dot(_rbBall.position - transform.position, _rb.velocity)));
+
+        // float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
+        // AddReward(agentBallDistanceReward);
+        
+        // GameObject goalLines = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").gameObject;
+        // Vector3 enemyGoalPosition = _team.Equals(TeamController.Team.BLUE) ? goalLines.transform.Find("GoalLineRed").position : goalLines.transform.Find("GoalLineBlue").position;
+        // float ballEnemyGoalDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, enemyGoalPosition) / _mapData.diag));
+        // AddReward(ballEnemyGoalDistanceReward);
     }
 
-    protected override void AssignReward()
+    private void OnCollisionEnter(Collision other)
     {
-        if (Time.time - _lastResetTime > _episodeLength)
+        if(other.gameObject.tag.Equals("Ball"))
         {
-            Reset();
+            AddReward(1.0f);
+            _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f);
+            _matchEnvController.Reset();
         }
-
-        if (mapData.isScoredBlue)
-        {
-            if (_team.Equals(TeamController.Team.ORANGE))
-            {
-                AddReward(1);
-            }
-            else
-            {
-                AddReward(-1);
-            }
-            Reset();
-        }
-        if (mapData.isScoredOrange)
-        {
-            if (_team.Equals(TeamController.Team.BLUE))
-            {
-                AddReward(1);
-            }
-            else
-            {
-                AddReward(-1);
-            }
-            Reset();
-        }
-
-        float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
-        AddReward(agentBallDistanceReward);
-
-        GameObject goalLines = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").gameObject;
-        Vector3 enemyGoalPosition = _team.Equals(TeamController.Team.BLUE) ? goalLines.transform.Find("GoalLineRed").position : goalLines.transform.Find("GoalLineBlue").position;
-        float ballEnemyGoalDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, enemyGoalPosition) / mapData.diag));
-        AddReward(ballEnemyGoalDistanceReward);
     }
 }

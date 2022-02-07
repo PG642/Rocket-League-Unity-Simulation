@@ -22,16 +22,16 @@ public class GameInformationController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        boost = _cubeBoosting._boostAmount;
+        boost = _cubeBoosting.boostAmount;
         wheelsOnGround = _cubeController.isAllWheelsSurface;
-        jumped = _jumpController.IsFirstJump || _jumpController.IsSecondJump;
+        jumped = _jumpController.isFirstJump || _jumpController.isSecondJump;
     }
 
     public void SetStartValues(float boostAmount)
     {
         if (boostAmount > 0)
-        GetComponentInChildren<CubeBoosting>()._boostAmount = boostAmount;
+        GetComponentInChildren<CubeBoosting>().boostAmount = boostAmount;
 
-        GetComponentInChildren<CubeBoosting>()._infiniteBoosting = boostAmount < 0;
+        GetComponentInChildren<CubeBoosting>().infiniteBoosting = boostAmount < 0;
     }
 }
