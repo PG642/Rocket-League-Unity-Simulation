@@ -14,7 +14,7 @@ public class GoalKeeperAgent : PGBaseAgent
 {
     // Start is called before the first frame update
     [SerializeField] public GoalkeeperEnvironmentParameters defaultParameter;
-    
+
     private GoalkeeperEvironmentHandler _handler;
     private Rigidbody _rbBall;
 
@@ -37,7 +37,7 @@ public class GoalKeeperAgent : PGBaseAgent
         _shootAt = transform.parent.Find("ShootAt");
 
         _lastResetTime = Time.time;
-        
+
         _handler.UpdateEnvironmentParameters();
         _handler.ResetParameter();
 
@@ -193,7 +193,7 @@ public class GoalKeeperAgent : PGBaseAgent
         sensor.AddObservation(ball_velocity);
 
         // Boost amount
-        float boostAmount = boostControl._boostAmount / 100f;
+        float boostAmount = boostControl.boostAmount / 100f;
         if (float.IsNaN(boostAmount))
         {
             Debug.Log("Car: boostAmount == NaN");

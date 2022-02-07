@@ -12,10 +12,10 @@ public class Ball : Resettable
     private const float Mu = 0.285f;
     private const float A = 3f;
     private const float Radius = 0.9125f; //0.9138625f;
-    
+
     private float _lastStoppedTime;
     private Transform _transform;
-    
+
     public bool disableCustomBounce;
     public bool disableBulletImpulse;
     public bool disablePsyonixImpulse;
@@ -24,8 +24,8 @@ public class Ball : Resettable
     public float maxAngularVelocity = 6.0f;
     public float maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
-    
-   
+
+
 
     public bool BallStuck;
 
@@ -82,7 +82,7 @@ public class Ball : Resettable
     {
         if (!stopSlowBall)
             return;
-        
+
         if (rb.velocity.magnitude <= MinVelocity && rb.angularVelocity.magnitude <= MinAngularVelocity)
         {
             if (_lastStoppedTime == 0.0f)
@@ -160,7 +160,17 @@ public class Ball : Resettable
             col.gameObject.GetComponent<Resettable>().CancelUnityImpulse();
             //setCarState(col.rigidbody);
             Vector3 collisionPoint = col.rigidbody.ClosestPointOnBounds(rb.position); // col.GetContact(0).point;
-            Vector3 jBullet = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
+            Nullable<Vector3> jBulletResult = -CustomPhysics.CalculateBulletImpulse(rb, col.rigidbody, collisionPoint);
+            Vector3 jBullet;
+            if (jBulletResult.HasValue)
+            {
+                jBullet = jBulletResult.Value;
+            }
+            else
+            {
+                BallStuck = true;
+                jBullet = new Vector3(0f, 0f, 0f);
+            }
             CustomPhysics.ApplyImpulseAtPosition(rb, jBullet, collisionPoint);
             CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
         }

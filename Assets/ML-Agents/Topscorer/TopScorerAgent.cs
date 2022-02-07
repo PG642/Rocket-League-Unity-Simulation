@@ -179,7 +179,7 @@ public class TopScorerAgent : PGBaseAgent
         }
 
         // Boost amount
-        var boostAmount = boostControl._boostAmount / 100f;
+        var boostAmount = boostControl.boostAmount / 100f;
         if (float.IsNaN(boostAmount) || float.IsInfinity(boostAmount))
         {
             Debug.Log("boost_amount is inf or nan");
