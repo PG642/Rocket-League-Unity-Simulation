@@ -47,10 +47,10 @@ public class CubeController : MonoBehaviour
         _style.fontStyle = FontStyle.Bold;
 
         // Lock scene view camera to the car
-// #if UNITY_EDITOR
-//         Selection.activeGameObject = sceneViewFocusObject;
-//         SceneView.lastActiveSceneView.FrameSelected(true);
-// #endif
+        // #if UNITY_EDITOR
+        //         Selection.activeGameObject = sceneViewFocusObject;
+        //         SceneView.lastActiveSceneView.FrameSelected(true);
+        // #endif
     }
 
     void FixedUpdate()
@@ -58,7 +58,7 @@ public class CubeController : MonoBehaviour
         SetCarState();
         UpdateCarVariables();
     }
-    
+
 
     private void LateUpdate()
     {
@@ -68,25 +68,26 @@ public class CubeController : MonoBehaviour
         }
     }
 
-    public void ResetCar(Vector3 position, Quaternion rotation)
+    public void ResetCar(Vector3 position, Quaternion rotation, float boost = 33f)
     {
-        _rb.position = position;
+        _rb.transform.localPosition = position;
         _rb.rotation = rotation;
         _rb.velocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
+
         GetComponent<CubeJumping>().Reset();
         GetComponent<CubeBoosting>().boostAmount = 32f;
     }
 
     private void UpdateCarVariables()
     {
-        
-        
+
+
         forwardSpeed = Vector3.Dot(_rb.velocity, transform.forward);
 
-        var vectorForwardSpeed = forwardSpeed * transform.forward; 
-        
-        forwardSpeed = Math.Abs(forwardSpeed) > 0.02f ?  (float) System.Math.Round(forwardSpeed, 2): 0.0f;
+        var vectorForwardSpeed = forwardSpeed * transform.forward;
+
+        forwardSpeed = Math.Abs(forwardSpeed) > 0.02f ? (float)System.Math.Round(forwardSpeed, 2) : 0.0f;
 
         if (forwardSpeed == 0)
         {
