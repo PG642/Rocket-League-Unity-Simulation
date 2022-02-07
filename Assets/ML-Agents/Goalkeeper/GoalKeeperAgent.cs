@@ -48,7 +48,7 @@ public class GoalKeeperAgent : Agent
     void Start()
     {
         
-        _handler = new GoalkeeperEvironmentHandler(GameObject.Find("Environment"), defaultParameter);
+        _handler = new GoalkeeperEvironmentHandler(transform.root.gameObject, defaultParameter);
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
 
