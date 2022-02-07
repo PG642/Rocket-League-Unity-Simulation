@@ -478,8 +478,6 @@ public class GoalKeeperAgent : Agent
     /// </summary>
     private void AssignReward()
     {
-        AddReward(-0.001f);
-        
         if (_rbBall.velocity.x > 0 || Time.frameCount - _lastResetFrame > _episodeLengthFrames)
         {
             SetReward(1f);
