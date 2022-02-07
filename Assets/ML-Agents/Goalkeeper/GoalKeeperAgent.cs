@@ -16,28 +16,31 @@ public class GoalKeeperAgent : PGBaseAgent
     [SerializeField] public GoalkeeperEnvironmentParameters defaultParameter;
 
     private GoalkeeperEvironmentHandler _handler;
+
+    private float _episodeLengthSeconds = 10f;
+    private float _episodeLengthFrames;
+    private float _lastResetFrame;
+
     private Rigidbody _rbBall;
-
-    private float _episodeLength = 10f;
-    private float _lastResetTime;
-
     private Transform _ball, _shootAt;
     private Vector3 _startPosition;
 
-    protected override void Start()
+    public float difficulty;
+
+    void Start()
     {
         base.Start();
-        _handler = new GoalkeeperEvironmentHandler(GameObject.Find("Environment"), defaultParameter);
-
-        _ball = transform.parent.Find("Ball");
+        _handler = new GoalkeeperEvironmentHandler(transform.root.gameObject, defaultParameter);
+        _episodeLengthFrames = _episodeLengthSeconds / Time.fixedDeltaTime;
+        _ball = _handler.environment.GetComponentInChildren<Ball>().transform;
         _rbBall = _ball.GetComponent<Rigidbody>();
 
         _startPosition = transform.position;
 
         _shootAt = transform.parent.Find("ShootAt");
 
-        _lastResetTime = Time.time;
-
+        _lastResetFrame = Time.frameCount;
+        
         _handler.UpdateEnvironmentParameters();
         _handler.ResetParameter();
 
@@ -48,17 +51,194 @@ public class GoalKeeperAgent : PGBaseAgent
         //Reset Car
         controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 
-        //Reset Ball
-        _ball.localPosition = new Vector3(UnityEngine.Random.Range(-10f, 0f), UnityEngine.Random.Range(0f, 20f), UnityEngine.Random.Range(-30f, 30f));
-        //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
+        ResetShoot();
+
+        mapData.ResetIsScored();
+    }
+
+    public static Vector3 GetLocalPositionTarget(Difficulty difficulty)
+    {
+        // Tor ist von -8.8 bis 8.8 breit und von 0 bis 6.5 hoch
+        switch (difficulty)
+        {
+            case Difficulty.EASY:
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 2.5f), UnityEngine.Random.Range(-2f, 2f));
+            case Difficulty.MIDDLE:
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 4f), UnityEngine.Random.Range(-4f, 4f));
+            case Difficulty.HARD:
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 5.6f),
+                    UnityEngine.Random.Range(-7.9f, 7.9f));
+            default:
+                return new Vector3(-53f, UnityEngine.Random.Range(0.9315f, 2.5f), UnityEngine.Random.Range(-2f, 2f));
+        }
+    }
+
+    public static Vector3 GetLocalPositionBall(Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case Difficulty.EASY:
+                return new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(0.9315f, 5f),
+                    UnityEngine.Random.Range(-10f, 10f));
+            case Difficulty.MIDDLE:
+                return new Vector3(UnityEngine.Random.Range(-20f, 20f), UnityEngine.Random.Range(0.9315f, 10f),
+                    UnityEngine.Random.Range(-20f, 20f));
+            case Difficulty.HARD:
+                return new Vector3(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0.9315f, 19f),
+                    UnityEngine.Random.Range(-39f, 39f));
+            default:
+                return new Vector3(UnityEngine.Random.Range(-5f, 0f), UnityEngine.Random.Range(0f, 10f),
+                    UnityEngine.Random.Range(-10f, 10f));
+        }
+    }
+
+    public float GetSpeed(Difficulty difficulty, Vector3 ballPosition, Vector3 targetPosition)
+    {
+        float scale;
+        float dist = (ballPosition - targetPosition).magnitude;
+        float minTime = 2f;
+        float maxTime = Math.Max(minTime,Math.Min(_episodeLengthSeconds, dist / 5f));
+        switch (difficulty)
+        {
+            case Difficulty.EASY:
+                scale = UnityEngine.Random.Range(0.7f, 1f);
+                break;
+            case Difficulty.MIDDLE:
+                scale = UnityEngine.Random.Range(0.4f, 0.7f);
+                break;
+            case Difficulty.HARD:
+                scale = UnityEngine.Random.Range(0.1f, 4f);
+                break;
+            default:
+                scale = UnityEngine.Random.Range(0.7f, 1f);
+                break;
+        }
+        return dist * Math.Max(1 / minTime,scale / maxTime);
+    }
+
+    private void ResetShoot()
+    {
+        var localPositionBall = new Vector3();
+        var localPositionTarget = new Vector3();
+        var speed = 0.0f;
+
+
+        switch ((int) difficulty)
+        {
+            case 0:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.EASY);
+                localPositionBall = GetLocalPositionBall(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.EASY, localPositionBall, localPositionTarget);
+                break;
+
+            case 1:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.EASY, localPositionBall, localPositionTarget);
+                break;
+
+            case 2:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.EASY);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.EASY, localPositionBall, localPositionTarget);
+                break;
+
+            case 3:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.EASY);
+                localPositionBall = GetLocalPositionBall(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
+                break;
+
+            case 4:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.EASY, localPositionBall, localPositionTarget);
+                break;
+
+            case 5:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.EASY);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
+                break;
+
+            case 6:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.EASY);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
+                break;
+
+            case 7:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
+                break;
+
+            case 8:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.HARD);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
+                break;
+
+            case 9:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
+                break;
+
+            case 10:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.HARD, localPositionBall, localPositionTarget);
+                break;
+
+            case 11:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.HARD);
+                localPositionBall = GetLocalPositionBall(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.MIDDLE, localPositionBall, localPositionTarget);
+                break;
+
+            case 12:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.HARD);
+                localPositionBall = GetLocalPositionBall(Difficulty.MIDDLE);
+                speed = GetSpeed(Difficulty.HARD, localPositionBall, localPositionTarget);
+                break;
+
+            case 13:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.MIDDLE);
+                localPositionBall = GetLocalPositionBall(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.HARD, localPositionBall, localPositionTarget);
+                break;
+
+            case 14:
+                localPositionTarget =
+                    GetLocalPositionTarget(Difficulty.HARD);
+                localPositionBall = GetLocalPositionBall(Difficulty.HARD);
+                speed = GetSpeed(Difficulty.HARD, localPositionBall, localPositionTarget);
+                break;
+        }
+
+        //reset velocities
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
-        // Set new Taget Position
-        _shootAt.localPosition = new Vector3(-53f, UnityEngine.Random.Range(3f, 3f), UnityEngine.Random.Range(-7f, 7f));
-
+        _ball.localPosition = localPositionBall;
+        _shootAt.localPosition = localPositionTarget;
         //Throw Ball
-        _ball.GetComponent<ShootBall>().ShootTarget();
+        _ball.GetComponent<ShootBall>().ShootTarget(speed);
 
         mapData.ResetIsScored();
     }
@@ -66,131 +246,34 @@ public class GoalKeeperAgent : PGBaseAgent
     public override void CollectObservations(VectorSensor sensor)
     {
         //Car position
-        // TODO: Welche Normalisierung?? (alle /120f?)
-        var carXNormalized = (transform.localPosition.x + 60f) / 120f;
-        var carYNormalized = transform.localPosition.y / 20f;
-        var carZNormalized = (transform.localPosition.z + 41f) / 82f;
-        if (float.IsNaN(carXNormalized))
-        {
-            Debug.Log("Car: carXNormalized == NaN");
-            carXNormalized = -1f;
-        }
-        if (float.IsNaN(carYNormalized))
-        {
-            Debug.Log("Car: carYNormalized == NaN");
-            carYNormalized = -1f;
-        }
-        if (float.IsNaN(carZNormalized))
-        {
-            Debug.Log("Car: carZNormalized == NaN");
-            carZNormalized = -1f;
-        }
-        sensor.AddObservation(new Vector3(carXNormalized, carYNormalized, carZNormalized));
+        Vector3 carPosition = NormalizeVec(rb,VectorType.Position,EntityType.Car);
+        checkNormalizedVec(carPosition, "carPosition", VectorType.Position);
+        sensor.AddObservation(carPosition);
 
         //Car rotation, already normalized
-        float car_rotation_x = transform.rotation.x;
-        float car_rotation_y = transform.rotation.y;
-        float car_rotation_z = transform.rotation.z;
-        float car_rotation_w = transform.rotation.w;
-        if (float.IsNaN(car_rotation_x))
-        {
-            Debug.Log("Car: car_rotation_x == NaN");
-            car_rotation_x = -1f;
-        }
-        if (float.IsNaN(car_rotation_y))
-        {
-            Debug.Log("Car: car_rotation_y == NaN");
-            car_rotation_y = -1f;
-        }
-        if (float.IsNaN(car_rotation_z))
-        {
-            Debug.Log("Car: car_rotation_z == NaN");
-            car_rotation_z = -1f;
-        }
-        if (float.IsNaN(car_rotation_w))
-        {
-            Debug.Log("Car: car_rotation_w == NaN");
-            car_rotation_w = -1f;
-        }
-        sensor.AddObservation(new Quaternion(car_rotation_x, car_rotation_y, car_rotation_z, car_rotation_w));
+        Quaternion carRotation = new Quaternion(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+        checkQuaternion(carRotation, "carRotation", -1f);
+        sensor.AddObservation(carRotation);
+
         //Car velocity
-        Vector3 car_velocity = rb.velocity.normalized * (rb.velocity.magnitude / 23f);
-        if (float.IsNaN(car_velocity.x))
-        {
-            Debug.Log("Car: car_velocity.x == NaN");
-            car_velocity.x = -1f;
-        }
-        if (float.IsNaN(car_velocity.y))
-        {
-            Debug.Log("Car: car_velocity.y == NaN");
-            car_velocity.y = -1f;
-        }
-        if (float.IsNaN(car_velocity.z))
-        {
-            Debug.Log("Car: car_velocity.z == NaN");
-            car_velocity.z = -1f;
-        }
-        sensor.AddObservation(car_velocity);
+        Vector3 carVelocity = NormalizeVec(rb, VectorType.Velocity, EntityType.Car);
+        checkNormalizedVec(carVelocity, "carVelocity", VectorType.Velocity);
+        sensor.AddObservation(carVelocity);
 
         //Car angular velocity
-        Vector3 car_angularVelocity = rb.angularVelocity.normalized * (rb.angularVelocity.magnitude / 5.5f);
-        if (float.IsNaN(car_angularVelocity.x))
-        {
-            Debug.Log("Car: rb.angularVelocity.x == NaN");
-            car_angularVelocity.x = -1f;
-        }
-        if (float.IsNaN(car_angularVelocity.y))
-        {
-            Debug.Log("Car: rb.angularVelocity.y == NaN");
-            car_angularVelocity.y = -1f;
-        }
-        if (float.IsNaN(car_angularVelocity.z))
-        {
-            Debug.Log("Car: rb.angularVelocity.z == NaN");
-            car_angularVelocity.z = -1f;
-        }
-        sensor.AddObservation(car_angularVelocity);
+        Vector3 carAngularVelocity = NormalizeVec(rb, VectorType.AngularVelocity, EntityType.Car);
+        checkNormalizedVec(carAngularVelocity, "carAngularVelocity", VectorType.AngularVelocity);
+        sensor.AddObservation(carAngularVelocity);
 
         //Ball position
-        // TODO: Welche Normalisierung?? (alle /120f?)
-        var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
-        var ballYNormalized = _ball.localPosition.y / 20f;
-        var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
-        if (float.IsNaN(ballXNormalized))
-        {
-            Debug.Log("Ball: ballXNormalized == NaN");
-            ballXNormalized = -1f;
-        }
-        if (float.IsNaN(ballYNormalized))
-        {
-            Debug.Log("Ball: ballYNormalized == NaN");
-            ballYNormalized = -1f;
-        }
-        if (float.IsNaN(ballZNormalized))
-        {
-            Debug.Log("Ball: ballZNormalized == NaN");
-            ballZNormalized = -1f;
-        }
-        sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
+        Vector3 ballPosition = NormalizeVec(_rbBall, VectorType.Position, EntityType.Ball);
+        checkNormalizedVec(ballPosition, "ballPosition", VectorType.Position);
+        sensor.AddObservation(ballPosition);
 
         //Ball velocity
-        Vector3 ball_velocity = rb.velocity.normalized * (_rbBall.velocity.magnitude / 60f);
-        if (float.IsNaN(ball_velocity.x))
-        {
-            Debug.Log("Ball: ball_velocity.x == NaN");
-            ball_velocity.x = -1f;
-        }
-        if (float.IsNaN(ball_velocity.y))
-        {
-            Debug.Log("Ball: ball_velocity.y == NaN");
-            ball_velocity.y = -1f;
-        }
-        if (float.IsNaN(ball_velocity.z))
-        {
-            Debug.Log("Ball: ball_velocity.z == NaN");
-            ball_velocity.z = -1f;
-        }
-        sensor.AddObservation(ball_velocity);
+        Vector3 ballVelocity = NormalizeVec(_rbBall, VectorType.Velocity, EntityType.Ball);
+        checkNormalizedVec(ballVelocity, "ballVelocity", VectorType.Velocity);
+        sensor.AddObservation(ballVelocity);
 
         // Boost amount
         float boostAmount = boostControl.boostAmount / 100f;
@@ -199,12 +282,14 @@ public class GoalKeeperAgent : PGBaseAgent
             Debug.Log("Car: boostAmount == NaN");
             boostAmount = -1f;
         }
+
         sensor.AddObservation(boostAmount);
     }
 
+
     private void Reset()
     {
-        _lastResetTime = Time.time;
+        _lastResetFrame = Time.frameCount;
         EndEpisode();
         _handler.ResetParameter();
     }
@@ -214,15 +299,13 @@ public class GoalKeeperAgent : PGBaseAgent
     /// </summary>
     protected override void AssignReward()
     {
-        AddReward(-0.001f);
-
-        if (_rbBall.velocity.x > 0 || Time.time - _lastResetTime > _episodeLength)
+        if (_rbBall.velocity.x > 0 || Time.frameCount - _lastResetFrame > _episodeLengthFrames)
         {
-            // Agent scored a goal
-            SetReward(2f);
+            SetReward(1f);
 
             Reset();
         }
+
         if (mapData.isScoredOrange)
         {
             // Agent got scored on
@@ -230,6 +313,11 @@ public class GoalKeeperAgent : PGBaseAgent
             Reset();
         }
     }
+
+    public enum Difficulty
+    {
+        EASY,
+        MIDDLE,
+        HARD
+    }
 }
-
-

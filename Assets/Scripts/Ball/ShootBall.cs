@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.MLAgents;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -16,9 +17,15 @@ public class ShootBall : MonoBehaviour
         ShootTarget();
     }
 
-    public void ShootTarget()
+
+    public void ShootTarget(float velocity = 0.0f)
     {
         Vector3 dir = ShootAt.position - transform.position;
-        _rb.AddForce( dir.normalized  * Random.Range(speed.x, speed.y), ForceMode.VelocityChange);
+        if (velocity == 0.0f)
+        {
+            velocity = Random.Range(speed.x, speed.y);
+        }
+        
+        _rb.AddForce( dir.normalized  * velocity, ForceMode.VelocityChange);
     }
 }

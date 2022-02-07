@@ -51,16 +51,6 @@ public abstract class PGBaseAgent : Agent
         mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
     }
 
-    protected Vector3 NormalizePosition(Transform objTransform)
-    {
-        var vec = new Vector3(objTransform.localPosition.x, objTransform.localPosition.y, objTransform.localPosition.z);
-
-        vec.x = (vec.x + 60f) / 120f;
-        vec.y = vec.y / 20f;
-        vec.z = (vec.z + 41f) / 82f;
-        return vec;
-    }
-
     protected void AddRelativePositionNormalized(VectorSensor sensor, Transform otherTransform)
     {
         sensor.AddObservation((transform.localPosition - otherTransform.localPosition) / mapData.diag);
@@ -232,26 +222,98 @@ public abstract class PGBaseAgent : Agent
             return ActionSpaceType.Mixed;
         }
     }
+    protected Vector3 NormalizeVec(Rigidbody rb, VectorType vecType, EntityType entity)
+    {
+        switch (vecType)
+        {
+            case VectorType.Position:
+                return NormalizePosition(rb.transform);
+            case VectorType.Velocity:
+                return NormalizeVelocity(rb, entity);
+            case VectorType.AngularVelocity:
+                return NormalizeAngularVelocity(rb, entity);
+            default:
+                return Vector3.zero;
+        }
+    }
 
-    protected bool checkVec(Vector3 vec, string name, float defaultValue)
+    protected Vector3 NormalizePosition(Transform objTransform)
+    {
+        var vec = new Vector3(objTransform.localPosition.x, objTransform.localPosition.y, objTransform.localPosition.z);
+
+        vec.x = (vec.x + 60f) / 120f;
+        vec.y = vec.y / 20f;
+        vec.z = (vec.z + 41f) / 82f;
+        return vec;
+    }
+
+
+    protected Vector3 NormalizeVelocity(Rigidbody rb, EntityType entity)
+    {
+        switch (entity)
+        {
+            case EntityType.Ball:
+                return rb.velocity.normalized * (rb.velocity.magnitude / 60f);
+            case EntityType.Car:
+                return rb.velocity.normalized * (rb.velocity.magnitude / 23f);
+            default:
+                return Vector3.zero;
+        }
+    }
+
+    protected Vector3 NormalizeAngularVelocity(Rigidbody rb, EntityType entity)
+    {
+        switch (entity)
+        {
+            case EntityType.Ball:
+                return rb.angularVelocity.normalized * (rb.angularVelocity.magnitude / 6f);
+            case EntityType.Car:
+                return rb.angularVelocity.normalized * (rb.angularVelocity.magnitude / 5.5f);
+            default:
+                return Vector3.zero;
+        }
+    }
+
+    protected bool checkNormalizedVec(Vector3 vec, string name, VectorType type)
+    {
+        switch (type)
+        {
+            case VectorType.Position:
+                return checkVec(vec, name, -1f, true, false, 0f, 1f);
+            case VectorType.Velocity:
+                return checkVec(vec, name, -1f, false, true, -1f, 1f, 0f, 1f);
+            case VectorType.AngularVelocity:
+                return checkVec(vec, name, -1f, false, true, -1f, 1f, 0f, 1f);
+            default:
+                return true;
+        }
+    }
+
+
+    protected bool checkVec(Vector3 vec, string name, float defaultValue, bool legalValueInterval=true, bool legalMagnitudeInterval = true, float minLegalValue=-5f, float maxLegalValue=5f, float minLegalMagnitude=-1f, float maxLegalMagnitude=5f)
     {
         bool reset = false;
         for (int i = 0; i < 3; i++)
         {
-            if (float.IsNaN(vec[i]) || float.IsInfinity(vec[i]))
+            if (float.IsNaN(vec[i]))
             {
-                Debug.Log($"{name}[{i}] is NaN or Infinity");
+                Debug.Log($"{name}[{i}] is NaN");
                 vec[i] = defaultValue;
             }
-            if (vec[i] < -5f || vec[i] > 5f)
+            if (float.IsInfinity(vec[i]))
             {
-                Debug.LogWarning($"{name}[{i}] is {vec[i]}, was expected to be in interval [-5, 5]");
+                Debug.Log($"{name}[{i}] is Infinity");
+                vec[i] = defaultValue;
+            }
+            if (legalValueInterval && (vec[i] < minLegalValue || vec[i] > maxLegalValue))
+            {
+                Debug.LogWarning($"{name}[{i}] is {vec[i]}, was expected to be in interval [{minLegalValue}, {maxLegalValue}]");
                 reset = true;
             }
         }
-        if (vec.magnitude < -1f || vec.magnitude > 5f)
+        if (legalMagnitudeInterval && (vec.magnitude < minLegalMagnitude || vec.magnitude > maxLegalMagnitude))
         {
-            Debug.LogWarning($"{name}.magnitude is {vec.magnitude}, was expected to be in interval [-1, 5]");
+            Debug.LogWarning($"{name}.magnitude is {vec.magnitude}, was expected to be in interval [{minLegalMagnitude}, {maxLegalMagnitude}]");
             reset = true;
         }
         return reset;
@@ -261,9 +323,14 @@ public abstract class PGBaseAgent : Agent
     {
         for (int i = 0; i < 4; i++)
         {
-            if (float.IsNaN(quat[i]) || float.IsInfinity(quat[i]))
+            if (float.IsNaN(quat[i]))
             {
-                Debug.Log(name + "[" + i + "] is NaN or Infinity");
+                Debug.Log(name + "[" + i + "] is NaN");
+                quat[i] = defaultValue;
+            }
+            if (float.IsInfinity(quat[i]))
+            {
+                Debug.Log(name + "[" + i + "] is Infinity");
                 quat[i] = defaultValue;
             }
         }
@@ -277,5 +344,18 @@ public abstract class PGBaseAgent : Agent
         Continuous,
         MultiDiscrete,
         Mixed
+    }
+
+    public enum VectorType
+    {
+        Position,
+        Velocity,
+        AngularVelocity
+    }
+
+    public enum EntityType
+    {
+        Ball,
+        Car
     }
 }
