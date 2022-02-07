@@ -51,16 +51,14 @@ public abstract class PGBaseAgent : Agent
         mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
     }
 
-    protected bool AddPositionNormalized(VectorSensor sensor, Transform objTransform)
+    protected Vector3 NormalizePosition(Transform objTransform)
     {
         var vec = new Vector3(objTransform.localPosition.x, objTransform.localPosition.y, objTransform.localPosition.z);
 
         vec.x = (vec.x + 60f) / 120f;
         vec.y = vec.y / 20f;
         vec.z = (vec.z + 41f) / 82f;
-        bool reset = checkVec(vec, objTransform.name + "_localPosition", -1f);
-        sensor.AddObservation(vec);
-        return reset;
+        return vec;
     }
 
     protected void AddRelativePositionNormalized(VectorSensor sensor, Transform otherTransform)

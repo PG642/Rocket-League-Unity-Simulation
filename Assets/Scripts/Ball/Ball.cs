@@ -189,6 +189,14 @@ public class Ball : Resettable
         CapVelocities();
 
         CustomPhysics.ApplyImpulseAtPosition(col.rigidbody, -jBullet, collisionPoint);
+        if (col.rigidbody.velocity.magnitude > 23.00f)
+        {
+            col.rigidbody.velocity = col.rigidbody.velocity.normalized * 23.00f;
+        }
+        if (col.rigidbody.angularVelocity.magnitude > col.rigidbody.maxAngularVelocity)
+        {
+            col.rigidbody.angularVelocity = col.rigidbody.angularVelocity.normalized * col.rigidbody.maxAngularVelocity;
+        }
     }
 
     private void setCarState(Rigidbody rb)
