@@ -18,8 +18,9 @@ public class GoalKeeperAgent : Agent
     private GoalkeeperEvironmentHandler _handler;
     private Rigidbody _rb, _rbBall;
 
-    private float _episodeLength = 10f;
-    private float _lastResetTime;
+    private float _episodeLengthSeconds = 10f;
+    private float _episodeLengthFrames;
+    private float _lastResetFrame;
 
     private Transform _ball, _shootAt;
     private Vector3 _startPosition;
@@ -51,6 +52,7 @@ public class GoalKeeperAgent : Agent
         _handler = new GoalkeeperEvironmentHandler(transform.root.gameObject, defaultParameter);
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
+        _episodeLengthFrames = _episodeLengthSeconds / Time.fixedDeltaTime;
 
         ActionSpec actionSpec = GetComponent<BehaviorParameters>().BrainParameters.ActionSpec;
         _actionSpaceType = DetermineActionSpaceType(actionSpec);
@@ -70,7 +72,7 @@ public class GoalKeeperAgent : Agent
         _shootAt = transform.parent.Find("ShootAt");
         _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
 
-        _lastResetTime = Time.time;
+        _lastResetFrame = Time.frameCount;
         
         _handler.UpdateEnvironmentParameters();
         _handler.ResetParameter();
@@ -266,7 +268,7 @@ public class GoalKeeperAgent : Agent
 
     private void Reset()
     {
-        _lastResetTime = Time.time;
+        _lastResetFrame = Time.frameCount;
         EndEpisode();
         _handler.ResetParameter();
     }
@@ -278,10 +280,10 @@ public class GoalKeeperAgent : Agent
     {
         AddReward(-0.001f);
         
-        if (_rbBall.velocity.x > 0 || Time.time - _lastResetTime > _episodeLength)
+        if (_rbBall.velocity.x > 0 || Time.frameCount - _lastResetFrame > _episodeLengthFrames)
         {
             // Agent scored a goal
-            SetReward(2f);
+            SetReward(1f);
 
             Reset();
         }
