@@ -18,9 +18,6 @@ public class GoalKeeperAgent : PGBaseAgent
     private GoalkeeperEvironmentHandler _handler;
     private Rigidbody _rbBall;
 
-    private float _episodeLength = 10f;
-    private float _lastResetTime;
-
     private Transform _ball, _shootAt;
     private Vector3 _startPosition;
 
@@ -35,16 +32,11 @@ public class GoalKeeperAgent : PGBaseAgent
         _startPosition = transform.position;
 
         _shootAt = transform.parent.Find("ShootAt");
-
-        _lastResetTime = Time.time;
-
-        _handler.UpdateEnvironmentParameters();
-        _handler.ResetParameter();
-
     }
 
     public override void OnEpisodeBegin()
     {
+        _handler.ResetParameter();
         //Reset Car
         controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 
@@ -204,9 +196,7 @@ public class GoalKeeperAgent : PGBaseAgent
 
     private void Reset()
     {
-        _lastResetTime = Time.time;
         EndEpisode();
-        _handler.ResetParameter();
     }
 
     /// <summary>
@@ -214,19 +204,18 @@ public class GoalKeeperAgent : PGBaseAgent
     /// </summary>
     protected override void AssignReward()
     {
-        AddReward(-0.001f);
+        //AddReward(-0.001f);
 
-        if (_rbBall.velocity.x > 0 || Time.time - _lastResetTime > _episodeLength)
+        if (_rbBall.velocity.x > 0f)
         {
             // Agent scored a goal
-            SetReward(2f);
-
+            SetReward(1f);
             Reset();
         }
         if (mapData.isScoredOrange)
         {
             // Agent got scored on
-            SetReward(-1f);
+            SetReward(0f);
             Reset();
         }
     }

@@ -15,6 +15,14 @@ namespace ML_Agents.Goalkeeper
         public override void ResetParameter()
         {
             UpdateEnvironmentParameters();
+            // Determine what seed to use for this episode, if the seed is set to a negative number use a new random seed for each episode
+            if (currentParameter.seed >= 0)
+                UnityEngine.Random.InitState((int)currentParameter.seed);
+            else
+            {
+                System.Random rand = new System.Random();
+                UnityEngine.Random.InitState(rand.Next(1000));
+            }
             //TODO after merge with difficulty, add difficulty parameter
             if (currentParameter.canDoubleJump == 0)
             {

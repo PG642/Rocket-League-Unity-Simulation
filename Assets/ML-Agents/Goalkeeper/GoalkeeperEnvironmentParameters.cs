@@ -7,6 +7,7 @@ namespace ML_Agents.Goalkeeper
     {
         public GoalkeeperEnvironmentParameters()
         {
+            seed = -1;
             difficulty = 1;
             initialBoost = 32;
             canBoost = 1;
@@ -19,7 +20,8 @@ namespace ML_Agents.Goalkeeper
             useCustomBounce = 1;
             useWallStabilization = 1;
             useGroundStabilization = 1;
-        }    
+        }
+        public float seed;
         public float difficulty;
         public float initialBoost;
         public float canDoubleJump;

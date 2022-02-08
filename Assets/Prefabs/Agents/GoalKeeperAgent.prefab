@@ -82,8 +82,21 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 10000
+  MaxStep: 2000
   InputManager: {fileID: 0}
+  defaultParameter:
+    seed: -1
+    difficulty: 1
+    initialBoost: 32
+    canDoubleJump: 1
+    canDrift: 1
+    canBoost: 1
+    useSuspension: 1
+    useBulletImpulse: 1
+    usePsyonixImpulse: 1
+    useCustomBounce: 1
+    useWallStabilization: 1
+    useGroundStabilization: 1
 --- !u!114 &883974180034025410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 10
+  DecisionPeriod: 5
   TakeActionsBetweenDecisions: 1
 --- !u!54 &883974180034025409
 Rigidbody:
