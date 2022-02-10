@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &883974180034025414
+--- !u!1 &7270290807663857196
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,42 +8,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 883974180034025415}
-  - component: {fileID: 883974180034025420}
-  - component: {fileID: 883974180034025411}
-  - component: {fileID: 883974180034025410}
-  - component: {fileID: 883974180034025409}
-  - component: {fileID: 883974180034025408}
-  - component: {fileID: 883974180034025421}
+  - component: {fileID: 7270290807663857197}
+  - component: {fileID: 7270290807663857190}
+  - component: {fileID: 7270290807663857193}
+  - component: {fileID: 7270290807663857192}
+  - component: {fileID: 7270290807663857195}
+  - component: {fileID: 7270290807663857194}
+  - component: {fileID: 7270290807663857191}
   m_Layer: 0
-  m_Name: GoalKeeperAgent
+  m_Name: TopScorerAgent
   m_TagString: ControllableCar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &883974180034025415
+--- !u!4 &7270290807663857197
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883974180034025414}
+  m_GameObject: {fileID: 7270290807663857196}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -53, y: 0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4989809088609905426}
+  - {fileID: 3287240428441039608}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &883974180034025420
+--- !u!114 &7270290807663857190
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883974180034025414}
+  m_GameObject: {fileID: 7270290807663857196}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
@@ -62,62 +62,50 @@ MonoBehaviour:
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: GoalKeeping
+  m_BehaviorName: TopScorer
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_ObservableAttributeHandling: 0
---- !u!114 &883974180034025411
+--- !u!114 &7270290807663857193
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883974180034025414}
+  m_GameObject: {fileID: 7270290807663857196}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5075c42d805f5ed46aa3725251dab3a9, type: 3}
+  m_Script: {fileID: 11500000, guid: d08b4dab4d1fea9498467eeeac7b2f22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 2000
+  MaxStep: 0
   InputManager: {fileID: 0}
-  defaultParameter:
-    seed: -1
-    difficulty: 1
-    initialBoost: 32
-    canDoubleJump: 1
-    canDrift: 1
-    canBoost: 1
-    useSuspension: 1
-    useBulletImpulse: 1
-    usePsyonixImpulse: 1
-    useCustomBounce: 1
-    useWallStabilization: 1
-    useGroundStabilization: 1
---- !u!114 &883974180034025410
+  Difficulty: 0
+--- !u!114 &7270290807663857192
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883974180034025414}
+  m_GameObject: {fileID: 7270290807663857196}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 5
+  DecisionPeriod: 10
   TakeActionsBetweenDecisions: 1
---- !u!54 &883974180034025409
+--- !u!54 &7270290807663857195
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883974180034025414}
+  m_GameObject: {fileID: 7270290807663857196}
   serializedVersion: 2
   m_Mass: 180
   m_Drag: 0
@@ -127,13 +115,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &883974180034025408
+--- !u!114 &7270290807663857194
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883974180034025414}
+  m_GameObject: {fileID: 7270290807663857196}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3647dc28d553f054086959c1d51bdadf, type: 3}
@@ -176,13 +164,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &883974180034025421
+--- !u!114 &7270290807663857191
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883974180034025414}
+  m_GameObject: {fileID: 7270290807663857196}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d57328d66b70a3d4fa10ca170bdcb747, type: 3}
@@ -231,12 +219,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1001 &883974179412080674
+--- !u!1001 &7270290807073366472
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 883974180034025415}
+    m_TransformParent: {fileID: 7270290807663857197}
     m_Modifications:
     - target: {fileID: 1258923820049204481, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
       propertyPath: m_Name
@@ -301,8 +289,8 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 1258923820049204483, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
---- !u!4 &4989809088609905426 stripped
+--- !u!4 &3287240428441039608 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5295069023348888368, guid: 05668fc0bdd598742a14914a4dae67b7, type: 3}
-  m_PrefabInstance: {fileID: 883974179412080674}
+  m_PrefabInstance: {fileID: 7270290807073366472}
   m_PrefabAsset: {fileID: 0}

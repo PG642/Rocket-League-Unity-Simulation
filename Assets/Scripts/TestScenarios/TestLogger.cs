@@ -64,6 +64,7 @@ namespace TestScenarios
         {
             var logValue = new LogValue()
             {
+            
                 time = Time.time,
                 game_cars = new List<GameCar>(
                     from controllableCar in _controllableCars select
@@ -78,9 +79,9 @@ namespace TestScenarios
                             angular_velocity = _dictCarRb[controllableCar].angularVelocity.ToVector()
                         },
 
-                        boost = _dictCarBoosting[controllableCar]._boostAmount,
+                        boost = _dictCarBoosting[controllableCar].boostAmount,
                         has_wheel_contact = _dictCarController[controllableCar].isAllWheelsSurface,
-                        jumped = _dictCarJumping[controllableCar].IsFirstJump || _dictCarJumping[controllableCar].IsSecondJump
+                        jumped = _dictCarJumping[controllableCar].isFirstJump || _dictCarJumping[controllableCar].isSecondJump
                     }),
                 game_ball = new BallValues()
                 {

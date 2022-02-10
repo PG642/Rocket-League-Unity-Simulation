@@ -18,7 +18,7 @@ public static class CustomPhysics
         return J;
     }
 
-    public static Vector3 CalculateBulletImpulse(Rigidbody self, Rigidbody other, Vector3 collisionPoint)
+    public static Nullable<Vector3> CalculateBulletImpulse(Rigidbody self, Rigidbody other, Vector3 collisionPoint)
     {
         Rigidbody ballRigidBody = self;
         Rigidbody carRigidBody = other;
@@ -33,10 +33,10 @@ public static class CustomPhysics
         scaleIdentity[0, 0] = massScale;
         scaleIdentity[1, 1] = massScale;
         scaleIdentity[2, 2] = massScale;
- 
-        Matrix4x4 M = Subtract( Subtract(scaleIdentity, (Lc* Ic.inverse * Lc)) , Lb* Ib.inverse * Lb ).inverse;
+
+        Matrix4x4 M = Subtract(Subtract(scaleIdentity, (Lc * Ic.inverse * Lc)), Lb * Ib.inverse * Lb).inverse;
         Vector3 carV = carRigidBody.velocity - (Vector3)(Lc * carRigidBody.angularVelocity);
-        Vector3 ballV =  ballRigidBody.velocity - (Vector3)(Lb * ballRigidBody.angularVelocity);
+        Vector3 ballV = ballRigidBody.velocity - (Vector3)(Lb * ballRigidBody.angularVelocity);
         Vector3 deltaV = carV - ballV;
         Vector3 J = Subtract(Matrix4x4.zero, M) * deltaV;
 
@@ -46,9 +46,9 @@ public static class CustomPhysics
         Vector3 Jperp = Vector3.Dot(J, n) * n;
         Vector3 Jpara = J - Jperp;
         J = Jperp + Math.Min(1, friction * Jperp.magnitude / Jpara.magnitude) * Jpara;
-        if(float.IsNaN(J.x) || float.IsNaN(J.y) || float.IsNaN(J.z))
+        if (float.IsNaN(J.x) || float.IsNaN(J.y) || float.IsNaN(J.z) || float.IsInfinity(J.x) || float.IsInfinity(J.y) || float.IsInfinity(J.z))
         {
-            Debug.Log("Tried to calculate NaN impulse, set to zero instead:");
+            Debug.Log("Tried to calculate NaN or inf impulse, set to zero instead:");
             Debug.Log("CollisionPoint: " + collisionPoint);
             Debug.Log("ballPosition: " + ballRigidBody.position);
             Debug.Log("n: " + n);
@@ -70,9 +70,9 @@ public static class CustomPhysics
             Debug.Log("BallInertiaTensorRotation: " + ballRigidBody.inertiaTensorRotation);
             Debug.Log("CarInertiaTensor: " + carRigidBody.inertiaTensor);
             Debug.Log("CarInertiaTensorRotation: " + carRigidBody.inertiaTensorRotation);
-            return new Vector3(0,0,0);
+            return new Nullable<Vector3>();
         }
-        return J;
+        return new Nullable<Vector3>(J);
     }
 
     public static Vector3 CalculateVelocityAfterImpulse(Rigidbody rb, Vector3 J)
@@ -96,10 +96,10 @@ public static class CustomPhysics
     {
         Vector3 dist = collisionPoint - rbPosition;
         return new Matrix4x4(
-            new Vector4(      0, -dist.z,  dist.y, 0),
-            new Vector4( dist.z,       0, -dist.x, 0),
-            new Vector4(-dist.y,  dist.x,       0, 0),
-            new Vector4(      0,       0,       0, 1));
+            new Vector4(0, -dist.z, dist.y, 0),
+            new Vector4(dist.z, 0, -dist.x, 0),
+            new Vector4(-dist.y, dist.x, 0, 0),
+            new Vector4(0, 0, 0, 1));
     }
 
 

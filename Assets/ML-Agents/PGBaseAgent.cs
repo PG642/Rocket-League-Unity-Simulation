@@ -1,144 +1,74 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
-using System;
 using Unity.MLAgents.Policies;
-using Random = UnityEngine.Random;
 
-public class OneVsOneAgentTest : Agent
+public abstract class PGBaseAgent : Agent
 {
-    // Start is called before the first frame update
 
-    private TeamController _teamController;
-    private TeamController.Team _team;
-    private MapData _mapData;
+    /// <summary>
+    /// Contains the possible values for the discretized actions.
+    /// </summary>
+    private readonly float[] DISCRETE_ACTIONS = { -1f, -0.5f, 0f, 0.5f, 1f };
 
-    private Rigidbody _rb, _rbBall, _rbEnemy;
-
-    private float _episodeLength;
-    private float _lastResetTime;
-
-    private MatchEnvControllerTest _matchEnvController;
-
-    private Transform _ball, _enemy;
-
-    private CubeJumping _jumpControl;
-    private CubeController _controller;
-    private CubeBoosting _boostControl;
-    private CubeGroundControl _groundControl;
-    private CubeAirControl _airControl;
+    /// <summary>
+    /// Shows whether the action space of the agent is continuous, multi-discrete or mixed.
+    /// </summary>
+    private ActionSpaceType _actionSpaceType;
 
     public InputManager InputManager;
 
-    private readonly float[] DISCRETE_ACTIONS = { -1f, -0.5f, 0f, 0.5f, 1f };
-    private ActionSpaceType _actionSpaceType;
+    protected CubeJumping jumpControl;
+    protected CubeController controller;
+    protected CubeBoosting boostControl;
+    protected CubeGroundControl groundControl;
+    protected CubeAirControl airControl;
+    protected Rigidbody rb;
+    protected MapData mapData;
 
-    private int _nBallTouches = 0;
+    protected abstract void AssignReward();
 
-    void Start()
+    // Start is called before the first frame update
+    protected virtual void Start()
     {
-        _episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
-
-        _matchEnvController = transform.parent.GetComponent<MatchEnvControllerTest>();
-
         InputManager = GetComponent<InputManager>();
         InputManager.isAgent = true;
 
-        _teamController = GetComponentInParent<TeamController>();
-        _mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
-
-        _rb = GetComponent<Rigidbody>();
-        _airControl = GetComponentInChildren<CubeAirControl>();
-        _jumpControl = GetComponentInChildren<CubeJumping>();
-        _controller = GetComponentInChildren<CubeController>();
-        _boostControl = GetComponentInChildren<CubeBoosting>();
-        _groundControl = GetComponentInChildren<CubeGroundControl>();
-
-        _ball = transform.parent.Find("Ball");
-        _rbBall = _ball.GetComponent<Rigidbody>();
-
         ActionSpec actionSpec = GetComponent<BehaviorParameters>().BrainParameters.ActionSpec;
         _actionSpaceType = DetermineActionSpaceType(actionSpec);
+
+        rb = GetComponent<Rigidbody>();
+        airControl = GetComponentInChildren<CubeAirControl>();
+        jumpControl = GetComponentInChildren<CubeJumping>();
+        controller = GetComponentInChildren<CubeController>();
+        boostControl = GetComponentInChildren<CubeBoosting>();
+        groundControl = GetComponentInChildren<CubeGroundControl>();
+
+        mapData = transform.parent.Find("World").Find("Rocket_Map").GetComponent<MapData>();
     }
 
-    public void FixedUpdate()
+    protected Vector3 NormalizePosition(Transform objTransform)
     {
-        AddReward(- (Time.fixedDeltaTime / _episodeLength));
+        var vec = new Vector3(objTransform.localPosition.x, objTransform.localPosition.y, objTransform.localPosition.z);
+
+        vec.x = (vec.x + 60f) / 120f;
+        vec.y = vec.y / 20f;
+        vec.z = (vec.z + 41f) / 82f;
+        return vec;
     }
 
-    public override void OnEpisodeBegin()
+    protected void AddRelativePositionNormalized(VectorSensor sensor, Transform otherTransform)
     {
-        //Respawn Cars
-        // transform.parent.GetComponent<TeamController>().SpawnTeams();
-
-        //Define Enemy
-        // if (gameObject.Equals(_teamController.TeamBlue[0]))
-        // {
-        //     _enemy = _teamController.TeamOrange[0].transform;
-        //     _team = TeamController.Team.BLUE;
-        // }
-        // else
-        // {
-        //     _enemy = _teamController.TeamBlue[0].transform;
-        //     _team = TeamController.Team.ORANGE;
-        // }
-
-        // _rbEnemy = _enemy.GetComponent<Rigidbody>();
-
-        //Reset Ball
-        // _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
-        // _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        // _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-
-        _nBallTouches = 0;
+        sensor.AddObservation((transform.localPosition - otherTransform.localPosition) / mapData.diag);
     }
 
-    public override void CollectObservations(VectorSensor sensor)
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
-        //Car position
-        var carXNormalized = (transform.localPosition.x + 60f) / 120f;
-        var carYNormalized = transform.localPosition.y / 20f;
-        var carZNormalized = (transform.localPosition.z + 41f) / 82f;
-        sensor.AddObservation(new Vector3(carXNormalized, carYNormalized, carZNormalized));
-        //Car rotation, already normalized
-        sensor.AddObservation(transform.rotation);
-        //Car velocity
-        sensor.AddObservation(_rb.velocity / 23f);
-        //Car angular velocity
-        sensor.AddObservation(_rb.angularVelocity / 5.5f);
-
-        // Boost amount
-        sensor.AddObservation(_boostControl.boostAmount / 100f);
-        
-        //Enemy position
-        // var enemyXNormalized = (_enemy.localPosition.x + 60f) / 120f;
-        // var enemyYNormalized = _enemy.localPosition.y / 20f;
-        // var enemyZNormalized = (_enemy.localPosition.z + 41f) / 82f;
-        // sensor.AddObservation(new Vector3(enemyXNormalized, enemyYNormalized, enemyZNormalized));
-        // //Enemy rotation, already normalized
-        // sensor.AddObservation(_enemy.rotation);
-        // //Enemy velocity
-        // sensor.AddObservation(_rbEnemy.velocity / 23f);
-        // //Enemy angular velocity
-        // sensor.AddObservation(_rbEnemy.angularVelocity / 5.5f);
-
-        //Ball position
-        // var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
-        // var ballYNormalized = _ball.localPosition.y / 20f;
-        // var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
-        // sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
-        // //Ball velocity
-        // sensor.AddObservation(_rbBall.velocity / 60f);
-
-        var localPosition = transform.localPosition;
-        // var relativePositionToEnemy = (_enemy.localPosition - localPosition) / _mapData.diag;
-        var relativePositionToBall = (_ball.localPosition - localPosition) / _mapData.diag;
-
-        // sensor.AddObservation(relativePositionToEnemy);
-        sensor.AddObservation(relativePositionToBall);
+        InputManager.isAgent = false;
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -158,61 +88,15 @@ public class OneVsOneAgentTest : Agent
                     break;
                 default:
                     throw new InvalidOperationException(string.Format("The method {0} does not support the {1} '{2}'.", nameof(OnActionReceived), typeof(ActionSpaceType), _actionSpaceType.ToString()));
-                    break;
             }
         }
         AssignReward();
     }
 
-    public override void Heuristic(in ActionBuffers actionsOut)
-    {
-        InputManager.isAgent = false;
-    }
-
-    private void AssignReward()
-    {
-        // if (_team.Equals(TeamController.Team.BLUE) && _rb.transform.localPosition.x > 0 ||
-        //     _team.Equals(TeamController.Team.ORANGE) && _rb.transform.localPosition.x < 0)
-        // {
-        //     AddReward(0.001f);
-        // }
-        // else
-        // {
-        //     AddReward(-0.001f);
-        // }
-        
-        //AddReward(0.001f * Mathf.Sign(Vector3.Dot(_ball.position - transform.position, _rb.velocity)));
-        // AddReward(0.001f * Mathf.Sign(Vector3.Dot(_rbBall.position - transform.position, _rb.velocity)));
-
-        // float agentBallDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, transform.position) / _mapData.diag));
-        // AddReward(agentBallDistanceReward);
-        
-        // GameObject goalLines = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").gameObject;
-        // Vector3 enemyGoalPosition = _team.Equals(TeamController.Team.BLUE) ? goalLines.transform.Find("GoalLineRed").position : goalLines.transform.Find("GoalLineBlue").position;
-        // float ballEnemyGoalDistanceReward = 0.001f * (1 - (Vector3.Distance(_ball.position, enemyGoalPosition) / _mapData.diag));
-        // AddReward(ballEnemyGoalDistanceReward);
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if(other.gameObject.tag.Equals("Ball"))
-        {
-            int maxBallTouches = 1;
-            AddReward(1.0f / maxBallTouches);
-            // _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f/maxBallTouches);
-            ++_nBallTouches;
-            if (_nBallTouches < maxBallTouches)
-            {
-                _matchEnvController.ResetBall();
-            }
-            else
-            {
-                _matchEnvController.Reset();
-                _nBallTouches = 0;
-            }
-        }
-    }
-
+    /// <summary>
+    /// Processes the actions, if <see cref="actionSpaceType"/> is <see cref="ActionSpaceType.Continuous"/>.
+    /// </summary>
+    /// <param name="actionBuffers">The action buffers containing the actions.</param>
     private void ProcessContinuousActions(ActionBuffers actionBuffers)
     {
         // set inputs
@@ -349,10 +233,46 @@ public class OneVsOneAgentTest : Agent
         }
     }
 
+    protected bool checkVec(Vector3 vec, string name, float defaultValue)
+    {
+        bool reset = false;
+        for (int i = 0; i < 3; i++)
+        {
+            if (float.IsNaN(vec[i]) || float.IsInfinity(vec[i]))
+            {
+                Debug.Log($"{name}[{i}] is NaN or Infinity");
+                vec[i] = defaultValue;
+            }
+            if (vec[i] < -5f || vec[i] > 5f)
+            {
+                Debug.LogWarning($"{name}[{i}] is {vec[i]}, was expected to be in interval [-5, 5]");
+                reset = true;
+            }
+        }
+        if (vec.magnitude < -1f || vec.magnitude > 5f)
+        {
+            Debug.LogWarning($"{name}.magnitude is {vec.magnitude}, was expected to be in interval [-1, 5]");
+            reset = true;
+        }
+        return reset;
+    }
+
+    protected void checkQuaternion(Quaternion quat, string name, float defaultValue)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (float.IsNaN(quat[i]) || float.IsInfinity(quat[i]))
+            {
+                Debug.Log(name + "[" + i + "] is NaN or Infinity");
+                quat[i] = defaultValue;
+            }
+        }
+    }
+
     /// <summary>
     /// Helper for classifying the action space.
     /// </summary>
-    private enum ActionSpaceType
+    public enum ActionSpaceType
     {
         Continuous,
         MultiDiscrete,

@@ -25,13 +25,13 @@ public class Suspension : MonoBehaviour
         var suspensionCollidersRear = backAxle.GetComponentsInChildren<SuspensionCollider>();
         foreach (var suspensionCollider in suspensionCollidersFront)
         {
-            suspensionCollider.stiffnes = frontStiffness;
+            suspensionCollider.stiffness = frontStiffness;
             
         }
             
         foreach (var suspensionCollider in suspensionCollidersRear)
         {
-            suspensionCollider.stiffnes = rearStiffness;
+            suspensionCollider.stiffness = rearStiffness;
         }
     }
 
@@ -45,14 +45,14 @@ public class Suspension : MonoBehaviour
             var suspensionCollidersRear = backAxle.GetComponentsInChildren<SuspensionCollider>();
             foreach (var suspensionCollider in suspensionCollidersFront)
             {
-                suspensionCollider.stiffnes = frontStiffness;
+                suspensionCollider.stiffness = frontStiffness;
                 suspensionCollider.damper = damper;
 
             }
             
             foreach (var suspensionCollider in suspensionCollidersRear)
             {
-                suspensionCollider.stiffnes = rearStiffness;
+                suspensionCollider.stiffness = rearStiffness;
                 suspensionCollider.damper = damper;
             }
         }

@@ -58,4 +58,9 @@ public class Resettable : MonoBehaviour
         var rbInertiaTensorRotation = rbToClone.inertiaTensorRotation;
         inertiaTensorRotation = new Quaternion(rbInertiaTensorRotation.x, rbInertiaTensorRotation.y, rbInertiaTensorRotation.z, rbInertiaTensorRotation.w);
     }
+
+    public void ResetValues()
+    {
+        Clone(rb);
+    }
 }
