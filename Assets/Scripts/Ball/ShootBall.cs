@@ -21,7 +21,7 @@ public class ShootBall : MonoBehaviour
         Vector3 dir = ShootAt.position - transform.position;
         if (velocity == 0.0f)
         {
-            velocity = Random.Range(speed.x, speed.y);
+            velocity = UnityEngine.Random.Range(speed.x, speed.y);
         }
         
         _rb.AddForce( dir.normalized  * velocity, ForceMode.VelocityChange);

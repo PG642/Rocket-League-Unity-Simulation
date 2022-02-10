@@ -24,11 +24,6 @@ public class OneVsOneAgent : PGBaseAgent
 
     private Transform _ball, _enemy;
 
-
-
-    private readonly float[] DISCRETE_ACTIONS = { -1f, -0.5f, 0f, 0.5f, 1f };
-    private ActionSpaceType _actionSpaceType;
-
     private int _nBallTouches = 0;
 
     void Start()
@@ -76,10 +71,10 @@ public class OneVsOneAgent : PGBaseAgent
     public override void CollectObservations(VectorSensor sensor)
     {
         //Car position
-        var carXNormalized = (transform.localPosition.x + 60f) / 120f;
-        var carYNormalized = transform.localPosition.y / 20f;
-        var carZNormalized = (transform.localPosition.z + 41f) / 82f;
-        sensor.AddObservation(new Vector3(carXNormalized, carYNormalized, carZNormalized));
+        Vector3 carPositionNormalized = NormalizeVec(rb,VectorType.Position,EntityType.Car);
+        checkNormalizedVec(carPositionNormalized, "carPositionNormalized", VectorType.Position);
+        sensor.AddObservation(carPositionNormalized);
+
         //Car rotation, already normalized
         sensor.AddObservation(transform.rotation);
         //Car velocity
