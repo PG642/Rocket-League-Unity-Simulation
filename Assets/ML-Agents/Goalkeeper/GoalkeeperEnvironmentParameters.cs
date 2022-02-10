@@ -19,6 +19,7 @@ namespace ML_Agents.Goalkeeper
             useCustomBounce = 1;
             useWallStabilization = 1;
             useGroundStabilization = 1;
+            seed = 0;
         }    
         public float difficulty;
         public float initialBoost;
@@ -31,6 +32,7 @@ namespace ML_Agents.Goalkeeper
         public float useCustomBounce;
         public float useWallStabilization;
         public float useGroundStabilization;
+        public int seed;
     }
     
 }

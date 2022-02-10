@@ -28,6 +28,7 @@ public class OneVsOneAgent : PGBaseAgent
 
     void Start()
     {
+        base.Start();
         _episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
 
         _matchEnvController = transform.parent.GetComponent<MatchEnvController>();
