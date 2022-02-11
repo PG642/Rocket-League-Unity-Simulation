@@ -188,6 +188,55 @@ public class Ball : Resettable
         {
             col.rigidbody.angularVelocity = col.rigidbody.angularVelocity.normalized * col.rigidbody.maxAngularVelocity;
         }
+        Vector3 impactPosition = CalculateImpactPosition();
+
+    }
+    //Calculates the Spot the Ball would land on on the edges of the arena (including the ground and ceiling).
+    private Vector3 CalculateImpactPosition()
+    {
+        float r =                               //Ball radius
+            GetComponent<SphereCollider>().radius;               
+        
+        Vector3 V_hor = 
+            new Vector3(rb.velocity.x, 0, rb.velocity.z);   
+        Vector3 dir = V_hor.normalized;         //Top-down direction the ball is moving in
+        float V_x = V_hor.magnitude;            //Velocity in dir
+        float V_y = rb.velocity.y;              //Upwards velocity
+
+        float G = -Physics.gravity.y;            //Gravity  
+
+        float h_ceiling = 20.44f;               //Height of the arena ceiling
+        float h = rb.position.y-r;              //Height above rest at ground                 
+        float h_diff = -h;                      //Height Difference to impact point
+        float h_max =                           //Max Height for uninterrupted flight
+            (float)(h + Math.Pow(V_y, 2) / (2 * G));
+
+        //Arena Wall Vectors
+        Vector3 p1 = new Vector3(-39.68f, r, 40.96f);
+        Vector3 p2 = new Vector3(51.2f, r, 29.44f);
+        Vector3 p3 = new Vector3(39.68f, r, -40.96f);
+        Vector3 p4 = new Vector3(-51.2f, r, -29.44f);
+
+        Vector3 v1 = new Vector3(102.4f, 0, 0); //long walls
+        Vector3 v2 = new Vector3(0, 0, 81.92f); //short walls
+        Vector3 v3 = new Vector3(16.29f, 0, 16.29f); //corner walls 1 
+        Vector3 v4 = new Vector3(-16.29f, 0, 16.29f); //corer walls 2
+
+
+        float t_impact_ground = (float)((V_y + Math.Sqrt(Math.Pow(V_y, 2) - h * 2 * G)) / G);
+        if (h_max >= (h_ceiling - r))           //Ball hits the ceiling
+        {
+            float t_impact_ceiling = (float)((V_y - Math.Sqrt(Math.Pow(V_y, 2) + (h_ceiling - r - rb.position.y) * 2 * G)) / G);
+        }
+
+        float dist = t_impact_ground * V_x;            //Distance the Ball travels in current direction until impact
+        Vector3 p_impact_ground =                      //Impact Point (Center of Ball at impact)
+            rb.position + dir * dist;    
+        p_impact_ground.y = r;
+
+
+
+        return p_impact_ground;
     }
 
     private void OnCollisionExit(Collision other)
