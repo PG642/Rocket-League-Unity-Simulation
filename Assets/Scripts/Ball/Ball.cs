@@ -191,14 +191,15 @@ public class Ball : Resettable
         Vector3 impactPosition = CalculateImpactPosition();
 
     }
+
     //Calculates the Spot the Ball would land on on the edges of the arena (including the ground and ceiling).
     private Vector3 CalculateImpactPosition()
     {
         float r =                               //Ball radius
-            GetComponent<SphereCollider>().radius;               
-        
-        Vector3 V_hor = 
-            new Vector3(rb.velocity.x, 0, rb.velocity.z);   
+            GetComponent<SphereCollider>().radius;
+
+        Vector3 V_hor =
+            new Vector3(rb.velocity.x, 0, rb.velocity.z);
         Vector3 dir = V_hor.normalized;         //Top-down direction the ball is moving in
         float V_x = V_hor.magnitude;            //Velocity in dir
         float V_y = rb.velocity.y;              //Upwards velocity
@@ -206,37 +207,93 @@ public class Ball : Resettable
         float G = -Physics.gravity.y;            //Gravity  
 
         float h_ceiling = 20.44f;               //Height of the arena ceiling
-        float h = rb.position.y-r;              //Height above rest at ground                 
-        float h_diff = -h;                      //Height Difference to impact point
-        float h_max =                           //Max Height for uninterrupted flight
+        float h = rb.position.y - r;            //Height above rest at ground      
+        float h_max =                           //Max Height for unhindered flight
             (float)(h + Math.Pow(V_y, 2) / (2 * G));
 
-        //Arena Wall Vectors
-        Vector3 p1 = new Vector3(-39.68f, r, 40.96f);
-        Vector3 p2 = new Vector3(51.2f, r, 29.44f);
-        Vector3 p3 = new Vector3(39.68f, r, -40.96f);
-        Vector3 p4 = new Vector3(-51.2f, r, -29.44f);
+        float dist_ground = (float)(V_x * (V_y + Math.Sqrt(Math.Pow(V_y, 2) + h * 2 * G)) / G);  //Distance the Ball travels in current direction until impact
+        Vector3 line_ground = dir * dist_ground;
+        Vector3 ballPosition2d = new Vector3(rb.position.x, r, rb.position.z);
+        Vector3 p_impact = ballPosition2d + line_ground;  //Impact Point (Center of Ball at impact) if the ball flies unhindered (no walls or ceiling in the trajectory)
 
-        Vector3 v1 = new Vector3(102.4f, 0, 0); //long walls
-        Vector3 v2 = new Vector3(0, 0, 81.92f); //short walls
-        Vector3 v3 = new Vector3(16.29f, 0, 16.29f); //corner walls 1 
-        Vector3 v4 = new Vector3(-16.29f, 0, 16.29f); //corer walls 2
+        //Arena Wall Vectors (out of ball perspective)
+        Vector3 p1 = new Vector3(-39.68f + r, r, 40.96f - r);
+        Vector3 p2 = new Vector3(51.2f - r, r, 29.44f - r);
+        Vector3 p3 = new Vector3(39.68f - r, r, -40.96f + r);
+        Vector3 p4 = new Vector3(-51.2f + r, r, -29.44f + r);
 
+        Vector3 v1 = new Vector3(79.36f - 2 * r, 0, 0); //long walls
+        Vector3 v2 = new Vector3(0, 0, 58.88f - 2 * r); //short walls
+        Vector3 v3 = new Vector3(11.52f - r, 0, 11.52f - r); //corner walls 1 
+        Vector3 v4 = new Vector3(-11.52f + r, 0, 11.52f - r); //corer walls 2
 
-        float t_impact_ground = (float)((V_y + Math.Sqrt(Math.Pow(V_y, 2) - h * 2 * G)) / G);
-        if (h_max >= (h_ceiling - r))           //Ball hits the ceiling
+        Vector3 intersection;
+        Vector3 p_intersect_wall = Vector3.zero;
+
+        if (CustomPhysics.LineLineIntersection(out intersection, p1, -v3, p_impact, line_ground))
         {
-            float t_impact_ceiling = (float)((V_y - Math.Sqrt(Math.Pow(V_y, 2) + (h_ceiling - r - rb.position.y) * 2 * G)) / G);
+            p_intersect_wall = intersection;
+        }
+        if (CustomPhysics.LineLineIntersection(out intersection, p1, v1, p_impact, line_ground))
+        {
+            p_intersect_wall = intersection;
+        }
+        if (CustomPhysics.LineLineIntersection(out intersection, p2, v4, p_impact, line_ground))
+        {
+            p_intersect_wall = intersection;
+        }
+        if (CustomPhysics.LineLineIntersection(out intersection, p2, -v2, p_impact, line_ground))
+        {
+            p_intersect_wall = intersection;
+        }
+        if (CustomPhysics.LineLineIntersection(out intersection, p3, v3, p_impact, line_ground))
+        {
+            p_intersect_wall = intersection;
+        }
+        if (CustomPhysics.LineLineIntersection(out intersection, p3, -v1, p_impact, line_ground))
+        {
+            p_intersect_wall = intersection;
+        }
+        if (CustomPhysics.LineLineIntersection(out intersection, p4, -v4, p_impact, line_ground))
+        {
+            p_intersect_wall = intersection;
+        }
+        if (CustomPhysics.LineLineIntersection(out intersection, p4, v2, p_impact, line_ground))
+        {
+            p_intersect_wall = intersection;
         }
 
-        float dist = t_impact_ground * V_x;            //Distance the Ball travels in current direction until impact
-        Vector3 p_impact_ground =                      //Impact Point (Center of Ball at impact)
-            rb.position + dir * dist;    
-        p_impact_ground.y = r;
+        bool wallHit = p_intersect_wall != Vector3.zero;
+        bool ceilingHit = h_max >= (h_ceiling - r);
+        float dist_wall = 0;
+        float dist_ceiling = 0;
 
+        //Trajectory intercepts both wall and ceiling, determine what gets hit first
+        if (wallHit && ceilingHit)
+        {
+            dist_wall = (p_intersect_wall - ballPosition2d).magnitude;
+            dist_ceiling = (float)(V_x * (V_y - Math.Sqrt(Math.Pow(V_y, 2) - (h_ceiling - r - rb.position.y) * 2 * G)) / G);
+            if(dist_wall < dist_ceiling)
+            {
+                ceilingHit = false;
+            }
+            else
+            {
+                wallHit = false;
+            }
+        }
+        if (wallHit)
+        {
+            p_impact = rb.position + dir * dist_wall;
+            p_impact.y = (float)(h + dist_wall * V_y / V_x - Math.Pow(dist_wall, 2) * G / 2 * Math.Pow(V_x, 2));  
+        }
+        if (ceilingHit)
+        {
+            p_impact = rb.position + dir * dist_ceiling;
+            p_impact.y = h_ceiling - r;
+        }
 
-
-        return p_impact_ground;
+        return p_impact;
     }
 
     private void OnCollisionExit(Collision other)
