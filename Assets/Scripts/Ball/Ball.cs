@@ -28,6 +28,7 @@ public class Ball : Resettable
 
 
     public bool BallStuck;
+    public bool useShotPrediction;
 
     public override void Start()
     {
@@ -188,7 +189,10 @@ public class Ball : Resettable
         {
             col.rigidbody.angularVelocity = col.rigidbody.angularVelocity.normalized * col.rigidbody.maxAngularVelocity;
         }
-        Vector3 impactPosition = CalculateImpactPosition();
+        if (useShotPrediction)
+        {
+            Vector3 impactPosition = CalculateImpactPosition();
+        }
 
     }
 
