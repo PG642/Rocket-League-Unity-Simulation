@@ -711,7 +711,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShootAt: {fileID: 1355295177}
-  speed: {x: 20, y: 40}
 --- !u!1 &1295519837
 GameObject:
   m_ObjectHideFlags: 0

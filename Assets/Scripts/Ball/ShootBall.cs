@@ -6,7 +6,7 @@ using UnityEngine;
 public class ShootBall : MonoBehaviour
 {
     public Transform ShootAt;
-    public Vector2 speed = new Vector2(50, 100);
+    private Vector2 speed = new Vector2(20, 40);
     private Rigidbody _rb;
 
     void Start()

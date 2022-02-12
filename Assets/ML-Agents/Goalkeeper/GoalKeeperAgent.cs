@@ -164,7 +164,7 @@ public class GoalKeeperAgent : PGBaseAgent
         sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
 
         //Ball velocity
-        Vector3 ball_velocity = rb.velocity.normalized * (_rbBall.velocity.magnitude / 60f);
+        Vector3 ball_velocity = _rbBall.velocity / 60f;
         if (float.IsNaN(ball_velocity.x))
         {
             Debug.Log("Ball: ball_velocity.x == NaN");
