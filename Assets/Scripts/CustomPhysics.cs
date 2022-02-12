@@ -123,34 +123,31 @@ public static class CustomPhysics
         return result;
     }
 
-    //https://stackoverflow.com/questions/59449628/check-when-two-vector3-lines-intersect-unity3d
-    //***ADJUSTED***
-    //The first vector is not an infinite line, only an intersection on the length of the vector itself is counted
-    //The second vector however gets infinitely extended in both directions
-    public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1,
-        Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
+
+    //Only Calculates Intersections of the 2 line segments, the vectors are not interpreted as infinite lines!
+    //Line Segments (P1,P2) and (P3,P4)
+    //Only for Vector3 with the same y, so effectively Vector2, but without conversion
+    public static bool LineSegmentIntersection2D(out Vector3 intersection, Vector3 P1,
+        Vector3 P2, Vector3 P3, Vector3 P4)
     {
-
-        Vector3 lineVec3 = linePoint2 - linePoint1;
-        Vector3 crossVec1and2 = Vector3.Cross(lineVec1, lineVec2);
-        Vector3 crossVec3and2 = Vector3.Cross(lineVec3, lineVec2);
-
-        float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
-
-        //is coplanar, and not parallel
-        if (Mathf.Abs(planarFactor) < 0.0001f
-                && crossVec1and2.sqrMagnitude > 0.0001f)
+        float t = ((P1.x - P3.x) * (P3.z - P4.z) - (P1.z - P3.z) * (P3.x - P4.x)) / 
+                  ((P1.x - P2.x) * (P3.z - P4.z) - (P1.z - P2.z) * (P3.x - P4.x));
+        if (t < 0.0f || t > 1)
         {
-            float s = Vector3.Dot(crossVec3and2, crossVec1and2)
-                    / crossVec1and2.sqrMagnitude;
-            if(s > 0 && s <= 1)
-            {
-                intersection = linePoint1 + (lineVec1 * s);
-                return true;
-            }
+            intersection = Vector3.zero;
+            return false;
         }
-        intersection = Vector3.zero;
-        return false;
+        float u = ((P1.x - P3.x) * (P1.z - P2.z) - (P1.z - P3.z) * (P1.x - P2.x)) /
+                  ((P1.x - P2.x) * (P3.z - P4.z) - (P1.z - P2.z) * (P3.x - P4.x));
+        if (u < 0.0f || u > 1)
+        {
+            intersection = Vector3.zero;
+            return false;
+        }
+        intersection = new Vector3(P1.x + t * (P2.x - P1.x), 
+                                   P1.y, 
+                                   P1.z + t * (P2.z - P1.z));
+        return true;
     }
 
 }
