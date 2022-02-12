@@ -16,9 +16,9 @@ public class MatchEnvController : MonoBehaviour
 
     private MapData _mapData;
 
-    private float _episodeLength;
-    private float _lastResetTime;
-    
+    public int maxSteps = 2000;
+    private int _stepCount;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,9 +47,6 @@ public class MatchEnvController : MonoBehaviour
         _ball.GetComponent<Ball>().stopSlowBall = false;
 
         _mapData = transform.Find("World").Find("Rocket_Map").GetComponent<MapData>();
-        
-        _episodeLength = transform.GetComponent<MatchTimeController>().matchTimeSeconds;
-        _lastResetTime = Time.time;
     }
 
     public void Reset()
@@ -80,12 +77,15 @@ public class MatchEnvController : MonoBehaviour
         // transform.Rotate(0.0f, rotationAngle, 0.0f);
 
         // Reset start time of episode to now
-        _lastResetTime = Time.time;
+        //_lastResetTime = Time.time;
+        _stepCount = 0;
     }
 
     void FixedUpdate()
     {
-        if (Time.time - _lastResetTime > _episodeLength){
+        ++_stepCount;
+        if (_stepCount >= maxSteps && maxSteps > 0)
+        {
             foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
             {
                 var reward = 1.0f / (_ball.localPosition - agent.transform.localPosition).magnitude;
