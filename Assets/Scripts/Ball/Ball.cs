@@ -25,8 +25,6 @@ public class Ball : Resettable
     public float maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
 
-
-
     public bool BallStuck;
     public bool useShotPrediction = false;
     public GameObject HitMarker;
@@ -221,66 +219,66 @@ public class Ball : Resettable
         float V_x = V_hor.magnitude;            //Velocity in dir
         float V_y = rb.velocity.y;              //Upwards velocity
 
-        float G = -Physics.gravity.y;            //Gravity  
-        float h = transform.localPosition.y - r;            //Height above rest at ground      
+        float G = -Physics.gravity.y;           //Gravity  
+        float h = transform.localPosition.y - r;//Height above rest at ground      
         float h_max =                           //Max Height for unhindered flight
             (float)(h + Math.Pow(V_y, 2) / (2 * G));
 
         float dist_ground = (float)(V_x * (V_y + Math.Sqrt(Math.Pow(V_y, 2) + h * 2 * G)) / G);  //Distance the Ball travels in current direction until impact
         Vector3 line_ground = dir * dist_ground;
         Vector3 ballPosition2d = new Vector3(transform.localPosition.x, r, transform.localPosition.z);
-        Vector3 p_impact = ballPosition2d + line_ground;  //Impact Point (Center of Ball at impact) if the ball flies unhindered (no walls or ceiling in the trajectory)
+        Vector3 p_impact_ground = ballPosition2d + line_ground;  //Impact Point (Center of Ball at impact) if the ball flies unhindered (no walls or ceiling in the trajectory)
+        Vector3 p_impact = p_impact_ground;
 
         //Arena Corners (out of ball perspective)
-        Vector3 p1 = new Vector3(-39.68f + r_tol, r,  40.96f - r_tol);
-        Vector3 p2 = new Vector3( 39.68f - r_tol, r,  40.96f - r_tol);
-        Vector3 p3 = new Vector3( 51.2f  - r_tol, r,  29.44f - r_tol);
-        Vector3 p4 = new Vector3( 51.2f  - r_tol, r, -29.44f + r_tol);
-        Vector3 p5 = new Vector3( 39.68f - r_tol, r, -40.96f + r_tol);
-        Vector3 p6 = new Vector3(-39.68f + r_tol, r, -40.96f + r_tol);
-        Vector3 p7 = new Vector3(-51.2f  + r_tol, r, -29.44f + r_tol);
-        Vector3 p8 = new Vector3(-51.2f  + r_tol, r,  29.44f - r_tol);
+        Vector3[] arenaCorners = new[] {
+            //Right wall
+            new Vector3(-51.20f + r_tol, r,  29.44f - r_tol),
+            new Vector3(-39.68f + r_tol, r,  40.96f - r_tol),
+            new Vector3( 39.68f - r_tol, r,  40.96f - r_tol),
+            new Vector3( 51.20f - r_tol, r,  29.44f - r_tol),
+
+            //Left wall
+            new Vector3( 51.20f - r_tol, r, -29.44f + r_tol),
+            new Vector3( 39.68f - r_tol, r, -40.96f + r_tol),
+            new Vector3(-39.68f + r_tol, r, -40.96f + r_tol),
+            new Vector3(-51.20f + r_tol, r, -29.44f + r_tol),
+            };
+
+        Vector3[] goalCornersOrange = new[] {
+            //Orange goal
+            new Vector3( 51.20f - r_tol, r,   8.93f - r_tol),
+            new Vector3( 60.00f - r_tol, r,   8.93f - r_tol),
+            new Vector3( 60.00f - r_tol, r,  -8.93f + r_tol),
+            new Vector3( 51.20f - r_tol, r,  -8.93f + r_tol),
+            };
+
+        Vector3[] goalCornersBlue = new[] {
+            //Blue goal
+            new Vector3(-51.20f + r_tol, r,  -8.93f + r_tol),
+            new Vector3(-60.00f + r_tol, r,  -8.93f + r_tol),
+            new Vector3(-60.00f + r_tol, r,   8.93f - r_tol),
+            new Vector3(-51.20f + r_tol, r,   8.93f - r_tol),
+            };
+
+        float h_goal = 6.42775f - r_tol; 
 
         Vector3 intersection;
         Vector3 p_intersect_wall = Vector3.zero;
 
-        if (CustomPhysics.LineSegmentIntersection2D(out intersection, p1, p2, p_impact, ballPosition2d))
+        for (int i = 0; i < arenaCorners.Length; i++)
         {
-            p_intersect_wall = intersection;
-        }
-        if (CustomPhysics.LineSegmentIntersection2D(out intersection, p2, p3, p_impact, ballPosition2d))
-        {
-            p_intersect_wall = intersection;
-        }
-        if (CustomPhysics.LineSegmentIntersection2D(out intersection, p3, p4, p_impact, ballPosition2d))
-        {
-            p_intersect_wall = intersection;
-        }
-        if (CustomPhysics.LineSegmentIntersection2D(out intersection, p4, p5, p_impact, ballPosition2d))
-        {
-            p_intersect_wall = intersection;
-        }
-        if (CustomPhysics.LineSegmentIntersection2D(out intersection, p5, p6, p_impact, ballPosition2d))
-        {
-            p_intersect_wall = intersection;
-        }
-        if (CustomPhysics.LineSegmentIntersection2D(out intersection, p6, p7, p_impact, ballPosition2d))
-        {
-            p_intersect_wall = intersection;
-        }
-        if (CustomPhysics.LineSegmentIntersection2D(out intersection, p7, p8, p_impact, ballPosition2d))
-        {
-            p_intersect_wall = intersection;
-        }
-        if (CustomPhysics.LineSegmentIntersection2D(out intersection, p8, p1, p_impact, ballPosition2d))
-        {
-            p_intersect_wall = intersection;
+            if (CustomPhysics.LineSegmentIntersection2D(out intersection, arenaCorners[i], arenaCorners[(i+1)% arenaCorners.Length], p_impact_ground, ballPosition2d))
+            {
+                p_intersect_wall = intersection;
+            }
         }
 
         bool wallHit = p_intersect_wall != Vector3.zero;
         float dist_wall = (p_intersect_wall - ballPosition2d).magnitude;
 
-        float h_ceiling = 20.44f - r;           //Height of the arena ceiling
+        //Height of the arena ceiling
+        float h_ceiling = 20.44f - r_tol;           
         bool ceilingHit = h_max >= h_ceiling;
         float dist_ceiling = (float)(V_x * (V_y - Math.Sqrt(Math.Pow(V_y, 2) - (h_ceiling - transform.localPosition.y) * 2 * G)) / G);
 
@@ -301,6 +299,35 @@ public class Ball : Resettable
         {
             p_impact = transform.localPosition + dir * dist_wall;
             p_impact.y = (float)(h + (dist_wall * V_y / V_x) - (Math.Pow(dist_wall, 2) * G) / (2 * Math.Pow(V_x, 2)));
+
+            //Shot into Goal?
+            if(p_impact.y <= h_goal && Math.Abs(p_impact.z)<= 8.93f - r_tol)
+            {
+                intersection = Vector3.zero;
+                p_intersect_wall = Vector3.zero;
+                Vector3[] goalCorners = p_impact.x > 0 ? goalCornersOrange : goalCornersBlue;
+                for (int i = 0; i < goalCorners.Length-1; i++)
+                {
+                    if (CustomPhysics.LineSegmentIntersection2D(out intersection, goalCorners[i], goalCorners[i + 1], p_impact_ground, ballPosition2d))
+                    {
+                        p_intersect_wall = intersection;
+                    }
+                }
+                wallHit = p_intersect_wall != Vector3.zero;
+                dist_wall = (p_intersect_wall - ballPosition2d).magnitude;
+                if (wallHit)
+                {
+                    p_impact = transform.localPosition + dir * dist_wall;
+                    p_impact.y = (float)(h + (dist_wall * V_y / V_x) - (Math.Pow(dist_wall, 2) * G) / (2 * Math.Pow(V_x, 2)));
+                    ceilingHit = h_max >= h_goal;
+                    dist_ceiling = (float)(V_x * (V_y - Math.Sqrt(Math.Pow(V_y, 2) - (h_goal - transform.localPosition.y) * 2 * G)) / G);
+                    h_ceiling = h_goal;
+                }
+                else
+                {
+                    p_impact = p_impact_ground;
+                }
+            }
         }
         if (ceilingHit)
         {
