@@ -152,6 +152,7 @@ public class Ball : Resettable
 
         rb.velocity += deltaVPara + deltaVPerp;
         rb.angularVelocity += A * Radius * Vector3.Cross(deltaVPara, n);
+        PredictShot();
     }
 
     private void PerformPlayerHit(Collision col)
@@ -190,6 +191,12 @@ public class Ball : Resettable
         {
             col.rigidbody.angularVelocity = col.rigidbody.angularVelocity.normalized * col.rigidbody.maxAngularVelocity;
         }
+        PredictShot();
+
+    }
+
+    private void PredictShot()
+    {
         if (useShotPrediction)
         {
             Vector3 impactPosition = CalculateImpactPosition();
@@ -198,7 +205,6 @@ public class Ball : Resettable
                 HitMarker.transform.position = impactPosition;
             }
         }
-
     }
 
     //Calculates the Spot the Ball would land on on the edges of the arena (including the ground and ceiling).
@@ -206,6 +212,8 @@ public class Ball : Resettable
     {
         float r =                               //Ball radius
             GetComponentInChildren<SphereCollider>().radius;
+        float tolerance = 0.02f;
+        float r_tol = r - tolerance;
 
         Vector3 V_hor =
             new Vector3(rb.velocity.x, 0, rb.velocity.z);
@@ -214,24 +222,24 @@ public class Ball : Resettable
         float V_y = rb.velocity.y;              //Upwards velocity
 
         float G = -Physics.gravity.y;            //Gravity  
-        float h = rb.position.y - r;            //Height above rest at ground      
+        float h = transform.localPosition.y - r;            //Height above rest at ground      
         float h_max =                           //Max Height for unhindered flight
             (float)(h + Math.Pow(V_y, 2) / (2 * G));
 
         float dist_ground = (float)(V_x * (V_y + Math.Sqrt(Math.Pow(V_y, 2) + h * 2 * G)) / G);  //Distance the Ball travels in current direction until impact
         Vector3 line_ground = dir * dist_ground;
-        Vector3 ballPosition2d = new Vector3(rb.position.x, r, rb.position.z);
+        Vector3 ballPosition2d = new Vector3(transform.localPosition.x, r, transform.localPosition.z);
         Vector3 p_impact = ballPosition2d + line_ground;  //Impact Point (Center of Ball at impact) if the ball flies unhindered (no walls or ceiling in the trajectory)
 
         //Arena Corners (out of ball perspective)
-        Vector3 p1 = new Vector3(-39.68f + r, r, 40.96f - r);
-        Vector3 p2 = new Vector3(39.68f - r, r, 40.96f - r);
-        Vector3 p3 = new Vector3(51.2f - r, r, 29.44f - r);
-        Vector3 p4 = new Vector3(51.2f - r, r, -29.44f + r);
-        Vector3 p5 = new Vector3(39.68f - r, r, -40.96f + r);
-        Vector3 p6 = new Vector3(-39.68f + r, r, -40.96f + r);
-        Vector3 p7 = new Vector3(-51.2f + r, r, -29.44f + r);
-        Vector3 p8 = new Vector3(-51.2f + r, r, 29.44f - r);
+        Vector3 p1 = new Vector3(-39.68f + r_tol, r,  40.96f - r_tol);
+        Vector3 p2 = new Vector3( 39.68f - r_tol, r,  40.96f - r_tol);
+        Vector3 p3 = new Vector3( 51.2f  - r_tol, r,  29.44f - r_tol);
+        Vector3 p4 = new Vector3( 51.2f  - r_tol, r, -29.44f + r_tol);
+        Vector3 p5 = new Vector3( 39.68f - r_tol, r, -40.96f + r_tol);
+        Vector3 p6 = new Vector3(-39.68f + r_tol, r, -40.96f + r_tol);
+        Vector3 p7 = new Vector3(-51.2f  + r_tol, r, -29.44f + r_tol);
+        Vector3 p8 = new Vector3(-51.2f  + r_tol, r,  29.44f - r_tol);
 
         Vector3 intersection;
         Vector3 p_intersect_wall = Vector3.zero;
@@ -274,7 +282,7 @@ public class Ball : Resettable
 
         float h_ceiling = 20.44f - r;           //Height of the arena ceiling
         bool ceilingHit = h_max >= h_ceiling;
-        float dist_ceiling = (float)(V_x * (V_y - Math.Sqrt(Math.Pow(V_y, 2) - (h_ceiling - rb.position.y) * 2 * G)) / G);
+        float dist_ceiling = (float)(V_x * (V_y - Math.Sqrt(Math.Pow(V_y, 2) - (h_ceiling - transform.localPosition.y) * 2 * G)) / G);
 
 
         //Trajectory intercepts both wall and ceiling, determine what gets hit first
@@ -291,12 +299,12 @@ public class Ball : Resettable
         }
         if (wallHit)
         {
-            p_impact = rb.position + dir * dist_wall;
+            p_impact = transform.localPosition + dir * dist_wall;
             p_impact.y = (float)(h + (dist_wall * V_y / V_x) - (Math.Pow(dist_wall, 2) * G) / (2 * Math.Pow(V_x, 2)));
         }
         if (ceilingHit)
         {
-            p_impact = rb.position + dir * dist_ceiling;
+            p_impact = transform.localPosition + dir * dist_ceiling;
             p_impact.y = h_ceiling;
         }
         return p_impact;
