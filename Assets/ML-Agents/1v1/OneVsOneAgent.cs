@@ -17,9 +17,6 @@ public class OneVsOneAgent : PGBaseAgent
 
     private Rigidbody _rbBall, _rbEnemy;
 
-    private float _episodeLength;
-    private float _lastResetTime;
-
     private MatchEnvController _matchEnvController;
 
     private Transform _ball, _enemy;
@@ -29,7 +26,7 @@ public class OneVsOneAgent : PGBaseAgent
     void Start()
     {
         base.Start();
-        _episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
+        //_episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
 
         _matchEnvController = transform.parent.GetComponent<MatchEnvController>();
         _teamController = GetComponentInParent<TeamController>();
@@ -41,7 +38,7 @@ public class OneVsOneAgent : PGBaseAgent
 
     public void FixedUpdate()
     {
-        AddReward(- (Time.fixedDeltaTime / _episodeLength));
+        AddReward(-1.0f / _matchEnvController.maxSteps);
     }
 
     public override void OnEpisodeBegin()
