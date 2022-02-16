@@ -1313,14 +1313,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1469899324}
     m_Modifications:
-    - target: {fileID: 883974180034025411, guid: 0a3f86ef81cf99f46b33e7f9e661ee20, type: 3}
-      propertyPath: _seedText
-      value: 
-      objectReference: {fileID: 1496263053}
-    - target: {fileID: 883974180034025411, guid: 0a3f86ef81cf99f46b33e7f9e661ee20, type: 3}
-      propertyPath: defaultParameter.seed
-      value: -1
-      objectReference: {fileID: 0}
     - target: {fileID: 883974180034025414, guid: 0a3f86ef81cf99f46b33e7f9e661ee20, type: 3}
       propertyPath: m_Name
       value: GoalKeeperAgent

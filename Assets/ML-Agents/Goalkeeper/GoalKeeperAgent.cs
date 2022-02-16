@@ -45,7 +45,7 @@ public class GoalKeeperAgent : PGBaseAgent
         _ball.rotation = Quaternion.Euler(0f, 0f, 0f);
 
         // Set new Taget Position
-        _shootAt.localPosition = new Vector3(-53f, UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-7f, 7f));
+        _shootAt.localPosition = new Vector3(-53f, UnityEngine.Random.Range(3f, 3f), UnityEngine.Random.Range(-7f, 7f));
 
         // Shoot Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
