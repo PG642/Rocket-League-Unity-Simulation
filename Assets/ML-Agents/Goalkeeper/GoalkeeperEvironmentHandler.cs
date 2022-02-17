@@ -20,7 +20,6 @@ namespace ML_Agents.Goalkeeper
             {
                 activeSeed = (int)currentParameter.seed;
                 UnityEngine.Random.InitState((int)currentParameter.seed);
-                Debug.Log("fixed seed!");
             }
             else
             {

@@ -46,15 +46,16 @@ public class TopScorerAgent : PGBaseAgent
     public override void OnEpisodeBegin()
     {
         _handler.ResetParameter();
-        var diff = UnityEngine.Random.Range(0, 200) % 4;
-        switch (diff)
-        {
-            case 0: OnEpisodeBeginDifficulty0(); break;
-            case 1: OnEpisodeBeginDifficulty1(); break;
-            case 2: OnEpisodeBeginDifficulty2(); break;
-            case 3: OnEpisodeBeginDifficultyDefault(); break;
-            default: throw new Exception("Difficulty does not exist");
-        }
+        // var diff = UnityEngine.Random.Range(0, 200) % 4;
+        // switch (diff)
+        // {
+        //     case 0: OnEpisodeBeginDifficulty0(); break;
+        //     case 1: OnEpisodeBeginDifficulty1(); break;
+        //     case 2: OnEpisodeBeginDifficulty2(); break;
+        //     case 3: OnEpisodeBeginDifficultyDefault(); break;
+        //     default: throw new Exception("Difficulty does not exist");
+        // }
+        OnEpisodeBeginDifficulty2();
         ball.ResetValues();
         mapData.ResetIsScored();
         SetReward(0f);
@@ -94,7 +95,7 @@ public class TopScorerAgent : PGBaseAgent
         Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
         controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
 
-
+        
         //Reset Ball
         float ball_z_pos = UnityEngine.Random.Range(0, 9) % 2 == 0 ? 6f : -6f;
         _ball.localPosition = new Vector3(45f, UnityEngine.Random.Range(2f, 5f), ball_z_pos + UnityEngine.Random.Range(-1f, 1f));
@@ -215,7 +216,7 @@ public class TopScorerAgent : PGBaseAgent
 
     private void Reset()
     {
-        Debug.Log(GetCumulativeReward());
+        // Debug.Log(GetCumulativeReward());
         _lastResetTime = Time.time;
         EndEpisode();
     }
@@ -225,7 +226,7 @@ public class TopScorerAgent : PGBaseAgent
     /// </summary>
     protected override void AssignReward()
     {
-        AddReward(-(1 / _maxStepsPerEpisode));
+        // AddReward(-(1 / _maxStepsPerEpisode));
         if (StepCount > _maxStepsPerEpisode)// || rb.position.x > rbBall.position.x + 5.0f)
         {
             // Agent didn't score a goal
@@ -235,8 +236,9 @@ public class TopScorerAgent : PGBaseAgent
         else
         {
             // AddShortEpisodeReward(-0.2f);
-            float agentBallDistanceReward = 0.00025f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
-            AddReward(agentBallDistanceReward);
+            // float agentBallDistanceReward = 0.00025f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
+            //Debug.Log(agentBallDistanceReward);
+            // AddReward(agentBallDistanceReward);
 
             if (mapData.isScoredBlue)
             {
@@ -247,31 +249,31 @@ public class TopScorerAgent : PGBaseAgent
         }
     }
 
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.tag.Equals("Ball"))
-        {
-            AddReward(0.1f);
-        }
-    }
+    // private void OnCollisionEnter(Collision other)
+    // {
+    //     if (other.gameObject.tag.Equals("Ball"))
+    //     {
+    //         AddReward(0.1f);
+    //     }
+    // }
 
-    private void AddShortEpisodeReward(float factor)
-    {
-        // adds a reward in range [0, factor]
-        if (StepCount > _maxStepsPerEpisode)
-        {
-            return;
-        }
-        AddReward((1f - (StepCount / _maxStepsPerEpisode)) * factor);
-    }
+    // private void AddShortEpisodeReward(float factor)
+    // {
+    //     // adds a reward in range [0, factor]
+    //     if (StepCount > _maxStepsPerEpisode)
+    //     {
+    //         return;
+    //     }
+    //     AddReward((1f - (StepCount / _maxStepsPerEpisode)) * factor);
+    // }
 
-    private void AddFastShotReward(float factor)
-    {
-        // adds a reward in range [0, factor]
-        if (Time.time - _lastResetTime > _episodeLength)
-        {
-            return;
-        }
-        AddReward((rbBall.velocity.magnitude / _ball.GetComponent<Ball>().maxVelocity) * factor);
-    }
+    // private void AddFastShotReward(float factor)
+    // {
+    //     // adds a reward in range [0, factor]
+    //     if (Time.time - _lastResetTime > _episodeLength)
+    //     {
+    //         return;
+    //     }
+    //     AddReward((rbBall.velocity.magnitude / _ball.GetComponent<Ball>().maxVelocity) * factor);
+    // }
 }
