@@ -14,7 +14,6 @@ public class ShootBall : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        ShootTarget();
     }
 
 
@@ -26,6 +25,6 @@ public class ShootBall : MonoBehaviour
             velocity = Random.Range(speed.x, speed.y);
         }
         
-        _rb.AddForce( dir.normalized  * velocity, ForceMode.VelocityChange);
+        _rb.velocity = dir.normalized  * velocity;
     }
 }
