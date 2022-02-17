@@ -6,11 +6,14 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using ML_Agents.Goalkeeper;
 
 
 public class TopScorerAgent : PGBaseAgent
 {
-    // Start is called before the first frame update
+    [SerializeField] public GoalkeeperEnvironmentParameters defaultParameter;
+
+    private GoalkeeperEvironmentHandler _handler;
     public int Difficulty = 0;
 
     private Rigidbody rbBall;
@@ -26,7 +29,8 @@ public class TopScorerAgent : PGBaseAgent
     protected override void Start()
     {
         base.Start();
-        _ball = transform.parent.Find("Ball");
+        _handler = new GoalkeeperEvironmentHandler(transform.root.gameObject, defaultParameter);
+        _ball = _handler.environment.GetComponentInChildren<Ball>().transform;
         rbBall = _ball.GetComponent<Rigidbody>();
         ball = _ball.GetComponent<Ball>();
 
@@ -34,10 +38,14 @@ public class TopScorerAgent : PGBaseAgent
         _shootAt = transform.parent.Find("ShootAt");
 
         _lastResetTime = Time.time;
+
+        _handler.UpdateEnvironmentParameters();
+        _handler.ResetParameter();
     }
 
     public override void OnEpisodeBegin()
     {
+        _handler.ResetParameter();
         var diff = UnityEngine.Random.Range(0, 200) % 4;
         switch (diff)
         {
