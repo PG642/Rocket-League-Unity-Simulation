@@ -8,6 +8,7 @@ namespace ML_Agents.Goalkeeper
     [Serializable]
     public class GoalkeeperEvironmentHandler: EnvironmentHandler<GoalkeeperEnvironmentParameters>
     {
+        public int activeSeed = -1;
         public GoalkeeperEvironmentHandler(GameObject env, GoalkeeperEnvironmentParameters defaultParameter) : base(env, defaultParameter)
         {
         }
@@ -15,6 +16,19 @@ namespace ML_Agents.Goalkeeper
         public override void ResetParameter()
         {
             UpdateEnvironmentParameters();
+            if (currentParameter.seed >= 0)
+            {
+                activeSeed = (int)currentParameter.seed;
+                UnityEngine.Random.InitState((int)currentParameter.seed);
+                Debug.Log("fixed seed!");
+            }
+            else
+            {
+                System.Random rand = new System.Random();
+                // Sample a seed from the range 0 to 999
+                activeSeed = rand.Next(1000);
+                UnityEngine.Random.InitState(activeSeed);
+            }
             //TODO after merge with difficulty, add difficulty parameter
             //environment.GetComponentInChildren<GoalKeeperAgent>().difficulty = currentParameter.difficulty;
             if (currentParameter.canDoubleJump == 0)
