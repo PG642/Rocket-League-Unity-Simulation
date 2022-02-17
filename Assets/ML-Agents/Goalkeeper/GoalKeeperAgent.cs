@@ -282,8 +282,13 @@ public class GoalKeeperAgent : PGBaseAgent
             Debug.Log("Car: boostAmount == NaN");
             boostAmount = -1f;
         }
-
         sensor.AddObservation(boostAmount);
+
+        // Relative position car to ball
+        float relativeXPos = ((_ball.localPosition.x + 60f) - (transform.localPosition.x + 60f)) / 120f;
+        float relativeYPos = (_ball.localPosition.y - transform.localPosition.y) / 20f;
+        float relativeZPos = ((_ball.localPosition.z + 41f) - (transform.localPosition.z + 41f)) / 82f;
+        sensor.AddObservation(new Vector3(relativeXPos, relativeYPos, relativeZPos));
     }
 
 

@@ -335,18 +335,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6750119729059262998}
   m_Enabled: 0
---- !u!114 &3243343760869561856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6750119729296308303}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2fcec0097665e74fbec36bfc73d7dc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6750119729343506587
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,20 +496,6 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 6750119729343506586}
---- !u!114 &6750119729572142156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9118461746507665664}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88304332db05f5e4b80c2152484c2fa3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShootAt: {fileID: 6750119728131920436}
-  speed: {x: 5, y: 5}
 --- !u!1001 &4127686330414560867
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -532,10 +506,18 @@ PrefabInstance:
     - target: {fileID: 7270290807663857190, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: m_Model
       value: 
+      objectReference: {fileID: 5022602860645237092, guid: b56addff173f3da41b4fa25dc61fed23, type: 3}
+    - target: {fileID: 7270290807663857190, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 23
+      objectReference: {fileID: 0}
+    - target: {fileID: 7270290807663857192, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
+      propertyPath: DecisionPeriod
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: Difficulty
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857196, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: m_Name
@@ -597,6 +579,18 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7270290807663857197, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
   m_PrefabInstance: {fileID: 4127686330414560867}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3243343760869561856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6750119729296308303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2fcec0097665e74fbec36bfc73d7dc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6750119728108799112
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -724,7 +718,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4104392332257108266, guid: 548a302a7fc95254a999ba2811266cf8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 548a302a7fc95254a999ba2811266cf8, type: 3}
@@ -868,7 +862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 44.27
+      value: -5.6
       objectReference: {fileID: 0}
     - target: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
       propertyPath: m_LocalPosition.y
@@ -919,3 +913,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2532842153811578196, guid: 2946bfcea95aa1d40872741310581650, type: 3}
   m_PrefabInstance: {fileID: 6750119729572142163}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6750119729572142156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9118461746507665664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88304332db05f5e4b80c2152484c2fa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShootAt: {fileID: 6750119728131920436}
+  speed: {x: 5, y: 5}
