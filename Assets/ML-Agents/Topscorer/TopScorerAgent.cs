@@ -39,7 +39,6 @@ public class TopScorerAgent : PGBaseAgent
 
         _lastResetTime = Time.time;
 
-        _handler.UpdateEnvironmentParameters();
         _handler.ResetParameter();
     }
 
@@ -55,7 +54,7 @@ public class TopScorerAgent : PGBaseAgent
         //     case 3: OnEpisodeBeginDifficultyDefault(); break;
         //     default: throw new Exception("Difficulty does not exist");
         // }
-        OnEpisodeBeginDifficulty2();
+        OnEpisodeBeginDifficultyDefault();
         ball.ResetValues();
         mapData.ResetIsScored();
         SetReward(0f);
