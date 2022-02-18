@@ -517,7 +517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: MaxStep
-      value: 2000
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: Difficulty
@@ -526,6 +526,10 @@ PrefabInstance:
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: defaultParameter.difficulty
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
+      propertyPath: defaultParameter.initialBoost
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857196, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: m_Name
@@ -934,4 +938,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShootAt: {fileID: 6750119728131920436}
-  speed: {x: 5, y: 5}
+  speed: {x: 5, y: 10}

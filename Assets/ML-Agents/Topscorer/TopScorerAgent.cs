@@ -19,10 +19,6 @@ public class TopScorerAgent : PGBaseAgent
     private Rigidbody rbBall;
     private Ball ball;
 
-    private static float _episodeLength = 5f;
-    private static float _maxStepsPerEpisode = 120f * _episodeLength;
-    private float _lastResetTime;
-
     private Transform _ball, _shootAt;
     private Vector3 _midFieldPosition;
 
@@ -36,8 +32,6 @@ public class TopScorerAgent : PGBaseAgent
 
         _midFieldPosition = Vector3.zero;
         _shootAt = transform.parent.Find("ShootAt");
-
-        _lastResetTime = Time.time;
 
         _handler.ResetParameter();
     }
@@ -112,12 +106,12 @@ public class TopScorerAgent : PGBaseAgent
     private void OnEpisodeBeginDifficultyDefault()
     {
         //Reset Car
-        Vector3 startPosition = _midFieldPosition + new Vector3(0f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
+        Vector3 startPosition = _midFieldPosition + new Vector3(20f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
 
         controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f + UnityEngine.Random.Range(-20f, 20f), 0f), 100f);
 
         //Reset Ball
-        _ball.localPosition = new Vector3(UnityEngine.Random.Range(30f, 50f), UnityEngine.Random.Range(0f, 10f), UnityEngine.Random.Range(-20f, 20f));
+        _ball.localPosition = new Vector3(50.0f, UnityEngine.Random.Range(0.5f, 12f), UnityEngine.Random.Range(-20f, 20f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
@@ -216,7 +210,6 @@ public class TopScorerAgent : PGBaseAgent
     private void Reset()
     {
         // Debug.Log(GetCumulativeReward());
-        _lastResetTime = Time.time;
         EndEpisode();
     }
 
@@ -226,25 +219,16 @@ public class TopScorerAgent : PGBaseAgent
     protected override void AssignReward()
     {
         // AddReward(-(1 / _maxStepsPerEpisode));
-        if (StepCount > _maxStepsPerEpisode)// || rb.position.x > rbBall.position.x + 5.0f)
-        {
-            // Agent didn't score a goal
-            // AddReward(-1f);
-            Reset();
-        }
-        else
-        {
             // AddShortEpisodeReward(-0.2f);
             // float agentBallDistanceReward = 0.00025f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
             //Debug.Log(agentBallDistanceReward);
             // AddReward(agentBallDistanceReward);
 
-            if (mapData.isScoredBlue)
-            {
-                // Agent scored a goal
-                SetReward(1f);
-                Reset();
-            }
+        if (mapData.isScoredBlue)
+        {
+            // Agent scored a goal
+            SetReward(1f);
+            Reset();
         }
     }
 
