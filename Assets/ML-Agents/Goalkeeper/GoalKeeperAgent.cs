@@ -1,7 +1,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
-using ML_Agents.Goalkeeper;
+using PGAgent.ResetParameters;
 using ML_Agents.Handler;
 using UnityEngine;
 using Unity.MLAgents;
@@ -13,9 +13,9 @@ using Unity.MLAgents.Policies;
 public class GoalKeeperAgent : PGBaseAgent
 {
     // Start is called before the first frame update
-    [SerializeField] public GoalkeeperEnvironmentParameters defaultParameter;
+    [SerializeField] public PGResetParameters defaultParameter;
 
-    private GoalkeeperEvironmentHandler _handler;
+    private PGEnvironmentHandler<PGResetParameters> _handler;
     private Rigidbody _rbBall;
 
     private float _episodeLength = 10f;
@@ -27,7 +27,7 @@ public class GoalKeeperAgent : PGBaseAgent
     protected override void Start()
     {
         base.Start();
-        _handler = new GoalkeeperEvironmentHandler(GameObject.Find("Environment"), defaultParameter);
+        _handler = new PGEnvironmentHandler<PGResetParameters>(transform.parent.gameObject, defaultParameter);
 
         _ball = transform.parent.Find("Ball");
         _rbBall = _ball.GetComponent<Rigidbody>();

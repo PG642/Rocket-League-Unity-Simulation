@@ -6,7 +6,6 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using PGAgent.ResetParameters;
-using ML_Agents.Goalkeeper;
 
 
 public class TopScorerAgent : PGBaseAgent
