@@ -1,18 +1,19 @@
-using System.Collections;
 using System;
-using System.Collections.Generic;
+using ML_Agents.Handler;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using PGAgent.ResetParameters;
+using ML_Agents.Goalkeeper;
 
 
 public class TopScorerAgent : PGBaseAgent
 {
-    // Start is called before the first frame update
-    public int Difficulty = 0;
-
+    public TopScorerAgentParameter defaultParameter;
+    public float Difficulty;
+    private PGEnvironmentHandler<TopScorerAgentParameter> _handler;
     private Rigidbody rbBall;
     private Ball ball;
 
@@ -26,6 +27,7 @@ public class TopScorerAgent : PGBaseAgent
     protected override void Start()
     {
         base.Start();
+        _handler = new PGEnvironmentHandler<TopScorerAgentParameter>(transform.parent.gameObject, defaultParameter, new TopScorerAgentHandler());
         _ball = transform.parent.Find("Ball");
         rbBall = _ball.GetComponent<Rigidbody>();
         ball = _ball.GetComponent<Ball>();
@@ -38,13 +40,16 @@ public class TopScorerAgent : PGBaseAgent
 
     public override void OnEpisodeBegin()
     {
-        var diff = UnityEngine.Random.Range(0, 200) % 4;
-        switch (diff)
+        _handler.ResetParameter();
+        // var rand = UnityEngine.Random.Range(0, 200);
+        // var diff = rand % 4;
+        switch (Difficulty)
         {
-            case 0: OnEpisodeBeginDifficulty0(); break;
-            case 1: OnEpisodeBeginDifficulty1(); break;
-            case 2: OnEpisodeBeginDifficulty2(); break;
-            case 3: OnEpisodeBeginDifficultyDefault(); break;
+            case 0f: OnEpisodeBeginDifficulty0(); break;
+            case 1f: OnEpisodeBeginDifficulty1(); break;
+            case 2f: OnEpisodeBeginDifficulty2(); break;
+            case 3f: OnEpisodeBeginDifficulty3(); break;
+            case 4f: OnEpisodeBeginDifficulty4(); break;
             default: throw new Exception("Difficulty does not exist");
         }
         ball.ResetValues();
@@ -101,7 +106,7 @@ public class TopScorerAgent : PGBaseAgent
         _ball.GetComponent<ShootBall>().ShootTarget();
     }
 
-    private void OnEpisodeBeginDifficultyDefault()
+    private void OnEpisodeBeginDifficulty3()
     {
         //Reset Car
         Vector3 startPosition = _midFieldPosition + new Vector3(0f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
@@ -118,6 +123,21 @@ public class TopScorerAgent : PGBaseAgent
         _shootAt.localPosition = new Vector3(UnityEngine.Random.Range(10f, 30f), UnityEngine.Random.Range(0f, 7f), rb.position.z);
 
         //Throw Ball
+        _ball.GetComponent<ShootBall>().ShootTarget();
+    }
+
+    private void OnEpisodeBeginDifficulty4()
+    {
+        var ballLeft = UnityEngine.Random.Range(0, 100) % 2 == 0;
+        Vector3 startPosition = _midFieldPosition + new Vector3(23f, 0f, ballLeft ? 10f : -10f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+
+        _ball.localPosition = new Vector3(44f, 1.41579f, ballLeft ? -33f : 33f);
+        rbBall.velocity = Vector3.zero;
+        rbBall.angularVelocity = Vector3.zero;
+
+        _shootAt.localPosition = new Vector3(44f, 10f, ballLeft ? -15f : 15f);
+        _ball.GetComponent<ShootBall>().speed = new Vector2(20f, 20f);
         _ball.GetComponent<ShootBall>().ShootTarget();
     }
 
@@ -259,5 +279,24 @@ public class TopScorerAgent : PGBaseAgent
             return;
         }
         AddReward((rbBall.velocity.magnitude / _ball.GetComponent<Ball>().maxVelocity) * factor);
+    }
+
+    [Serializable]
+    public class TopScorerAgentParameter : PGResetParameters
+    {
+        public float difficulty;
+
+        public TopScorerAgentParameter() : base()
+        {
+            difficulty = 0f;
+        }
+    }
+
+    public class TopScorerAgentHandler : ResetParameterHandler<TopScorerAgentParameter>
+    {
+        public void Handle(TopScorerAgentParameter parameters, GameObject environment)
+        {
+            environment.GetComponentInChildren<TopScorerAgent>().Difficulty = parameters.difficulty;
+        }
     }
 }
