@@ -68,7 +68,7 @@ public class CubeController : MonoBehaviour
         }
     }
 
-    public void ResetCar(Vector3 position, Quaternion rotation, float boost = 33f)
+    public void ResetCar(Vector3 position, Quaternion rotation)
     {
         _rb.transform.localPosition = position;
         _rb.rotation = rotation;
@@ -76,7 +76,6 @@ public class CubeController : MonoBehaviour
         _rb.angularVelocity = Vector3.zero;
 
         GetComponent<CubeJumping>().Reset();
-        GetComponent<CubeBoosting>().boostAmount = boost;
     }
 
     private void UpdateCarVariables()

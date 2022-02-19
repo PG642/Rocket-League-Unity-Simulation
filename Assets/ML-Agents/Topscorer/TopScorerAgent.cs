@@ -22,6 +22,7 @@ public class TopScorerAgent : PGBaseAgent
 
     private Transform _ball, _shootAt;
     private Vector3 _midFieldPosition;
+    private Transform _goalLine;
 
     protected override void Start()
     {
@@ -35,43 +36,47 @@ public class TopScorerAgent : PGBaseAgent
         _shootAt = transform.parent.Find("ShootAt");
 
         _lastResetTime = Time.time;
+        _goalLine = transform.parent.Find("World").Find("Rocket_Map").Find("GoalLines").Find("GoalLineRed");
     }
 
     public override void OnEpisodeBegin()
     {
         _handler.ResetParameter();
+        _episodeLength = 5f;
         // var rand = UnityEngine.Random.Range(0, 200);
         // var diff = rand % 4;
         switch (Difficulty)
         {
-            case 0f: OnEpisodeBeginDifficulty0(); break;
-            case 1f: OnEpisodeBeginDifficulty1(); break;
-            case 2f: OnEpisodeBeginDifficulty2(); break;
-            case 3f: OnEpisodeBeginDifficulty3(); break;
-            case 4f: OnEpisodeBeginDifficulty4(); break;
+            case Difficulties.LAYING_IN_FRONT_OF_GOAL: OnEpisodeBeginInFrontOfGoal(); break;
+            case Difficulties.ROLLING_IN_FRONT_OF_GOAL: OnEpisodeBeginRollingInFrontOfGoal(); break;
+            case Difficulties.BOUNCING_IN_FRONT_OF_GOAL: OnEpisodeBeginBouncingInFrontOfGoal(); break;
+            case Difficulties.DRIBBLING: OnEpisodeBeginDribbling(); break;
+            case Difficulties.SHOT_TO_FIELD: OnEpisodeBeginShotToField(); break;
+            case Difficulties.AERIAL_ACROSS_GOALLINE: OnEpisodeBeginAerialAcrossGoal(); break;
             default: throw new Exception("Difficulty does not exist");
         }
+        _maxStepsPerEpisode = 120f * _episodeLength;
         ball.ResetValues();
         mapData.ResetIsScored();
         SetReward(0f);
     }
 
-    private void OnEpisodeBeginDifficulty0()
+    private void OnEpisodeBeginInFrontOfGoal()
     {
         Vector3 startPosition = _midFieldPosition + new Vector3(30f, 0.17f, 0f);
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f));
 
         _ball.localPosition = new Vector3(45f, 0.9315f, UnityEngine.Random.Range(-5f, 5f));
         rbBall.velocity = Vector3.zero;
         rbBall.angularVelocity = Vector3.zero;
     }
 
-    private void OnEpisodeBeginDifficulty1()
+    private void OnEpisodeBeginRollingInFrontOfGoal()
     {
         // Reset Car
         Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-5f, 5f));
 
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f));
 
         //Reset Ball
         _ball.localPosition = new Vector3(45f, 0.93f, UnityEngine.Random.Range(1, 10) % 2 == 0 ? -7f : 7f);
@@ -85,16 +90,15 @@ public class TopScorerAgent : PGBaseAgent
         _ball.GetComponent<ShootBall>().ShootTarget();
     }
 
-    private void OnEpisodeBeginDifficulty2()
+    private void OnEpisodeBeginBouncingInFrontOfGoal()
     {
         Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f));
 
 
         //Reset Ball
         float ball_z_pos = UnityEngine.Random.Range(0, 9) % 2 == 0 ? 6f : -6f;
         _ball.localPosition = new Vector3(45f, UnityEngine.Random.Range(2f, 5f), ball_z_pos + UnityEngine.Random.Range(-1f, 1f));
-        //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
@@ -105,16 +109,27 @@ public class TopScorerAgent : PGBaseAgent
         _ball.GetComponent<ShootBall>().ShootTarget();
     }
 
-    private void OnEpisodeBeginDifficulty3()
+    private void OnEpisodeBeginDribbling()
+    {
+        _episodeLength = 10f;
+
+        Vector3 startPosition = _midFieldPosition + new Vector3(-30f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f));
+
+        _ball.localPosition = new Vector3(0f, 0.9315f, UnityEngine.Random.Range(-10f, 10f));
+        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+    }
+
+    private void OnEpisodeBeginShotToField()
     {
         //Reset Car
         Vector3 startPosition = _midFieldPosition + new Vector3(0f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
 
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f + UnityEngine.Random.Range(-20f, 20f), 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f + UnityEngine.Random.Range(-20f, 20f), 0f));
 
         //Reset Ball
         _ball.localPosition = new Vector3(UnityEngine.Random.Range(30f, 50f), UnityEngine.Random.Range(0f, 10f), UnityEngine.Random.Range(-20f, 20f));
-        //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
@@ -125,11 +140,11 @@ public class TopScorerAgent : PGBaseAgent
         _ball.GetComponent<ShootBall>().ShootTarget();
     }
 
-    private void OnEpisodeBeginDifficulty4()
+    private void OnEpisodeBeginAerialAcrossGoal()
     {
         var ballLeft = UnityEngine.Random.Range(0, 100) % 2 == 0;
         Vector3 startPosition = _midFieldPosition + new Vector3(23f, 0f, ballLeft ? 10f : -10f);
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f));
 
         _ball.localPosition = new Vector3(44f, 1.41579f, ballLeft ? -33f : 33f);
         rbBall.velocity = Vector3.zero;
@@ -220,6 +235,7 @@ public class TopScorerAgent : PGBaseAgent
 
     private void Reset()
     {
+        // FIXME auskommentieren
         Debug.Log(GetCumulativeReward());
         _lastResetTime = Time.time;
         EndEpisode();
@@ -233,15 +249,19 @@ public class TopScorerAgent : PGBaseAgent
         AddReward(-(1 / _maxStepsPerEpisode));
         if (StepCount > _maxStepsPerEpisode)// || rb.position.x > rbBall.position.x + 5.0f)
         {
-            // Agent didn't score a goal
-            // AddReward(-1f);
             Reset();
         }
         else
         {
             // AddShortEpisodeReward(-0.2f);
-            float agentBallDistanceReward = 0.00025f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
+            float agentBallDistanceReward = 0.00005f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
             AddReward(agentBallDistanceReward);
+
+            if (Difficulty == Difficulties.DRIBBLING && _ball.localPosition.x >= 5f)
+            {
+                float ballGoalDistanceReward = 0.0003f * (1 - (Vector3.Distance(_goalLine.position, _ball.position) / mapData.diag));
+                AddReward(ballGoalDistanceReward);
+            }
 
             if (mapData.isScoredBlue)
             {
@@ -297,5 +317,15 @@ public class TopScorerAgent : PGBaseAgent
         {
             environment.GetComponentInChildren<TopScorerAgent>().Difficulty = parameters.difficulty;
         }
+    }
+
+    public static class Difficulties
+    {
+        public const float LAYING_IN_FRONT_OF_GOAL = 0f;
+        public const float ROLLING_IN_FRONT_OF_GOAL = 1f;
+        public const float BOUNCING_IN_FRONT_OF_GOAL = 2f;
+        public const float DRIBBLING = 2.5f;
+        public const float SHOT_TO_FIELD = 3f;
+        public const float AERIAL_ACROSS_GOALLINE = 4f;
     }
 }
