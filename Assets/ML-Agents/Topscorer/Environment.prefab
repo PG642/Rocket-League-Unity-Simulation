@@ -938,4 +938,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShootAt: {fileID: 6750119728131920436}
-  speed: {x: 5, y: 10}
+  speed: {x: 5, y: 8}
