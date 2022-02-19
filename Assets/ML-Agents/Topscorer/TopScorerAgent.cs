@@ -222,10 +222,10 @@ public class TopScorerAgent : PGBaseAgent
     /// </summary>
     protected override void AssignReward()
     {
-        if (!_ballTouched)
-        {
-            AddReward(-0.01f / 800f * 5f);
-        }
+        // if (!_ballTouched)
+        // {
+        //     AddReward(-0.01f / 800f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag)));
+        // }
         if (mapData.isScoredBlue)
         {
             // Agent scored a goal
@@ -241,7 +241,7 @@ public class TopScorerAgent : PGBaseAgent
             if (!_ballTouched)
             {
                 AddReward(0.1f);
-                Debug.Log(GetCumulativeReward());
+                // Debug.Log(GetCumulativeReward());
                 _ballTouched = true;
             }
         }
