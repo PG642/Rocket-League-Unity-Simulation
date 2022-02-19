@@ -21,6 +21,8 @@ public class TopScorerAgent : PGBaseAgent
 
     private Transform _ball, _shootAt;
     private Vector3 _midFieldPosition;
+    private bool _ballTouched = false;
+    private float _minDistance = 0.0f;
 
     protected override void Start()
     {
@@ -39,6 +41,7 @@ public class TopScorerAgent : PGBaseAgent
     public override void OnEpisodeBegin()
     {
         _handler.ResetParameter();
+        _ballTouched = false;
         // var diff = UnityEngine.Random.Range(0, 200) % 4;
         // switch (diff)
         // {
@@ -57,7 +60,7 @@ public class TopScorerAgent : PGBaseAgent
     private void OnEpisodeBeginDifficulty0()
     {
         Vector3 startPosition = _midFieldPosition + new Vector3(30f, 0.17f, 0f);
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), _handler.boost_amount);
 
         _ball.localPosition = new Vector3(45f, 0.9315f, UnityEngine.Random.Range(-5f, 5f));
         rbBall.velocity = Vector3.zero;
@@ -69,7 +72,7 @@ public class TopScorerAgent : PGBaseAgent
         // Reset Car
         Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-5f, 5f));
 
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), _handler.boost_amount);
 
         //Reset Ball
         _ball.localPosition = new Vector3(45f, 0.93f, UnityEngine.Random.Range(1, 10) % 2 == 0 ? -7f : 7f);
@@ -86,7 +89,7 @@ public class TopScorerAgent : PGBaseAgent
     private void OnEpisodeBeginDifficulty2()
     {
         Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), _handler.boost_amount);
 
         
         //Reset Ball
@@ -108,7 +111,7 @@ public class TopScorerAgent : PGBaseAgent
         //Reset Car
         Vector3 startPosition = _midFieldPosition + new Vector3(20f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
 
-        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f + UnityEngine.Random.Range(-20f, 20f), 0f), 100f);
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f + UnityEngine.Random.Range(-20f, 20f), 0f), _handler.boost_amount);
 
         //Reset Ball
         _ball.localPosition = new Vector3(50.0f, UnityEngine.Random.Range(0.5f, 12f), UnityEngine.Random.Range(-20f, 20f));
@@ -121,6 +124,7 @@ public class TopScorerAgent : PGBaseAgent
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
+        _minDistance = Vector3.Distance(_ball.position, transform.position);
     }
 
     private void resetFromErrorState()
@@ -218,45 +222,43 @@ public class TopScorerAgent : PGBaseAgent
     /// </summary>
     protected override void AssignReward()
     {
-        // AddReward(-(1 / _maxStepsPerEpisode));
-            // AddShortEpisodeReward(-0.2f);
-            // float agentBallDistanceReward = 0.00025f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
-            //Debug.Log(agentBallDistanceReward);
-            // AddReward(agentBallDistanceReward);
-
+        if (!_ballTouched)
+        {
+            AddReward(-0.01f / 800f * 5f);
+        }
         if (mapData.isScoredBlue)
         {
             // Agent scored a goal
-            SetReward(1f);
+            AddReward(1f);
             Reset();
         }
     }
 
-    // private void OnCollisionEnter(Collision other)
-    // {
-    //     if (other.gameObject.tag.Equals("Ball"))
-    //     {
-    //         AddReward(0.1f);
-    //     }
-    // }
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag.Equals("Ball"))
+        {
+            if (!_ballTouched)
+            {
+                AddReward(0.1f);
+                Debug.Log(GetCumulativeReward());
+                _ballTouched = true;
+            }
+        }
+    }
 
-    // private void AddShortEpisodeReward(float factor)
-    // {
-    //     // adds a reward in range [0, factor]
-    //     if (StepCount > _maxStepsPerEpisode)
-    //     {
-    //         return;
-    //     }
-    //     AddReward((1f - (StepCount / _maxStepsPerEpisode)) * factor);
-    // }
-
-    // private void AddFastShotReward(float factor)
-    // {
-    //     // adds a reward in range [0, factor]
-    //     if (Time.time - _lastResetTime > _episodeLength)
-    //     {
-    //         return;
-    //     }
-    //     AddReward((rbBall.velocity.magnitude / _ball.GetComponent<Ball>().maxVelocity) * factor);
-    // }
+    private void RewardCloseness()
+    {
+        float currentDistance = Vector3.Distance(_ball.position, transform.position);
+        if (currentDistance < _minDistance)
+        {
+            _minDistance = currentDistance;
+            if (!_ballTouched)
+            {
+                float agentBallDistanceReward = 0.0001f *  Mathf.Pow((1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag)), 0.5f);
+                //Debug.Log(agentBallDistanceReward);
+                AddReward(agentBallDistanceReward);
+            }
+        }
+    }
 }

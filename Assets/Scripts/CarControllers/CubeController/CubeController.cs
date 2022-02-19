@@ -76,7 +76,7 @@ public class CubeController : MonoBehaviour
         _rb.angularVelocity = Vector3.zero;
 
         GetComponent<CubeJumping>().Reset();
-        GetComponent<CubeBoosting>().boostAmount = 32f;
+        GetComponent<CubeBoosting>().boostAmount = boost;
     }
 
     private void UpdateCarVariables()

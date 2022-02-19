@@ -9,6 +9,7 @@ namespace ML_Agents.Goalkeeper
     public class GoalkeeperEvironmentHandler: EnvironmentHandler<GoalkeeperEnvironmentParameters>
     {
         public int activeSeed = -1;
+        public float boost_amount = 32.0f;
         public GoalkeeperEvironmentHandler(GameObject env, GoalkeeperEnvironmentParameters defaultParameter) : base(env, defaultParameter)
         {
         }
@@ -41,6 +42,7 @@ namespace ML_Agents.Goalkeeper
             else
             {
                 environment.GetComponentInChildren<CubeBoosting>().boostAmount = currentParameter.initialBoost;
+                boost_amount = currentParameter.initialBoost;
             }
             if (currentParameter.canDrift == 0)
             {

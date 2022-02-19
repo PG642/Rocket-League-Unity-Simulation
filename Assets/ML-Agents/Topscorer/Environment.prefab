@@ -517,7 +517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: MaxStep
-      value: 1000
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: Difficulty
@@ -529,7 +529,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: defaultParameter.initialBoost
-      value: 32
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857196, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: m_Name
