@@ -52,6 +52,7 @@ public class TopScorerAgent : PGBaseAgent
             case Difficulties.BOUNCING_IN_FRONT_OF_GOAL: OnEpisodeBeginBouncingInFrontOfGoal(); break;
             case Difficulties.DRIBBLING: OnEpisodeBeginDribbling(); break;
             case Difficulties.SHOT_TO_FIELD: OnEpisodeBeginShotToField(); break;
+            case Difficulties.GOAL_LINE_REBOUND: OnEpisodeBeginGoalLineRebound(); break;
             case Difficulties.AERIAL_ACROSS_GOALLINE: OnEpisodeBeginAerialAcrossGoal(); break;
             default: throw new Exception("Difficulty does not exist");
         }
@@ -137,6 +138,20 @@ public class TopScorerAgent : PGBaseAgent
         _shootAt.localPosition = new Vector3(UnityEngine.Random.Range(10f, 30f), UnityEngine.Random.Range(0f, 7f), rb.position.z);
 
         //Throw Ball
+        _ball.GetComponent<ShootBall>().ShootTarget();
+    }
+
+    private void OnEpisodeBeginGoalLineRebound()
+    {
+        Vector3 startPosition = _midFieldPosition + new Vector3(0f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f + UnityEngine.Random.Range(-20f, 20f), 0f));
+
+        _ball.localPosition = new Vector3(UnityEngine.Random.Range(25f, 30f), 18f, UnityEngine.Random.Range(-25f, 25f));
+        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+        _shootAt.localPosition = new Vector3(_goalLine.position.x, UnityEngine.Random.Range(16f, 18f), UnityEngine.Random.Range(0f, 3f) * Mathf.Sign(_ball.localPosition.z));
+        _ball.GetComponent<ShootBall>().speed = new Vector2(20f, 20f);
         _ball.GetComponent<ShootBall>().ShootTarget();
     }
 
@@ -326,6 +341,7 @@ public class TopScorerAgent : PGBaseAgent
         public const float BOUNCING_IN_FRONT_OF_GOAL = 2f;
         public const float DRIBBLING = 2.5f;
         public const float SHOT_TO_FIELD = 3f;
+        public const float GOAL_LINE_REBOUND = 3.5f;
         public const float AERIAL_ACROSS_GOALLINE = 4f;
     }
 }
