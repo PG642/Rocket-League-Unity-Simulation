@@ -517,7 +517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: MaxStep
-      value: 800
+      value: 650
       objectReference: {fileID: 0}
     - target: {fileID: 7270290807663857193, guid: bfdff73714e4393468e3c7968d554ba5, type: 3}
       propertyPath: Difficulty

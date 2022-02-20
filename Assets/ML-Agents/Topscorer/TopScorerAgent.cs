@@ -7,7 +7,7 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using ML_Agents.Goalkeeper;
-
+using UnityEngine.UI;
 
 public class TopScorerAgent : PGBaseAgent
 {
@@ -23,11 +23,13 @@ public class TopScorerAgent : PGBaseAgent
     private Vector3 _midFieldPosition;
     private bool _ballTouched = false;
     private float _minDistance = 0.0f;
+    [SerializeField] Text _seedText;
 
     protected override void Start()
     {
         base.Start();
         _handler = new GoalkeeperEvironmentHandler(transform.root.gameObject, defaultParameter);
+        
         _ball = _handler.environment.GetComponentInChildren<Ball>().transform;
         rbBall = _ball.GetComponent<Rigidbody>();
         ball = _ball.GetComponent<Ball>();
@@ -36,11 +38,13 @@ public class TopScorerAgent : PGBaseAgent
         _shootAt = transform.parent.Find("ShootAt");
 
         _handler.ResetParameter();
+        
     }
 
     public override void OnEpisodeBegin()
     {
         _handler.ResetParameter();
+        _seedText.text = "Seed: " + _handler.activeSeed;
         _ballTouched = false;
         var diff = UnityEngine.Random.Range(0, 200) % 2;
         switch (diff)
@@ -62,8 +66,8 @@ public class TopScorerAgent : PGBaseAgent
 
         
         //Reset Ball
-        float ball_z_pos = UnityEngine.Random.Range(0, 9) % 2 == 0 ? 6f : -6f;
-        _ball.localPosition = new Vector3(45f, UnityEngine.Random.Range(2f, 5f), ball_z_pos + UnityEngine.Random.Range(-1f, 1f));
+        float ball_z_pos = UnityEngine.Random.Range(0, 9) % 2 == 0 ? 9f : -9f;
+        _ball.localPosition = new Vector3(UnityEngine.Random.Range(44f, 46f), UnityEngine.Random.Range(2f, 10f), ball_z_pos + UnityEngine.Random.Range(-1f, 1f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
