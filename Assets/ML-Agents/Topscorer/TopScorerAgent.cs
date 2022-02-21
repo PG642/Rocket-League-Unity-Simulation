@@ -20,6 +20,8 @@ public class TopScorerAgent : PGBaseAgent
     private static float _maxStepsPerEpisode = 120f * _episodeLength;
     private float _lastResetTime;
 
+    private int _lastBallRewardStep = -300;
+
     private Transform _ball, _shootAt;
     private Vector3 _midFieldPosition;
     private Transform _goalLine;
@@ -157,10 +159,11 @@ public class TopScorerAgent : PGBaseAgent
 
     private void OnEpisodeBeginAerialAcrossGoal()
     {
+        _episodeLength = 3f;
         var ballLeft = UnityEngine.Random.Range(0, 100) % 2 == 0;
         Vector3 startPosition = _midFieldPosition + new Vector3(23f, 0f, ballLeft ? 10f : -10f);
         controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f));
-
+        rb.velocity = Vector3.right * 5f; 
         _ball.localPosition = new Vector3(44f, 1.41579f, ballLeft ? -33f : 33f);
         rbBall.velocity = Vector3.zero;
         rbBall.angularVelocity = Vector3.zero;
@@ -269,12 +272,12 @@ public class TopScorerAgent : PGBaseAgent
         else
         {
             // AddShortEpisodeReward(-0.2f);
-            float agentBallDistanceReward = 0.00005f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
+            float agentBallDistanceReward = 0.00025f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
             AddReward(agentBallDistanceReward);
 
             if (Difficulty == Difficulties.DRIBBLING && _ball.localPosition.x >= 5f)
             {
-                float ballGoalDistanceReward = 0.0003f * (1 - (Vector3.Distance(_goalLine.position, _ball.position) / mapData.diag));
+                float ballGoalDistanceReward = 0.0005f * (1 - (Vector3.Distance(_goalLine.position, _ball.position) / mapData.diag));
                 AddReward(ballGoalDistanceReward);
             }
 
@@ -289,8 +292,9 @@ public class TopScorerAgent : PGBaseAgent
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.tag.Equals("Ball"))
+        if (other.gameObject.tag.Equals("Ball") && StepCount > _lastBallRewardStep+240)
         {
+            _lastBallRewardStep = StepCount;
             AddReward(0.1f);
         }
     }
