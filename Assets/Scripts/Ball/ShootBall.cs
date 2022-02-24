@@ -24,6 +24,8 @@ public class ShootBall : MonoBehaviour
         {
             velocity = Random.Range(speed.x, speed.y);
         }
+        // Debug.Log("Speed");
+        // Debug.Log(velocity.ToString("F6"));
         
         _rb.velocity = dir.normalized  * velocity;
     }

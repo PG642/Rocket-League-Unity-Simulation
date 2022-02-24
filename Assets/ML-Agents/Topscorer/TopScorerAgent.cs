@@ -46,24 +46,51 @@ public class TopScorerAgent : PGBaseAgent
         _handler.ResetParameter();
         _seedText.text = "Seed: " + _handler.activeSeed;
         _ballTouched = false;
-        var diff = UnityEngine.Random.Range(0, 200) % 2;
-        switch (diff)
-        {
-            case 0: OnEpisodeBeginDifficulty2(); break;
-            case 1: OnEpisodeBeginDifficultyDefault(); break;
-            default: throw new Exception("Difficulty does not exist");
-        }
-        // OnEpisodeBeginDifficultyDefault();
+        // var diff = UnityEngine.Random.Range(0, 200) % 2;
+        // switch (diff)
+        // {
+        //     case 0: OnEpisodeBeginDifficulty2(); break;
+        //     case 1: OnEpisodeBeginDifficultyDefault(); break;
+        //     default: throw new Exception("Difficulty does not exist");
+        // }
+        // OnEpisodeBeginDifficulty2();
+        // OnEpisodeBegiEasy();
+        OnEpisodeBeginDifficultyDefault();
         ball.ResetValues();
         mapData.ResetIsScored();
         SetReward(0f);
+    }
+
+    private void OnEpisodeBegiEasy()
+    {
+        Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
+        controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), _handler.boost_amount);
+        Debug.Log("Agent Position");
+        Debug.Log(startPosition.ToString("F6"));
+
+        
+        //Reset Ball
+        float ball_z_pos = UnityEngine.Random.Range(0, 9) % 2 == 0 ? 6f : -6f;
+        _ball.localPosition = new Vector3(45f, UnityEngine.Random.Range(2f, 5f), ball_z_pos + UnityEngine.Random.Range(-1f, 1f));
+        //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
+        _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        // Debug.Log("Ball Position");
+        // Debug.Log(_ball.localPosition.ToString("F6"));
+
+        // Set new Taget Position
+        _shootAt.localPosition = new Vector3(_ball.localPosition.x, 0f, 0f);
+
+        //Throw Ball
+        _ball.GetComponent<ShootBall>().ShootTarget();
     }
 
     private void OnEpisodeBeginDifficulty2()
     {
         Vector3 startPosition = _midFieldPosition + new Vector3(UnityEngine.Random.Range(20f, 25f), 0.17f, UnityEngine.Random.Range(-15f, 15f));
         controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f), _handler.boost_amount);
-
+        // Debug.Log("Agent Position");
+        // Debug.Log(startPosition.ToString("F6"));
         
         //Reset Ball
         float ball_z_pos = UnityEngine.Random.Range(0, 9) % 2 == 0 ? 9f : -9f;
@@ -75,6 +102,12 @@ public class TopScorerAgent : PGBaseAgent
         // Set new Taget Position
         _shootAt.localPosition = new Vector3(_ball.localPosition.x, 0f, 0f);
 
+        // Debug.Log("Shoot At Position");
+        // Debug.Log(_shootAt.localPosition.ToString("F6"));
+
+        // Debug.Log("Ball Position");
+        // Debug.Log(_ball.localPosition.ToString("F6"));
+
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
     }
@@ -82,18 +115,27 @@ public class TopScorerAgent : PGBaseAgent
     private void OnEpisodeBeginDifficultyDefault()
     {
         //Reset Car
-        Vector3 startPosition = _midFieldPosition + new Vector3(UnityEngine.Random.Range(20f, 25f), 0.17f, UnityEngine.Random.Range(-15f, 15f));
-
+        // Vector3 startPosition = _midFieldPosition + new Vector3(UnityEngine.Random.Range(20f, 25f), 0.17f, UnityEngine.Random.Range(-15f, 15f));
+        Vector3 startPosition = _midFieldPosition + new Vector3(25f, 0.17f, UnityEngine.Random.Range(-15f, 15f));
         controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f + UnityEngine.Random.Range(-20f, 20f), 0f), _handler.boost_amount);
 
+        // Debug.Log("Agent Position");
+        // Debug.Log(startPosition.ToString("F6"));
+
         //Reset Ball
-        _ball.localPosition = new Vector3(50.0f, UnityEngine.Random.Range(0.75f, 13f), UnityEngine.Random.Range(-20f, 20f));
+        _ball.localPosition = new Vector3(50.0f, UnityEngine.Random.Range(0.75f, 10f), UnityEngine.Random.Range(-20f, 20f));
         //_ball.rotation = Quaternion.Euler(0f, 0f, 0f);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         // Set new Taget Position
         _shootAt.localPosition = new Vector3(UnityEngine.Random.Range(10f, 30f), UnityEngine.Random.Range(0f, 7f), rb.position.z);
+
+        // Debug.Log("Shoot At Position");
+        // Debug.Log(_shootAt.localPosition.ToString("F6"));
+
+        // Debug.Log("Ball Position");
+        // Debug.Log(_ball.localPosition.ToString("F6"));
 
         //Throw Ball
         _ball.GetComponent<ShootBall>().ShootTarget();
@@ -195,6 +237,7 @@ public class TopScorerAgent : PGBaseAgent
     /// </summary>
     protected override void AssignReward()
     {
+        RewardDirection();
         if (mapData.isScoredBlue)
         {
             // Agent scored a goal
@@ -209,11 +252,18 @@ public class TopScorerAgent : PGBaseAgent
         {
             if (!_ballTouched)
             {
-                AddReward(0.1f);
+                // AddReward(0.1f);
                 // Debug.Log(GetCumulativeReward());
                 _ballTouched = true;
             }
         }
+    }
+
+    private void RewardDirection()
+    {
+        float speed = rb.velocity.magnitude / 23.0f;
+        float lookAtTarget = Vector3.Dot((_ball.position - transform.position).normalized, rb.velocity.normalized);
+        AddReward((lookAtTarget * speed / 650.0f) / 10.0f);
     }
 
     private void RewardCloseness()
