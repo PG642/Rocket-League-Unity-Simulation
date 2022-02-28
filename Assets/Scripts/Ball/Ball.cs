@@ -28,6 +28,8 @@ public class Ball : Resettable
     public bool BallStuck;
     public bool useShotPrediction = false;
     public GameObject HitMarker;
+    public Vector3 predictedImpactPosition;
+    public ShotPredictionAgent agent;
 
     public override void Start()
     {
@@ -197,16 +199,17 @@ public class Ball : Resettable
     {
         if (useShotPrediction)
         {
-            Vector3 impactPosition = CalculateImpactPosition();
+            predictedImpactPosition = CalculateImpactPosition();
             if (HitMarker != null)
             {
-                HitMarker.transform.position = impactPosition;
+                HitMarker.transform.position = predictedImpactPosition;
             }
+            agent.BallPrediction(predictedImpactPosition);
         }
     }
 
     //Calculates the Spot the Ball would land on on the edges of the arena (including the ground and ceiling).
-    private Vector3 CalculateImpactPosition()
+    public Vector3 CalculateImpactPosition()
     {
         float r =                               //Ball radius
             GetComponentInChildren<SphereCollider>().radius;

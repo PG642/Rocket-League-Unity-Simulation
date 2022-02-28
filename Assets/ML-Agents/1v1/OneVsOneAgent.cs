@@ -12,14 +12,14 @@ public class OneVsOneAgent : PGBaseAgent
 {
     // Start is called before the first frame update
 
-    private TeamController _teamController;
-    private TeamController.Team _team;
+    public TeamController teamController;
+    public TeamController.Team team;
 
-    private Rigidbody _rbBall, _rbEnemy;
+    public Rigidbody rbBall, rbEnemy;
 
-    private MatchEnvController _matchEnvController;
+    public MatchEnvController matchEnvController;
 
-    private Transform _ball, _enemy;
+    public Transform ball, enemy;
 
     private int _nBallTouches = 0;
 
@@ -28,18 +28,14 @@ public class OneVsOneAgent : PGBaseAgent
         base.Start();
         //_episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
 
-        _matchEnvController = transform.parent.GetComponent<MatchEnvController>();
-        _teamController = GetComponentInParent<TeamController>();
+        matchEnvController = transform.parent.GetComponent<MatchEnvController>();
+        teamController = GetComponentInParent<TeamController>();
 
 
-        _ball = transform.parent.Find("Ball");
-        _rbBall = _ball.GetComponent<Rigidbody>();
+        ball = transform.parent.Find("Ball");
+        rbBall = ball.GetComponent<Rigidbody>();
     }
 
-    public void FixedUpdate()
-    {
-        AddReward(-1.0f / _matchEnvController.maxSteps);
-    }
 
     public override void OnEpisodeBegin()
     {
@@ -47,18 +43,18 @@ public class OneVsOneAgent : PGBaseAgent
         // transform.parent.GetComponent<TeamController>().SpawnTeams();
 
         //Define Enemy
-        if (gameObject.Equals(_teamController.TeamBlue[0]))
+        if (gameObject.Equals(teamController.TeamBlue[0]))
         {
-            _enemy = _teamController.TeamOrange[0].transform;
-            _team = TeamController.Team.BLUE;
+            enemy = teamController.TeamOrange[0].transform;
+            team = TeamController.Team.BLUE;
         }
         else
         {
-            _enemy = _teamController.TeamBlue[0].transform;
-            _team = TeamController.Team.ORANGE;
+            enemy = teamController.TeamBlue[0].transform;
+            team = TeamController.Team.ORANGE;
         }
 
-        _rbEnemy = _enemy.GetComponent<Rigidbody>();
+        rbEnemy = enemy.GetComponent<Rigidbody>();
 
         //Reset Ball
         // _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
@@ -104,8 +100,8 @@ public class OneVsOneAgent : PGBaseAgent
         // sensor.AddObservation(_rbBall.velocity / 60f);
 
         var localPosition = transform.localPosition;
-        var relativePositionToEnemy = (_enemy.localPosition - localPosition) / mapData.diag;
-        var relativePositionToBall = (_ball.localPosition - localPosition) / mapData.diag;
+        var relativePositionToEnemy = (enemy.localPosition - localPosition) / mapData.diag;
+        var relativePositionToBall = (ball.localPosition - localPosition) / mapData.diag;
 
         sensor.AddObservation(relativePositionToEnemy);
         sensor.AddObservation(relativePositionToBall);
@@ -145,11 +141,11 @@ public class OneVsOneAgent : PGBaseAgent
             ++_nBallTouches;
             if (_nBallTouches < maxBallTouches)
             {
-                _matchEnvController.ResetBall();
+                matchEnvController.ResetBall();
             }
             else
             {
-                _matchEnvController.Reset();
+                matchEnvController.Reset();
                 _nBallTouches = 0;
             }
         }

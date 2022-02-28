@@ -182,6 +182,13 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   InputManager: {fileID: 0}
+  teamController: {fileID: 0}
+  team: 0
+  rbBall: {fileID: 0}
+  rbEnemy: {fileID: 0}
+  matchEnvController: {fileID: 0}
+  ball: {fileID: 0}
+  enemy: {fileID: 0}
 --- !u!1001 &4477629620189644563
 PrefabInstance:
   m_ObjectHideFlags: 0

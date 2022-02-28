@@ -406,6 +406,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2586464754737006007, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+      propertyPath: m_BehaviorName
+      value: ShotPrediction
+      objectReference: {fileID: 0}
+    - target: {fileID: 2586464755421236143, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+      propertyPath: m_BehaviorName
+      value: ShotPrediction
+      objectReference: {fileID: 0}
     - target: {fileID: 5943083373906032848, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
       propertyPath: m_Name
       value: Environment
@@ -454,5 +462,65 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4221303501912534760, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+    - {fileID: 4221303500161835248, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+--- !u!1 &5943083373827293427 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4291464089185116853, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+  m_PrefabInstance: {fileID: 5943083373827293426}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5943083373827293428 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4291464090672491693, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+  m_PrefabInstance: {fileID: 5943083373827293426}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5943083373827293429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5943083373827293427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6fcc74265482d46aefe5c7a335795a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  InputManager: {fileID: 0}
+  teamController: {fileID: 0}
+  team: 0
+  rbBall: {fileID: 0}
+  rbEnemy: {fileID: 0}
+  matchEnvController: {fileID: 0}
+  ball: {fileID: 0}
+  enemy: {fileID: 0}
+--- !u!114 &5943083373827293430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5943083373827293428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6fcc74265482d46aefe5c7a335795a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  InputManager: {fileID: 0}
+  teamController: {fileID: 0}
+  team: 0
+  rbBall: {fileID: 0}
+  rbEnemy: {fileID: 0}
+  matchEnvController: {fileID: 0}
+  ball: {fileID: 0}
+  enemy: {fileID: 0}

@@ -86,18 +86,6 @@ public class MatchEnvController : MonoBehaviour
         ++_stepCount;
         if (_stepCount >= maxSteps && maxSteps > 0)
         {
-            foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
-            {
-                var reward = 1.0f / (_ball.localPosition - agent.transform.localPosition).magnitude;
-                agent.SetReward(reward);
-                // Debug.Log($"End of episode reward: {reward}; Team: Blue");
-            }
-            foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
-            {
-                var reward = 1.0f / (_ball.localPosition - agent.transform.localPosition).magnitude;
-                agent.SetReward(reward);
-                // Debug.Log($"End of episode reward: {reward}; Team: Orange");
-            }
             Reset();
         }
         
@@ -105,12 +93,12 @@ public class MatchEnvController : MonoBehaviour
         {
             foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
             {
-                agent.AddReward(5.0f);
+                agent.AddReward(100.0f);
             }
 
             foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
             {
-                agent.AddReward(-5.0f);
+                agent.AddReward(-100.0f);
             }
             
             Reset();
@@ -119,12 +107,12 @@ public class MatchEnvController : MonoBehaviour
         {
             foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
             {
-                agent.AddReward(-5.0f);
+                agent.AddReward(-100.0f);
             }
 
             foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
             {
-                agent.AddReward(5.0f);
+                agent.AddReward(100.0f);
             }
             
             Reset();
@@ -139,7 +127,7 @@ public class MatchEnvController : MonoBehaviour
     
     public void ResetBall()
     {
-        _ball.localPosition = new Vector3(Random.Range(-25f, 25f), Random.Range(1f, 15f), Random.Range(-20f, 20f));
+        _ball.localPosition = new Vector3(0, _ball.GetComponentInChildren<SphereCollider>().radius, 0);
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
     }
