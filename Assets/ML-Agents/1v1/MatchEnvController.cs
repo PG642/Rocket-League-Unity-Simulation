@@ -13,6 +13,7 @@ public class MatchEnvController : MonoBehaviour
     private HashSet<OneVsOneAgent> _teamBlueAgentGroup;
     private HashSet<OneVsOneAgent> _teamOrangeAgentGroup;
     private Transform _ball;
+    private Transform _spawnPositions;
 
     private MapData _mapData;
 
@@ -47,6 +48,7 @@ public class MatchEnvController : MonoBehaviour
         _ball.GetComponent<Ball>().stopSlowBall = false;
 
         _mapData = transform.Find("World").Find("Rocket_Map").GetComponent<MapData>();
+        _spawnPositions = transform.Find("World").Find("Rocket_Map").Find("SpawnPositions");
     }
 
     public void Reset()
@@ -56,14 +58,19 @@ public class MatchEnvController : MonoBehaviour
         ResetBall();
 
         // End episode for all agents
+        int spawnPosition = Random.Range(0, _spawnPositions.Find("Blue").Find("Spawn").childCount);
         foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
         {
-            ResetAgent(agent, TeamController.Team.BLUE);
+            Debug.Log("111" + agent.team + " " + spawnPosition);
+            ResetAgent(agent, TeamController.Team.BLUE, spawnPosition);
+            Debug.Log("222" + agent.team + " " + spawnPosition);
         }
 
         foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
         {
-            ResetAgent(agent, TeamController.Team.ORANGE);
+            Debug.Log("333" + agent.team + " " + spawnPosition);
+            ResetAgent(agent, TeamController.Team.ORANGE, spawnPosition);
+            Debug.Log("444" + agent.team + " " + spawnPosition);
         }
         
         // Reset environment
@@ -127,23 +134,26 @@ public class MatchEnvController : MonoBehaviour
     
     public void ResetBall()
     {
-        _ball.localPosition = new Vector3(0, _ball.GetComponentInChildren<SphereCollider>().radius, 0);
+        Transform ballSpawn = _spawnPositions.Find("Ball").Find("Center");
+        _ball.localPosition = new Vector3(0, _ball.GetComponentInChildren<SphereCollider>().radius, 0) + ballSpawn.localPosition;
+        _ball.localRotation = ballSpawn.localRotation;
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
     }
 
-    private void ResetAgent(OneVsOneAgent agent, TeamController.Team team)
+    private void ResetAgent(OneVsOneAgent agent, TeamController.Team team, int spawnPosition)
     {
-        agent.EndEpisode(); 
-        agent.transform.localPosition = (team == TeamController.Team.BLUE) ? 
-            new Vector3(Random.Range(-45f, -15f), 0.0f, Random.Range(-25.0f, 25.0f)) : 
-            new Vector3(Random.Range(45f, 15f), 0.0f, Random.Range(-25.0f, 25.0f));
-        
-        Vector3 agentToBall = _ball.localPosition - agent.transform.localPosition;
-        var rotationToBall =
-            Quaternion.LookRotation((agentToBall - Vector3.Dot(agentToBall, Vector3.up) * Vector3.up).normalized, Vector3.up);
-        agent.transform.localRotation = rotationToBall;
-            
+        Transform blueSpawns = _spawnPositions.Find("Blue").Find("Spawn");
+        Transform orangeSpawns = _spawnPositions.Find("Orange").Find("Spawn");
+        agent.EndEpisode();
+        agent.transform.localPosition = new Vector3(0f,0.1701f,0f) + ((team == TeamController.Team.BLUE) ? 
+            blueSpawns.GetChild(spawnPosition).localPosition :
+            orangeSpawns.GetChild(spawnPosition).localPosition);
+        Debug.Log(team + " " + spawnPosition);
+        agent.transform.localRotation = ((team == TeamController.Team.BLUE) ?
+            blueSpawns.GetChild(spawnPosition).localRotation :
+            orangeSpawns.GetChild(spawnPosition).localRotation);
+
         agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
         agent.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 

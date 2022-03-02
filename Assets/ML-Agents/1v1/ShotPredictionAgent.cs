@@ -11,6 +11,14 @@ public class ShotPredictionAgent : OneVsOneAgent
     new void Start()
     {
         base.Start();
+        //_episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
+
+        matchEnvController = transform.parent.GetComponent<MatchEnvController>();
+        teamController = GetComponentInParent<TeamController>();
+
+
+        ball = transform.parent.Find("Ball");
+        rbBall = ball.GetComponent<Rigidbody>();
         ball.GetComponent<Ball>().useShotPrediction = true;
         ball.GetComponent<Ball>().agent = this;
     }
@@ -139,7 +147,7 @@ public class ShotPredictionAgent : OneVsOneAgent
     {
         if (other.gameObject.tag.Equals("Ball"))
         {
-            if (Time.frameCount - lastFrameBallHit > 10f * 120f)
+            if (Time.frameCount - lastFrameBallHit >= 10f * 120f)
             {
                 AddReward(2f);
                 lastFrameBallHit = Time.frameCount;
