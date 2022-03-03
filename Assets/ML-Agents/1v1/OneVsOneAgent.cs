@@ -21,8 +21,6 @@ public class OneVsOneAgent : PGBaseAgent
 
     public Transform ball, enemy;
 
-    private int _nBallTouches = 0;
-
     void Start()
     {
         base.Start();
@@ -64,47 +62,103 @@ public class OneVsOneAgent : PGBaseAgent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        //Car self absolute -------------------------
         //Car position
         Vector3 carPositionNormalized = NormalizeVec(rb,VectorType.Position,EntityType.Car);
         checkNormalizedVec(carPositionNormalized, "carPositionNormalized", VectorType.Position);
         sensor.AddObservation(carPositionNormalized);
 
         //Car rotation, already normalized
-        sensor.AddObservation(transform.rotation);
-        //Car velocity
-        sensor.AddObservation(rb.velocity / 23f);
-        //Car angular velocity
-        sensor.AddObservation(rb.angularVelocity / 5.5f);
+        Quaternion carRotationNormalized = transform.localRotation;
+        checkQuaternion(carRotationNormalized, "carRotationNormalized", 0);
+        sensor.AddObservation(carRotationNormalized);
 
-        // Boost amount
+        //Car velocity
+        Vector3 carVelocityNormalized = NormalizeVec(rb, VectorType.Velocity, EntityType.Car);
+        checkNormalizedVec(carVelocityNormalized, "carVelocityNormalized", VectorType.Velocity);
+        sensor.AddObservation(carVelocityNormalized);
+
+        //Car angular velocity
+        Vector3 carAngularVelocityNormalized = NormalizeVec(rb, VectorType.AngularVelocity, EntityType.Car);
+        checkNormalizedVec(carAngularVelocityNormalized, "carAngularVelocityNormalized", VectorType.AngularVelocity);
+        sensor.AddObservation(carAngularVelocityNormalized);
+
+        //Car Boost amount
         sensor.AddObservation(boostControl.boostAmount / 100f);
 
+        //Enemy Boost amount
+        sensor.AddObservation(enemy.GetComponentInChildren<CubeBoosting>().boostAmount / 100f);
+
+        //Enemy Absolute ------------
         //Enemy position
-        // var enemyXNormalized = (_enemy.localPosition.x + 60f) / 120f;
-        // var enemyYNormalized = _enemy.localPosition.y / 20f;
-        // var enemyZNormalized = (_enemy.localPosition.z + 41f) / 82f;
-        // sensor.AddObservation(new Vector3(enemyXNormalized, enemyYNormalized, enemyZNormalized));
-        // //Enemy rotation, already normalized
-        // sensor.AddObservation(_enemy.rotation);
-        // //Enemy velocity
-        // sensor.AddObservation(_rbEnemy.velocity / 23f);
-        // //Enemy angular velocity
-        // sensor.AddObservation(_rbEnemy.angularVelocity / 5.5f);
+        Vector3 enemyPositionNormalized = NormalizeVec(rbEnemy, VectorType.Position, EntityType.Car);
+        checkNormalizedVec(enemyPositionNormalized, "enemyPositionNormalized", VectorType.Position);
+        sensor.AddObservation(enemyPositionNormalized);
 
+
+        //Enemy rotation, already normalized
+        Quaternion enemyRotationNormalized = enemy.localRotation;
+        checkQuaternion(enemyRotationNormalized, "enemyRotationNormalized", 0);
+        sensor.AddObservation(enemyRotationNormalized);
+
+        //Enemy velocity
+        Vector3 enemyVelocityNormalized = NormalizeVec(rbEnemy, VectorType.Velocity, EntityType.Car);
+        checkNormalizedVec(enemyVelocityNormalized, "enemyVelocityNormalized", VectorType.Velocity);
+        sensor.AddObservation(enemyVelocityNormalized);
+
+        //Enemy angular velocity
+        Vector3 enemyAngularVelocityNormalized = NormalizeVec(rbEnemy, VectorType.AngularVelocity, EntityType.Car);
+        checkNormalizedVec(enemyAngularVelocityNormalized, "enemyAngularVelocityNormalized", VectorType.AngularVelocity);
+        sensor.AddObservation(enemyAngularVelocityNormalized);
+
+        
+
+        //Ball absolute -----------
         //Ball position
-        // var ballXNormalized = (_ball.localPosition.x + 60f) / 120f;
-        // var ballYNormalized = _ball.localPosition.y / 20f;
-        // var ballZNormalized = (_ball.localPosition.z + 41f) / 82f;
-        // sensor.AddObservation(new Vector3(ballXNormalized, ballYNormalized, ballZNormalized));
-        // //Ball velocity
-        // sensor.AddObservation(_rbBall.velocity / 60f);
+        Vector3 ballPositionNormalized = NormalizeVec(rbBall, VectorType.Position, EntityType.Ball);
+        checkNormalizedVec(ballPositionNormalized, "ballPositionNormalized", VectorType.Position);
+        sensor.AddObservation(ballPositionNormalized);
 
-        var localPosition = transform.localPosition;
-        var relativePositionToEnemy = (enemy.localPosition - localPosition) / mapData.diag;
-        var relativePositionToBall = (ball.localPosition - localPosition) / mapData.diag;
+        //Ball velocity
+        Vector3 ballVelocityNormalized = NormalizeVec(rbBall, VectorType.Velocity, EntityType.Ball);
+        checkNormalizedVec(ballVelocityNormalized, "ballVelocityNormalized", VectorType.Velocity);
+        sensor.AddObservation(ballVelocityNormalized);
 
-        sensor.AddObservation(relativePositionToEnemy);
-        sensor.AddObservation(relativePositionToBall);
+        //Ball angular velocity
+        Vector3 ballAngularVelocityNormalized = NormalizeVec(rbBall, VectorType.AngularVelocity, EntityType.Ball);
+        checkNormalizedVec(ballAngularVelocityNormalized, "ballAngularVelocityNormalized", VectorType.AngularVelocity);
+        sensor.AddObservation(ballAngularVelocityNormalized);
+
+
+        //Enemy Relative ----------------
+        Vector3 enemyRelativePositionNormalized = (enemy.localPosition - transform.localPosition) / mapData.diag;
+        sensor.AddObservation(enemyRelativePositionNormalized);
+
+        Quaternion enemyRelativeRotationNormalized = Quaternion.RotateTowards(transform.localRotation, enemy.localRotation, 360f);
+        sensor.AddObservation(enemyRelativeRotationNormalized);
+
+        Vector3 enemyRelativeVelocityNormalized = (rbEnemy.velocity - rb.velocity) / 46f;
+        sensor.AddObservation(enemyRelativeVelocityNormalized);
+
+        Vector3 enemyRelativeAngularVelocityNormalized = (rbEnemy.angularVelocity - rb.angularVelocity) / 11f;
+        sensor.AddObservation(enemyRelativeAngularVelocityNormalized);
+
+        //Ball Relative --------------
+        Vector3 ballRelativePositionNormalized = (ball.localPosition - transform.localPosition) / mapData.diag;
+        sensor.AddObservation(ballRelativePositionNormalized);
+
+        Vector3 ballRelativeVelocityNormalized = (rbBall.velocity - rb.velocity) / 83f;
+        sensor.AddObservation(ballRelativeVelocityNormalized);
+
+        Vector3 ballRelativeAngularVelocityNormalized = (rbBall.angularVelocity - rb.angularVelocity) / 11.5f;
+        sensor.AddObservation(ballRelativeAngularVelocityNormalized);
+
+        //Boost Pad Timers
+        Transform boostpads = matchEnvController.transform.Find("World").Find("Rocket_Map").Find("Boostpads");
+        foreach(Transform boostpad in boostpads)
+        {
+            sensor.AddObservation(boostpad.GetComponent<Boostpad>().remainingTime);
+        }
     }
 
     protected override void AssignReward()
@@ -131,23 +185,4 @@ public class OneVsOneAgent : PGBaseAgent
         // AddReward(ballEnemyGoalDistanceReward);
     }
 
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.tag.Equals("Ball"))
-        {
-            int maxBallTouches = 3;
-            AddReward(1.0f / maxBallTouches);
-            // _enemy.GetComponent<OneVsOneAgent>().AddReward(-1.0f/maxBallTouches);
-            ++_nBallTouches;
-            if (_nBallTouches < maxBallTouches)
-            {
-                matchEnvController.ResetBall();
-            }
-            else
-            {
-                matchEnvController.Reset();
-                _nBallTouches = 0;
-            }
-        }
-    }
 }
