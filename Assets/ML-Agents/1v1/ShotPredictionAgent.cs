@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class ShotPredictionAgent : OneVsOneAgent
 {
     float successfulSaveReward = 0f;
     float lastFrameBallHit = 0f;
+    int ballHitsInLastPeriod = 0;
 
     // Start is called before the first frame update
     new void Start()
@@ -115,7 +117,7 @@ public class ShotPredictionAgent : OneVsOneAgent
     // Update is called once per frame
     public void FixedUpdate()
     {
-        AddReward(-0.0001f);
+        AddReward(-0.001f);
     }
 
     public override void OnEpisodeBegin()
@@ -151,6 +153,12 @@ public class ShotPredictionAgent : OneVsOneAgent
             {
                 AddReward(2f);
                 lastFrameBallHit = Time.frameCount;
+                ballHitsInLastPeriod=1;
+            }
+            else
+            {
+                AddReward((float) Math.Pow(0.5, ballHitsInLastPeriod));
+                ballHitsInLastPeriod++;
             }
         }
     }
