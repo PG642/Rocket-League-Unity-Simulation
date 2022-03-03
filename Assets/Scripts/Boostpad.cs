@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,7 @@ public class Boostpad : MonoBehaviour
     public float boostAmount = 12;
     public float height = 1.65f;
     public float radius = 1.44f;
+    public float remainingTime;
 
     public bool isBig = false;
 
@@ -65,7 +67,8 @@ public class Boostpad : MonoBehaviour
                 transform.GetChild(1).gameObject.SetActive(false);
             }
 
-            if (Time.time - _lastPickup >= refreshTime)
+            remainingTime = Math.Max(0, refreshTime - Time.time + _lastPickup);
+            if (remainingTime==0)
             {
                 _isActive = true;
             }
