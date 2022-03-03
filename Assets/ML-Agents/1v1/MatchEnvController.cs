@@ -17,7 +17,7 @@ public class MatchEnvController : MonoBehaviour
 
     private MapData _mapData;
 
-    public int maxSteps = 2000;
+    public int maxSteps = 120*20;
     private int _stepCount;
 
     // Start is called before the first frame update
@@ -25,6 +25,7 @@ public class MatchEnvController : MonoBehaviour
     {
         _teamController = transform.GetComponent<TeamController>();
         _teamController.Initialize();
+        maxSteps = 120 * 20;
 
         _teamBlueAgentGroup = new HashSet<OneVsOneAgent>();
         foreach (var agentGameObject in _teamController.TeamBlue)
@@ -58,19 +59,14 @@ public class MatchEnvController : MonoBehaviour
         ResetBall();
 
         // End episode for all agents
-        int spawnPosition = Random.Range(0, _spawnPositions.Find("Blue").Find("Spawn").childCount);
         foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
         {
-            Debug.Log("111" + agent.team + " " + spawnPosition);
-            ResetAgent(agent, TeamController.Team.BLUE, spawnPosition);
-            Debug.Log("222" + agent.team + " " + spawnPosition);
+            ResetAgent(agent, TeamController.Team.BLUE);
         }
 
         foreach (OneVsOneAgent agent in _teamOrangeAgentGroup)
         {
-            Debug.Log("333" + agent.team + " " + spawnPosition);
-            ResetAgent(agent, TeamController.Team.ORANGE, spawnPosition);
-            Debug.Log("444" + agent.team + " " + spawnPosition);
+            ResetAgent(agent, TeamController.Team.ORANGE);
         }
         
         // Reset environment
@@ -141,21 +137,9 @@ public class MatchEnvController : MonoBehaviour
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
     }
 
-    private void ResetAgent(OneVsOneAgent agent, TeamController.Team team, int spawnPosition)
+    private void ResetAgent(OneVsOneAgent agent, TeamController.Team team)
     {
-        Transform blueSpawns = _spawnPositions.Find("Blue").Find("Spawn");
-        Transform orangeSpawns = _spawnPositions.Find("Orange").Find("Spawn");
         agent.EndEpisode();
-        agent.transform.localPosition = new Vector3(0f,0.1701f,0f) + ((team == TeamController.Team.BLUE) ? 
-            blueSpawns.GetChild(spawnPosition).localPosition :
-            orangeSpawns.GetChild(spawnPosition).localPosition);
-        Debug.Log(team + " " + spawnPosition);
-        agent.transform.localRotation = ((team == TeamController.Team.BLUE) ?
-            blueSpawns.GetChild(spawnPosition).localRotation :
-            orangeSpawns.GetChild(spawnPosition).localRotation);
-
-        agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        agent.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         agent.GetComponentInChildren<CubeJumping>().Reset();
     }
