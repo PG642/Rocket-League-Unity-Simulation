@@ -20,7 +20,7 @@ public class ShotPredictionAgent : OneVsOneAgent
         ball = transform.parent.Find("Ball");
         rbBall = ball.GetComponent<Rigidbody>();
         ball.GetComponent<Ball>().useShotPrediction = true;
-        ball.GetComponent<Ball>().agent = this;
+        ball.GetComponent<Ball>().agents.Add(this);
     }
 
     public void BallPrediction(Vector3 predictedImpact)
@@ -115,7 +115,7 @@ public class ShotPredictionAgent : OneVsOneAgent
     // Update is called once per frame
     public void FixedUpdate()
     {
-        AddReward(-0.001f);
+        AddReward(-0.0001f);
     }
 
     public override void OnEpisodeBegin()
