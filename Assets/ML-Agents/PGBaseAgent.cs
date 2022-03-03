@@ -279,11 +279,11 @@ public abstract class PGBaseAgent : Agent
         switch (type)
         {
             case VectorType.Position:
-                return checkVec(vec, name, -1f, true, false, 0f, 1f);
+                return checkVec(vec, name, -1f, true, false, 0f, 1.1f);
             case VectorType.Velocity:
-                return checkVec(vec, name, -1f, false, true, -1f, 1f, 0f, 1f);
+                return checkVec(vec, name, -1f, false, true, -1f, 1f, 0f, 1.1f);
             case VectorType.AngularVelocity:
-                return checkVec(vec, name, -1f, false, true, -1f, 1f, 0f, 1f);
+                return checkVec(vec, name, -1f, false, true, -1f, 1f, 0f, 3f);
             default:
                 return true;
         }
