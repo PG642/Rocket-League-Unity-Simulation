@@ -89,6 +89,7 @@ public class OneVsOneAgent : PGBaseAgent
         //Enemy Boost amount
         sensor.AddObservation(enemy.GetComponentInChildren<CubeBoosting>().boostAmount / 100f);
 
+        
         //Enemy Absolute ------------
         //Enemy position
         Vector3 enemyPositionNormalized = NormalizeVec(rbEnemy, VectorType.Position, EntityType.Car);
@@ -112,7 +113,7 @@ public class OneVsOneAgent : PGBaseAgent
         sensor.AddObservation(enemyAngularVelocityNormalized);
 
         
-
+        
         //Ball absolute -----------
         //Ball position
         Vector3 ballPositionNormalized = NormalizeVec(rbBall, VectorType.Position, EntityType.Ball);
@@ -128,8 +129,8 @@ public class OneVsOneAgent : PGBaseAgent
         Vector3 ballAngularVelocityNormalized = NormalizeVec(rbBall, VectorType.AngularVelocity, EntityType.Ball);
         checkNormalizedVec(ballAngularVelocityNormalized, "ballAngularVelocityNormalized", VectorType.AngularVelocity);
         sensor.AddObservation(ballAngularVelocityNormalized);
-
-
+        
+        
         //Enemy Relative ----------------
         Vector3 enemyRelativePositionNormalized = (enemy.localPosition - transform.localPosition) / mapData.diag;
         sensor.AddObservation(enemyRelativePositionNormalized);
@@ -152,6 +153,7 @@ public class OneVsOneAgent : PGBaseAgent
 
         Vector3 ballRelativeAngularVelocityNormalized = (rbBall.angularVelocity - rb.angularVelocity) / 11.5f;
         sensor.AddObservation(ballRelativeAngularVelocityNormalized);
+        
 
         //Boost Pad Timers
         Transform boostpads = matchEnvController.transform.Find("World").Find("Rocket_Map").Find("Boostpads");
