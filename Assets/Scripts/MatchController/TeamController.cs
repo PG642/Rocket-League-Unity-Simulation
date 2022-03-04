@@ -111,6 +111,7 @@ public class TeamController : MonoBehaviour
     {
         transform.GetComponent<SpawnController>().SpawnOppositeCars(TeamBlue,TeamOrange);
     }
+
     // Update is called once per frame
     void Update()
     {

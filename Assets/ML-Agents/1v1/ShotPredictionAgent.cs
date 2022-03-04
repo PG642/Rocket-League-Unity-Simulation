@@ -117,7 +117,10 @@ public class ShotPredictionAgent : OneVsOneAgent
     // Update is called once per frame
     public void FixedUpdate()
     {
-        AddReward(-0.001f);
+        AddReward(-0.0001f);
+        float distanceToBall = (ball.localPosition - transform.localPosition).magnitude;
+        float distanceToBallNormalized = distanceToBall / matchEnvController.transform.GetComponentInChildren<MapData>().diag;
+        AddReward((1 - distanceToBallNormalized) * 0.0001f);
     }
 
     public override void OnEpisodeBegin()
