@@ -54,7 +54,7 @@ public class ShotPredictionAgent : OneVsOneAgent
                     break;
                 }
                 //Ball would land near enemy goal
-                if ((ball.localPosition - orangeGoalCenter).magnitude > goalAreaRadius && (predictedImpact - orangeGoalCenter).magnitude <= goalAreaRadius)
+                if ((ball.localPosition - orangeGoalCenter).magnitude > goalAreaRadius && (predictedImpact - orangeGoalCenter).magnitude <= goalAreaRadius && predictedImpact.y <= r + tolerance)
                 {
                     reward = shotOnGoalReward * (goalAreaRadius - (predictedImpact - orangeGoalCenter).magnitude) / (2 * goalAreaRadius);
                     break;
@@ -88,7 +88,7 @@ public class ShotPredictionAgent : OneVsOneAgent
                 }
 
                 //Ball would land near enemy goal
-                if ((ball.localPosition - blueGoalCenter).magnitude > goalAreaRadius && (predictedImpact - blueGoalCenter).magnitude <= goalAreaRadius)
+                if ((ball.localPosition - blueGoalCenter).magnitude > goalAreaRadius && (predictedImpact - blueGoalCenter).magnitude <= goalAreaRadius && predictedImpact.y <= r + tolerance)
                 {
                     reward = shotOnGoalReward * (goalAreaRadius - (predictedImpact - blueGoalCenter).magnitude) / (2 * goalAreaRadius);
                     break;
@@ -117,10 +117,11 @@ public class ShotPredictionAgent : OneVsOneAgent
     // Update is called once per frame
     public void FixedUpdate()
     {
-        AddReward(-0.0001f);
+        float timePenalty = 0.01f;
+        AddReward(-timePenalty);
         float distanceToBall = (ball.localPosition - transform.localPosition).magnitude;
         float distanceToBallNormalized = distanceToBall / matchEnvController.transform.GetComponentInChildren<MapData>().diag;
-        AddReward((1 - distanceToBallNormalized) * 0.0001f);
+        AddReward((1 - distanceToBallNormalized) * timePenalty);
     }
 
     public override void OnEpisodeBegin()
