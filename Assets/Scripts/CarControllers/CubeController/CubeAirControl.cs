@@ -31,7 +31,8 @@ public class CubeAirControl : MonoBehaviour
         _cubeJumping = GetComponent<CubeJumping>();
     }
 
-    void Update()
+
+    private void FixedUpdate()
     {
         _inputYaw = _inputManager.yawInput;
         _inputPitch = _inputManager.pitchInput;
@@ -42,10 +43,7 @@ public class CubeAirControl : MonoBehaviour
             _inputRoll = -_inputYaw;
             _inputYaw = 0;
         }
-    }
-
-    private void FixedUpdate()
-    {
+        
         if (_controller.numWheelsSurface >= 3) return;
 
         if (!_cubeJumping.isDodge || _cubeJumping.isCancelled)
