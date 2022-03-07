@@ -117,7 +117,7 @@ public class ShotPredictionAgent : OneVsOneAgent
     // Update is called once per frame
     public void FixedUpdate()
     {
-        float timePenalty = 0.02f;
+        float timePenalty = 0.01f;
         float r = ball.GetComponentInChildren<SphereCollider>().radius;
         Vector3 orangeGoalCenter = new Vector3(51.20f, r, 0);
         Vector3 blueGoalCenter = new Vector3(-51.20f, r, 0);
