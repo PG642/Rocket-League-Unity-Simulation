@@ -117,11 +117,26 @@ public class ShotPredictionAgent : OneVsOneAgent
     // Update is called once per frame
     public void FixedUpdate()
     {
-        float timePenalty = 0.01f;
-        AddReward(-timePenalty);
+        float timePenalty = 0.02f;
+        float r = ball.GetComponentInChildren<SphereCollider>().radius;
+        Vector3 orangeGoalCenter = new Vector3(51.20f, r, 0);
+        Vector3 blueGoalCenter = new Vector3(-51.20f, r, 0);
+        Vector3 enemyGoalCenter = team==TeamController.Team.BLUE ? orangeGoalCenter : blueGoalCenter;
+
         float distanceToBall = (ball.localPosition - transform.localPosition).magnitude;
         float distanceToBallNormalized = distanceToBall / matchEnvController.transform.GetComponentInChildren<MapData>().diag;
-        AddReward((1 - distanceToBallNormalized) * timePenalty);
+        Vector3 ballToEnemyGoal = ball.localPosition - enemyGoalCenter;
+        float ballDistanceToGoal = ballToEnemyGoal.magnitude;
+        Vector3 carToEnemyGoal = transform.localPosition - enemyGoalCenter;
+        float carDistanceGoal = carToEnemyGoal.magnitude;
+        float ballGoalAlignmentAngle =  Vector3.Angle(carToEnemyGoal, ballToEnemyGoal);
+        float angleScale = 1f;
+        float penalty = distanceToBall + 2 * ballDistanceToGoal + angleScale * ballGoalAlignmentAngle;
+        Vector3 diagPoint = new Vector3(-43.6f, 18.42f, 34.05f);
+        float maxBallGoalDist = (diagPoint - orangeGoalCenter).magnitude;
+
+        float maxPenalty = matchEnvController.transform.GetComponentInChildren<MapData>().diag + 2 * maxBallGoalDist + angleScale * 180f;
+        AddReward(-timePenalty * penalty/maxPenalty);
     }
 
     public override void OnEpisodeBegin()
