@@ -18,8 +18,8 @@ public class GoalController : MonoBehaviour
     {
         if (!other.CompareTag("Ball")) return;
         
-        var ballPosition = ball.position;
-        var transformPosition = transform.position;
+        var ballPosition = ball.localPosition;
+        var transformPosition = transform.localPosition;
         if ((isGoalLineBlue && ballPosition.x < transformPosition.x) ||
             (!isGoalLineBlue && ballPosition.x > transformPosition.x))
         {
