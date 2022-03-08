@@ -135,6 +135,7 @@ public class MatchEnvController : MonoBehaviour
         _ball.localRotation = ballSpawn.localRotation;
         _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        _ball.GetComponent<Ball>().ResetValues();
     }
 
     private void ResetAgent(OneVsOneAgent agent, TeamController.Team team)
