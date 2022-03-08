@@ -39,12 +39,11 @@ public class GoalKeeperAgent : PGBaseAgent
         _lastResetTime = Time.time;
 
         _handler.UpdateEnvironmentParameters();
-        _handler.ResetParameter();
-
     }
 
     public override void OnEpisodeBegin()
     {
+        _handler.ResetParameter();
         //Reset Car
         controller.ResetCar(_startPosition, Quaternion.Euler(0f, 90f, 0f));
 

@@ -12,6 +12,7 @@ public class TopScorerAgent : PGBaseAgent
 {
     public TopScorerAgentParameter defaultParameter;
     public float Difficulty;
+    public float SparseReward;
     private PGEnvironmentHandler<TopScorerAgentParameter> _handler;
     private Rigidbody rbBall;
     private Ball ball;
@@ -163,7 +164,7 @@ public class TopScorerAgent : PGBaseAgent
         var ballLeft = UnityEngine.Random.Range(0, 100) % 2 == 0;
         Vector3 startPosition = _midFieldPosition + new Vector3(23f, 0f, ballLeft ? 10f : -10f);
         controller.ResetCar(startPosition, Quaternion.Euler(0f, 90f, 0f));
-        rb.velocity = Vector3.right * 5f; 
+        rb.velocity = Vector3.right * 5f;
         _ball.localPosition = new Vector3(44f, 1.41579f, ballLeft ? -33f : 33f);
         rbBall.velocity = Vector3.zero;
         rbBall.angularVelocity = Vector3.zero;
@@ -264,35 +265,60 @@ public class TopScorerAgent : PGBaseAgent
     /// </summary>
     protected override void AssignReward()
     {
-        AddReward(-(1 / _maxStepsPerEpisode));
-        if (StepCount > _maxStepsPerEpisode)// || rb.position.x > rbBall.position.x + 5.0f)
+        if (SparseReward == 1.0f)
         {
-            Reset();
-        }
-        else
-        {
-            // AddShortEpisodeReward(-0.2f);
-            float agentBallDistanceReward = 0.00025f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
-            AddReward(agentBallDistanceReward);
-
-            if (Difficulty == Difficulties.DRIBBLING && _ball.localPosition.x >= 5f)
+            if (StepCount > _maxStepsPerEpisode)
             {
-                float ballGoalDistanceReward = 0.0005f * (1 - (Vector3.Distance(_goalLine.position, _ball.position) / mapData.diag));
-                AddReward(ballGoalDistanceReward);
+                //SetReward(-1.0f);
+                Reset();
             }
-
             if (mapData.isScoredBlue)
             {
                 // Agent scored a goal
-                SetReward(1f);
+                SetReward(1.0f);
                 Reset();
+            }
+        }
+        else
+        {
+            //AddReward(-(1 / _maxStepsPerEpisode));
+            if (StepCount > _maxStepsPerEpisode)// || rb.position.x > rbBall.position.x + 5.0f)
+            {
+                Reset();
+            }
+            else
+            {
+                // AddShortEpisodeReward(-0.2f);
+                if (Difficulty == Difficulties.DRIBBLING)
+                {
+                    Vector3 carToBall = _ball.position - transform.position;
+                    AddReward(Mathf.Clamp((Vector3.Dot(carToBall.normalized, rb.velocity.normalized) + 0.2f) * 0.0001f, -1.0f, 1.0f));
+                }
+                else
+                {
+                    float agentBallDistanceReward = 0.00025f * (1 - (Vector3.Distance(_ball.position, transform.position) / mapData.diag));
+                    AddReward(agentBallDistanceReward);
+                }
+
+                if (Difficulty == Difficulties.DRIBBLING && _ball.localPosition.x >= 5f)
+                {
+                    float ballGoalDistanceReward = (1 - (Vector3.Distance(_goalLine.position, _ball.position) / mapData.diag)) / _maxStepsPerEpisode; //1.3f *
+                    AddReward(ballGoalDistanceReward);
+                }
+
+                if (mapData.isScoredBlue)
+                {
+                    // Agent scored a goal
+                    SetReward(1.0f); //1.3f
+                    Reset();
+                }
             }
         }
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.tag.Equals("Ball") && StepCount > _lastBallRewardStep+240)
+        if (other.gameObject.tag.Equals("Ball") && StepCount > _lastBallRewardStep + 240)
         {
             _lastBallRewardStep = StepCount;
             AddReward(0.1f);
@@ -323,10 +349,12 @@ public class TopScorerAgent : PGBaseAgent
     public class TopScorerAgentParameter : PGResetParameters
     {
         public float difficulty;
+        public float rewardFunction;
 
         public TopScorerAgentParameter() : base()
         {
             difficulty = 0f;
+            rewardFunction = 0f;
         }
     }
 
@@ -334,7 +362,9 @@ public class TopScorerAgent : PGBaseAgent
     {
         public void Handle(TopScorerAgentParameter parameters, GameObject environment)
         {
-            environment.GetComponentInChildren<TopScorerAgent>().Difficulty = parameters.difficulty;
+            var agent = environment.GetComponentInChildren<TopScorerAgent>();
+            agent.Difficulty = parameters.difficulty;
+            agent.SparseReward = parameters.rewardFunction;
         }
     }
 

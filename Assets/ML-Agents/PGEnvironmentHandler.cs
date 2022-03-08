@@ -30,7 +30,6 @@ namespace PGAgent.ResetParameters
                 System.Random rand = new System.Random();
                 UnityEngine.Random.InitState(rand.Next(1000));
             }
-            //TODO after merge with difficulty, add difficulty parameter
             if (currentParameter.canDoubleJump == 0)
             {
                 environment.GetComponentInChildren<CubeJumping>().disableDoubleJump = true;
