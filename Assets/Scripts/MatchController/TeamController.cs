@@ -103,7 +103,6 @@ public class TeamController : MonoBehaviour
         TeamBlue = TeamBlueList.ToArray();
         TeamOrange = TeamOrangeList.ToArray();
 
-
     }
 
 

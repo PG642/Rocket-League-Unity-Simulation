@@ -16,7 +16,7 @@ public class CubeBoosting : MonoBehaviour
     public bool infiniteBoosting;
     public bool disableBoosting;
     public float boostForceMultiplier = 1f;
-    public float boostAmount = 32f;
+    public float boostAmount = 33f;
     public Agent agent;
 
 
@@ -66,7 +66,10 @@ public class CubeBoosting : MonoBehaviour
                 {
                     float before = boostAmount;
                     boostAmount = Mathf.Max(0.0f, boostAmount - 0.27f);
-                    agent.AddReward((boostAmount - before) / 10f);
+                    if (agent != null)
+                    {
+                        agent.AddReward((boostAmount - before) / 10f);
+                    }
                 }
             }
             else
@@ -96,7 +99,10 @@ public class CubeBoosting : MonoBehaviour
         
         float before = boostAmount;
         boostAmount = Mathf.Min(100f, boostAmount + boost);
-        agent.AddReward((boostAmount - before)/10f);
+        if (agent != null)
+        {
+            agent.AddReward((boostAmount - before) / 10f);
+        }
         return false;
     }
 

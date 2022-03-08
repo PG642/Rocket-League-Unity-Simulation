@@ -46,7 +46,6 @@ public class MatchEnvControllerTest : MonoBehaviour
         //     }
         // }
         _ball = transform.Find("Ball");
-        _ball.GetComponent<Ball>().stopSlowBall = false;
 
         _mapData = transform.Find("World").Find("Rocket_Map").GetComponent<MapData>();
         

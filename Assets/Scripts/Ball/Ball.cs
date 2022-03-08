@@ -21,7 +21,6 @@ public class Ball : Resettable
     public bool disableBulletImpulse;
     public bool disablePsyonixImpulse;
     public bool isTouchedGround;
-    public bool stopSlowBall = true;
     public float maxAngularVelocity = 6.0f;
     public float maxVelocity = 60.0f;
     public AnimationCurve pysionixImpulseCurve = new AnimationCurve();
@@ -84,9 +83,6 @@ public class Ball : Resettable
 
     private void StopBallIfTooSlow()
     {
-        if (!stopSlowBall)
-            return;
-
         if (rb.velocity.magnitude <= MinVelocity && rb.angularVelocity.magnitude <= MinAngularVelocity)
         {
             if (_lastStoppedTime == 0.0f)

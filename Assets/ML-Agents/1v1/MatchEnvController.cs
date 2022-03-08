@@ -10,8 +10,8 @@ public class MatchEnvController : MonoBehaviour
 {
     private TeamController _teamController;
     
-    private HashSet<OneVsOneAgent> _teamBlueAgentGroup;
-    private HashSet<OneVsOneAgent> _teamOrangeAgentGroup;
+    private List<ShotPredictionAgent> _teamBlueAgentGroup;
+    private List<ShotPredictionAgent> _teamOrangeAgentGroup;
     private Transform _ball;
     private Transform _spawnPositions;
 
@@ -27,37 +27,46 @@ public class MatchEnvController : MonoBehaviour
         _teamController.Initialize();
         maxSteps = 120 * 20;
 
-        _teamBlueAgentGroup = new HashSet<OneVsOneAgent>();
+        _teamBlueAgentGroup = new List<ShotPredictionAgent>();
         foreach (var agentGameObject in _teamController.TeamBlue)
         {
-            var agent = agentGameObject.GetComponent<OneVsOneAgent>();
+            var agent = agentGameObject.GetComponent<ShotPredictionAgent>();
             if (!_teamBlueAgentGroup.Contains(agent))
             {
                 _teamBlueAgentGroup.Add(agent);
+                agent.team = TeamController.Team.BLUE;
+                agent.Init();
             }
         }
-        _teamOrangeAgentGroup = new HashSet<OneVsOneAgent>();
+        _teamOrangeAgentGroup = new List<ShotPredictionAgent>();
         foreach (var agentGameObject in _teamController.TeamOrange)
         {
-            var agent = agentGameObject.GetComponent<OneVsOneAgent>();
+            var agent = agentGameObject.GetComponent<ShotPredictionAgent>();
             if (!_teamOrangeAgentGroup.Contains(agent))
             {
                 _teamOrangeAgentGroup.Add(agent);
+                agent.team = TeamController.Team.ORANGE;
+                agent.Init();
             }
         }
+        _teamBlueAgentGroup[0].enemy = _teamController.TeamOrange[0].transform;
+        _teamBlueAgentGroup[0].rbEnemy = _teamBlueAgentGroup[0].enemy.GetComponent<Rigidbody>();
+        _teamBlueAgentGroup[0].InitializeEnemyGoal();
+
+        _teamOrangeAgentGroup[0].enemy = _teamController.TeamBlue[0].transform;
+        _teamOrangeAgentGroup[0].rbEnemy = _teamOrangeAgentGroup[0].enemy.GetComponent<Rigidbody>();
+        _teamOrangeAgentGroup[0].InitializeEnemyGoal();
+
         _ball = transform.Find("Ball");
-        _ball.GetComponent<Ball>().stopSlowBall = false;
 
         _mapData = transform.Find("World").Find("Rocket_Map").GetComponent<MapData>();
         _spawnPositions = transform.Find("World").Find("Rocket_Map").Find("SpawnPositions");
+
+        ResetBall();
     }
 
     public void Reset()
     {
-        SwapTeams();
-        
-        ResetBall();
-
         // End episode for all agents
         foreach (OneVsOneAgent agent in _teamBlueAgentGroup)
         {
@@ -68,24 +77,19 @@ public class MatchEnvController : MonoBehaviour
         {
             ResetAgent(agent, TeamController.Team.ORANGE);
         }
-        
+
         // Reset environment
-        // _teamController.SpawnTeams();
+        SwapTeams();
+        ResetBall();
+        _teamController.SpawnTeams();
 
         _mapData.ResetIsScored();
-
-        // rotate the whole environment
-        // var rotation = Random.Range(1, 3);
-        // var rotationAngle = rotation * 90.0f;
-        // transform.Rotate(0.0f, rotationAngle, 0.0f);
-
-        // Reset start time of episode to now
-        //_lastResetTime = Time.time;
         _stepCount = 0;
     }
 
     void FixedUpdate()
     {
+        
         ++_stepCount;
         if (_stepCount >= maxSteps && maxSteps > 0)
         {
@@ -126,6 +130,14 @@ public class MatchEnvController : MonoBehaviour
     {
         _teamController.SwapTeams();
         (_teamOrangeAgentGroup, _teamBlueAgentGroup) = (_teamBlueAgentGroup, _teamOrangeAgentGroup);
+        foreach(ShotPredictionAgent agent in _teamOrangeAgentGroup)
+        {
+            agent.team = TeamController.Team.ORANGE;
+        }
+        foreach (ShotPredictionAgent agent in _teamBlueAgentGroup)
+        {
+            agent.team = TeamController.Team.BLUE;
+        }
     }
     
     public void ResetBall()

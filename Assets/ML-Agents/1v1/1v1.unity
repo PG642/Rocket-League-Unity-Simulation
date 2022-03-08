@@ -290,7 +290,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2586464754737006007, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 93
+      value: 94
       objectReference: {fileID: 0}
     - target: {fileID: 2586464755421236143, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
       propertyPath: m_BehaviorName
@@ -298,7 +298,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2586464755421236143, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 93
+      value: 94
       objectReference: {fileID: 0}
     - target: {fileID: 5943083373906032848, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
       propertyPath: m_Name
@@ -348,6 +348,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8144477044577703146, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+      propertyPath: boostAmount
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 8144477046328335090, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+      propertyPath: boostAmount
+      value: 33
+      objectReference: {fileID: 0}
     - target: {fileID: 8750728005339591042, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -393,6 +401,10 @@ PrefabInstance:
     - {fileID: 4221303500161835248, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
     - {fileID: 6006921709801593313, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
     - {fileID: 4400576305565794642, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+    - {fileID: 7857475786390039895, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+    - {fileID: 2942499203038479910, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+    - {fileID: 8356128724818364661, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+    - {fileID: 3320122013760869246, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
 --- !u!1 &5943083373827293427 stripped
 GameObject:
@@ -428,6 +440,7 @@ MonoBehaviour:
   matchEnvController: {fileID: 0}
   ball: {fileID: 0}
   enemy: {fileID: 0}
+  Hitmarker: {fileID: 0}
 --- !u!114 &5943083373827293430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -452,6 +465,7 @@ MonoBehaviour:
   matchEnvController: {fileID: 0}
   ball: {fileID: 0}
   enemy: {fileID: 0}
+  Hitmarker: {fileID: 0}
 --- !u!1 &5943083373827293431 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1195006804423014153, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
@@ -470,7 +484,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5943083373827293431}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.2, y: 4.557, z: 15.997}

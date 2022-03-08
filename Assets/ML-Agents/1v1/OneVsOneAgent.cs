@@ -35,33 +35,11 @@ public class OneVsOneAgent : PGBaseAgent
     }
 
 
-    public override void OnEpisodeBegin()
-    {
-        //Respawn Cars
-        // transform.parent.GetComponent<TeamController>().SpawnTeams();
-
-        //Define Enemy
-        if (gameObject.Equals(teamController.TeamBlue[0]))
-        {
-            enemy = teamController.TeamOrange[0].transform;
-            team = TeamController.Team.BLUE;
-        }
-        else
-        {
-            enemy = teamController.TeamBlue[0].transform;
-            team = TeamController.Team.ORANGE;
-        }
-
-        rbEnemy = enemy.GetComponent<Rigidbody>();
-
-        //Reset Ball
-        // _ball.localPosition = new Vector3(Random.Range(-10f, 0f), Random.Range(0f, 20f), Random.Range(-30f, 30f));
-        // _ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        // _ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-    }
-
     public override void CollectObservations(VectorSensor sensor)
     {
+        //Team
+        sensor.AddObservation(team == TeamController.Team.BLUE);
+
         //Car self absolute -------------------------
         //Car position
         Vector3 carPositionNormalized = NormalizeVec(rb,VectorType.Position,EntityType.Car);

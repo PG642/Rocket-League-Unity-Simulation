@@ -17,7 +17,6 @@ public class GoalController : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Ball")) return;
-        
         var ballPosition = ball.localPosition;
         var transformPosition = transform.localPosition;
         if ((isGoalLineBlue && ballPosition.x < transformPosition.x) ||

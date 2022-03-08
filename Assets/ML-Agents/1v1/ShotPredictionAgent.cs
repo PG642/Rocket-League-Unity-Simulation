@@ -17,10 +17,8 @@ public class ShotPredictionAgent : OneVsOneAgent
     Transform goalLines;
 
     // Start is called before the first frame update
-    new void Start()
+    public void Init()
     {
-        base.Start();
-        //_episodeLength = transform.parent.GetComponent<MatchTimeController>().matchTimeSeconds;
 
         matchEnvController = transform.parent.GetComponent<MatchEnvController>();
         teamController = GetComponentInParent<TeamController>();
@@ -33,15 +31,6 @@ public class ShotPredictionAgent : OneVsOneAgent
 
         r = ball.GetComponentInChildren<SphereCollider>().radius;
         goalLines = matchEnvController.transform.Find("World").Find("Rocket_Map").Find("GoalLines");
-
-        float teamFactorX = team == TeamController.Team.BLUE ? -1f : 1f;
-        enemyGoalCorners = new Vector3[4];
-        enemyGoalCorners[0] = new Vector3(teamFactorX * 51.2f,            r, -8.92755f + r);
-        enemyGoalCorners[1] = new Vector3(teamFactorX * 51.2f, 6.42775f - r, -8.92755f + r);
-        enemyGoalCorners[2] = new Vector3(teamFactorX * 51.2f, 6.42775f - r,  8.92755f - r);
-        enemyGoalCorners[3] = new Vector3(teamFactorX * 51.2f,            r,  8.92755f - r);
-        enemyGoal = team == TeamController.Team.BLUE ? goalLines.Find("GoalLineRed").GetComponent<Collider>() : goalLines.Find("GoalLineBlue").GetComponent<Collider>();
-
     }
 
     public void BallPrediction(Vector3 predictedImpact)
@@ -149,7 +138,7 @@ public class ShotPredictionAgent : OneVsOneAgent
         bool ballAndCarAligned = Physics.Raycast(ball.localPosition, carToBall, maxBallGoalDist, raycastMask, QueryTriggerInteraction.Collide);
         if (team == TeamController.Team.BLUE)
         {
-            Debug.Log(ballAndCarAligned);
+            //Debug.Log(ballAndCarAligned);
         }
         float ballGoalAlignmentAngle = 0;
         if (!ballAndCarAligned)
@@ -185,34 +174,14 @@ public class ShotPredictionAgent : OneVsOneAgent
 
         if (team == TeamController.Team.BLUE)
         {
-            Debug.Log("Angle: " + ballGoalAlignmentAngle);
-            Debug.Log("Reward: " + (-timePenalty * penalty / maxPenalty));
+            //Debug.Log("Angle: " + ballGoalAlignmentAngle);
+            //Debug.Log("Reward: " + (-timePenalty * penalty / maxPenalty));
         }
     }
 
-    public override void OnEpisodeBegin()
+
+    public void InitializeEnemyGoal()
     {
-        //Respawn Cars
-        transform.parent.GetComponent<TeamController>().SpawnTeams();
-
-        //Define Enemy
-        if (gameObject.Equals(teamController.TeamBlue[0]))
-        {
-            enemy = teamController.TeamOrange[0].transform;
-            team = TeamController.Team.BLUE;
-        }
-        else
-        {
-            enemy = teamController.TeamBlue[0].transform;
-            team = TeamController.Team.ORANGE;
-        }
-
-        rbEnemy = enemy.GetComponent<Rigidbody>();
-
-        //Reset Ball
-        ball.localPosition = new Vector3(0, ball.GetComponentInChildren<SphereCollider>().radius, 0);
-        ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         float teamFactorX = team == TeamController.Team.BLUE ? -1f : 1f;
         enemyGoalCorners = new Vector3[4];
         enemyGoalCorners[0] = new Vector3(teamFactorX * 51.2f, r, -8.92755f + r);
