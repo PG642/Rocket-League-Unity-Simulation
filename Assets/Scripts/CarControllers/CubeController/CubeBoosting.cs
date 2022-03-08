@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.MLAgents;
+using UnityEngine;
 
 [RequireComponent(typeof(CubeController))]
 public class CubeBoosting : MonoBehaviour
@@ -16,6 +17,7 @@ public class CubeBoosting : MonoBehaviour
     public bool disableBoosting;
     public float boostForceMultiplier = 1f;
     public float boostAmount = 32f;
+    public Agent agent;
 
 
 
@@ -25,6 +27,7 @@ public class CubeBoosting : MonoBehaviour
         _style.normal.textColor = Color.red;
         _style.fontSize = 25;
         _style.fontStyle = FontStyle.Bold;
+        agent = GetComponentInParent<Agent>();
 
         if (infiniteBoosting)
         {
@@ -61,7 +64,9 @@ public class CubeBoosting : MonoBehaviour
 
                 if (!infiniteBoosting)
                 {
+                    float before = boostAmount;
                     boostAmount = Mathf.Max(0.0f, boostAmount - 0.27f);
+                    agent.AddReward((boostAmount - before) / 10f);
                 }
             }
             else
@@ -88,8 +93,10 @@ public class CubeBoosting : MonoBehaviour
         {
             return true;
         }
-
+        
+        float before = boostAmount;
         boostAmount = Mathf.Min(100f, boostAmount + boost);
+        agent.AddReward((boostAmount - before)/10f);
         return false;
     }
 
