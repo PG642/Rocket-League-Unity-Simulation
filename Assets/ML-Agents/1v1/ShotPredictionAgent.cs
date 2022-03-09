@@ -145,10 +145,12 @@ public class ShotPredictionAgent : OneVsOneAgent
             for (int i = 0; i < 4; i++)
             {
                 carToGoalCorners[i] = enemyGoalCorners[i] - transform.localPosition;
+                /*
                 if (team == TeamController.Team.BLUE)
                 {
                     Debug.DrawLine(transform.localPosition, enemyGoalCorners[i], Color.red, 0.01f);
                 }
+                */
             }
             Ray ray = new Ray(ball.localPosition, ballToGoal);
             Vector3 intersection = Vector3.zero;
@@ -156,11 +158,12 @@ public class ShotPredictionAgent : OneVsOneAgent
             for (int i = 0; i < 4; i++)
             {
                 carGoalPlanes[i] = new Plane(Vector3.Cross(carToGoalCorners[i], carToGoalCorners[(i + 1) % 4]).normalized, transform.localPosition);
+                /*
                 if(team == TeamController.Team.BLUE)
                 {
                     Debug.DrawLine(transform.localPosition, transform.localPosition + Vector3.Cross(carToGoalCorners[i], carToGoalCorners[(i + 1) % 4]).normalized, Color.black, 0.01f);
                 }
-                
+                */
                 if (carGoalPlanes[i].Raycast(ray, out rayDist))
                 {
                     intersection = ray.GetPoint(rayDist);
@@ -170,12 +173,14 @@ public class ShotPredictionAgent : OneVsOneAgent
                     }
                 }
             }
+            /*
             if (team == TeamController.Team.BLUE)
             {
                 Debug.DrawLine(transform.localPosition, intersection, Color.green, 0.01f);
                 Debug.DrawLine(transform.localPosition, ball.localPosition, Color.blue, 0.01f);
                 Debug.DrawLine(ball.localPosition, enemyGoalPoint, Color.yellow, 0.01f);
             }
+            */
             Vector3 carToIntersection = intersection - transform.localPosition;
             ballGoalAlignmentAngle = Vector3.Angle(carToIntersection, carToBall);
         }
@@ -183,11 +188,13 @@ public class ShotPredictionAgent : OneVsOneAgent
         float maxPenalty = maxCarBallDist + ballGoalScale * maxBallGoalDist + angleScale * 180f;
         AddReward(-timePenalty * penalty/maxPenalty);
 
+        /*
         if (team == TeamController.Team.BLUE)
         {
             Debug.Log("Angle: " + ballGoalAlignmentAngle);
             Debug.Log("Reward: " + (-timePenalty * penalty / maxPenalty));
         }
+        */
     }
 
 
