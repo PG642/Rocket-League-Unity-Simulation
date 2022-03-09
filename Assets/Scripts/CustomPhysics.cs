@@ -150,4 +150,30 @@ public static class CustomPhysics
         return true;
     }
 
+    //Siehe https://blackpawn.com/texts/pointinpoly/default.html
+    public static bool PointInsidePositiveQuadrantOfPlane(Vector3 V1, Vector3 V2, Vector3 planeOriginPoint, Vector3 pointOnPlaneToCheck)
+    {
+        // Compute vectors        
+        Vector3 v0 = V1;
+        Vector3 v1 = V2;
+        Vector3 v2 = pointOnPlaneToCheck - planeOriginPoint;
+        
+        // Compute dot products
+        float dot00 = Vector3.Dot(v0, v0);
+        float dot01 = Vector3.Dot(v0, v1);
+        float dot02 = Vector3.Dot(v0, v2);
+        float dot11 = Vector3.Dot(v1, v1);
+        float dot12 = Vector3.Dot(v1, v2);
+
+        // Compute barycentric coordinates
+        float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+        float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+        // Check if point is in positive Quadrant
+        return (u >= 0) && (v >= 0);
+        
+        
+    }
+
 }
