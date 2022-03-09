@@ -248,6 +248,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 743496512669240715, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1195006804423014153, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 2548820288418818815, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}
       propertyPath: m_LocalScale.y
       value: 1
@@ -440,7 +448,6 @@ MonoBehaviour:
   matchEnvController: {fileID: 0}
   ball: {fileID: 0}
   enemy: {fileID: 0}
-  Hitmarker: {fileID: 0}
 --- !u!114 &5943083373827293430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -465,7 +472,6 @@ MonoBehaviour:
   matchEnvController: {fileID: 0}
   ball: {fileID: 0}
   enemy: {fileID: 0}
-  Hitmarker: {fileID: 0}
 --- !u!1 &5943083373827293431 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1195006804423014153, guid: 8e5d167f8ce4088409b6638eb7748981, type: 3}

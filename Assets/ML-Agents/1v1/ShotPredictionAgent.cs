@@ -12,7 +12,6 @@ public class ShotPredictionAgent : OneVsOneAgent
     const float maxBallGoalDist = 99.16083715f;
     const float maxCarBallDist = 112.9899243f;
     Collider enemyGoal;
-    public GameObject Hitmarker;
     float r;
     Transform goalLines;
 
@@ -132,38 +131,50 @@ public class ShotPredictionAgent : OneVsOneAgent
         Vector3 carToBall = ball.localPosition - transform.localPosition;
         float carToBallDist = carToBall.magnitude;
         Vector3 enemyGoalPoint = enemyGoal.ClosestPoint(ball.localPosition);
+        enemyGoalPoint.x += team == TeamController.Team.BLUE ? 0.2f : -0.2f;
         Vector3 ballToGoal = enemyGoalPoint - ball.localPosition;
         float ballToGoalDist = ballToGoal.magnitude;
-        int raycastMask = team == TeamController.Team.BLUE ? (1 << 11) : (1 << 12);
+        int raycastMask = team == TeamController.Team.BLUE ? (1 << 14) : (1 << 13);
         bool ballAndCarAligned = Physics.Raycast(ball.localPosition, carToBall, maxBallGoalDist, raycastMask, QueryTriggerInteraction.Collide);
-        if (team == TeamController.Team.BLUE)
-        {
-            //Debug.Log(ballAndCarAligned);
-        }
         float ballGoalAlignmentAngle = 0;
         if (!ballAndCarAligned)
         {
             
             Vector3[] carToGoalCorners = new Vector3[4];
             Plane[] carGoalPlanes = new Plane[4];
-            float rayDist = 0f;
-            float maxRayDist = 0f;
             for (int i = 0; i < 4; i++)
             {
                 carToGoalCorners[i] = enemyGoalCorners[i] - transform.localPosition;
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                carGoalPlanes[i] = new Plane(Vector3.Cross(carToGoalCorners[i], carToGoalCorners[(i + 1) % 4]), transform.localPosition);
-                if(carGoalPlanes[i].Raycast(new Ray(ball.localPosition, ballToGoal),out rayDist))
+                if (team == TeamController.Team.BLUE)
                 {
-                    maxRayDist = Math.Max(maxRayDist, rayDist);
+                    Debug.DrawLine(transform.localPosition, enemyGoalCorners[i], Color.red, 0.01f);
                 }
             }
-            Vector3 intersection = ball.localPosition + Math.Min(maxRayDist,1) * ballToGoal;
-            if (Hitmarker != null)
+            Ray ray = new Ray(ball.localPosition, ballToGoal);
+            Vector3 intersection = Vector3.zero;
+            float rayDist;
+            for (int i = 0; i < 4; i++)
             {
-                Hitmarker.transform.position = intersection;
+                carGoalPlanes[i] = new Plane(Vector3.Cross(carToGoalCorners[i], carToGoalCorners[(i + 1) % 4]).normalized, transform.localPosition);
+                if(team == TeamController.Team.BLUE)
+                {
+                    Debug.DrawLine(transform.localPosition, transform.localPosition + Vector3.Cross(carToGoalCorners[i], carToGoalCorners[(i + 1) % 4]).normalized, Color.black, 0.01f);
+                }
+                
+                if (carGoalPlanes[i].Raycast(ray, out rayDist))
+                {
+                    intersection = ray.GetPoint(rayDist);
+                    if(CustomPhysics.PointInsidePositiveQuadrantOfPlane(carToGoalCorners[i], carToGoalCorners[(i + 1) % 4], transform.localPosition, intersection))
+                    {
+                        break;
+                    }
+                }
+            }
+            if (team == TeamController.Team.BLUE)
+            {
+                Debug.DrawLine(transform.localPosition, intersection, Color.green, 0.01f);
+                Debug.DrawLine(transform.localPosition, ball.localPosition, Color.blue, 0.01f);
+                Debug.DrawLine(ball.localPosition, enemyGoalPoint, Color.yellow, 0.01f);
             }
             Vector3 carToIntersection = intersection - transform.localPosition;
             ballGoalAlignmentAngle = Vector3.Angle(carToIntersection, carToBall);
@@ -174,15 +185,15 @@ public class ShotPredictionAgent : OneVsOneAgent
 
         if (team == TeamController.Team.BLUE)
         {
-            //Debug.Log("Angle: " + ballGoalAlignmentAngle);
-            //Debug.Log("Reward: " + (-timePenalty * penalty / maxPenalty));
+            Debug.Log("Angle: " + ballGoalAlignmentAngle);
+            Debug.Log("Reward: " + (-timePenalty * penalty / maxPenalty));
         }
     }
 
 
     public void InitializeEnemyGoal()
     {
-        float teamFactorX = team == TeamController.Team.BLUE ? -1f : 1f;
+        float teamFactorX = team == TeamController.Team.BLUE ? 1f : -1f;
         enemyGoalCorners = new Vector3[4];
         enemyGoalCorners[0] = new Vector3(teamFactorX * 51.2f, r, -8.92755f + r);
         enemyGoalCorners[1] = new Vector3(teamFactorX * 51.2f, 6.42775f - r, -8.92755f + r);
