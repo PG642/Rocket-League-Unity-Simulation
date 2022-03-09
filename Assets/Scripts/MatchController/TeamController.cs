@@ -105,6 +105,20 @@ public class TeamController : MonoBehaviour
 
     }
 
+    void ColorCars()
+    {
+        foreach(GameObject car in TeamBlue)
+        {
+            Material[] materials = car.transform.Find("CubeController").Find("Body Mesh").Find("Octane").GetComponent<Renderer>().materials;
+            FindAndDyeMaterial(materials, "Red", new Color(0.0f, 0.48f, 1.0f));
+        }
+        foreach (GameObject car in TeamOrange)
+        {
+            Material[] materials = car.transform.Find("CubeController").Find("Body Mesh").Find("Octane").GetComponent<Renderer>().materials;
+            FindAndDyeMaterial(materials, "Red", new Color(0.8f, 0.4f, 0.0f));
+        }
+    }
+
 
     public void SpawnTeams()
     {
@@ -141,6 +155,7 @@ public class TeamController : MonoBehaviour
     public void SwapTeams()
     { 
         (TeamBlue, TeamOrange) = (TeamOrange, TeamBlue);
+        ColorCars();
     }
 
 }
