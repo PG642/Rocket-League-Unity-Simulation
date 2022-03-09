@@ -133,10 +133,12 @@ public class MatchEnvController : MonoBehaviour
         foreach(ShotPredictionAgent agent in _teamOrangeAgentGroup)
         {
             agent.team = TeamController.Team.ORANGE;
+            agent.InitializeEnemyGoal();
         }
         foreach (ShotPredictionAgent agent in _teamBlueAgentGroup)
         {
             agent.team = TeamController.Team.BLUE;
+            agent.InitializeEnemyGoal();
         }
     }
     
