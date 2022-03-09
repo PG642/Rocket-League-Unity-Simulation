@@ -137,6 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea34b8f5f999c6249bd3ec6229916cd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mapData: {fileID: 0}
   maxSteps: 2000
 --- !u!1001 &5943083372968334335
 PrefabInstance:
