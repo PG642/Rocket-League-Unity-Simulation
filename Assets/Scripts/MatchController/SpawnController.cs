@@ -79,7 +79,7 @@ namespace MatchController
         {
             var spawnLocation = GetSpawnPosition(car, team, wasDemolished);
             car.transform.localPosition = new Vector3(0f, 0.1701f, 0f) + spawnLocation.localPosition;
-            car.transform.localRotation = spawnLocation.localRotation;
+            car.transform.localRotation = Quaternion.AngleAxis(0.55f, Vector3.right) * spawnLocation.localRotation;
             Rigidbody rb = car.GetComponent<Rigidbody>();
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
@@ -87,10 +87,10 @@ namespace MatchController
             return car;
         }
 
-        public void SpawnOppositeCars(GameObject[] teamBlue, GameObject[] teamOrane)
+        public void SpawnOppositeCars(GameObject[] teamBlue, GameObject[] teamOrange)
         {
             var blueTeamSize = teamBlue.Length;
-            var orangeTeamSize = teamOrane.Length;
+            var orangeTeamSize = teamOrange.Length;
             var maxTeamSize = blueTeamSize > orangeTeamSize ? blueTeamSize : orangeTeamSize;
             var spawnNum = _blueSpawnPositions.childCount;
 
@@ -101,26 +101,28 @@ namespace MatchController
             {
                 if (i < blueTeamSize)
                 {
-                    teamBlue[i].transform.localPosition = _blueSpawnPositions.GetChild(spawns[i]).localPosition;
-                    teamBlue[i].transform.localRotation = _blueSpawnPositions.GetChild(spawns[i]).localRotation;
+                    teamBlue[i].transform.localPosition = new Vector3(0f, 0.1701f, 0f) + _blueSpawnPositions.GetChild(spawns[i]).localPosition;
+                    teamBlue[i].transform.localRotation = Quaternion.AngleAxis(0.55f, Vector3.right) * _blueSpawnPositions.GetChild(spawns[i]).localRotation;
                     teamBlue[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
                     teamBlue[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
                 }
 
                 if (i < orangeTeamSize)
                 {
-                    teamOrane[i].transform.localPosition = _orangeSpawnPositions.GetChild(spawns[i]).localPosition;
-                    teamOrane[i].transform.localRotation = _orangeSpawnPositions.GetChild(spawns[i]).localRotation;
-                    teamOrane[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
-                    teamOrane[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                    teamOrange[i].transform.localPosition = new Vector3(0f, 0.1701f, 0f) + _orangeSpawnPositions.GetChild(spawns[i]).localPosition;
+                    teamOrange[i].transform.localRotation = Quaternion.AngleAxis(0.55f, Vector3.right) * _orangeSpawnPositions.GetChild(spawns[i]).localRotation;
+                    teamOrange[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    teamOrange[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
                 }
             }
         }
 
         public GameObject SpawnBall(GameObject ball)
         {
-            ball.transform.localPosition = _ballSpawnPosition.localPosition;
+            ball.transform.localPosition = new Vector3(0, ball.GetComponentInChildren<SphereCollider>().radius, 0) + _ballSpawnPosition.localPosition;
             ball.transform.localRotation = _ballSpawnPosition.localRotation;
+            ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             return ball;
         }
     }

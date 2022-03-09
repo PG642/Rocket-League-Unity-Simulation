@@ -15,7 +15,7 @@ public class MatchEnvController : MonoBehaviour
     private Transform _ball;
     private Transform _spawnPositions;
 
-    private MapData _mapData;
+    public MapData _mapData;
 
     public int maxSteps = 120*20;
     private int _stepCount;
@@ -26,8 +26,12 @@ public class MatchEnvController : MonoBehaviour
         _teamController = transform.GetComponent<TeamController>();
         _teamController.Initialize();
         maxSteps = 120 * 20;
+        _ball = transform.Find("Ball");
+        _ball.GetComponent<Ball>().agents = new List<ShotPredictionAgent>();
+        _ball.GetComponent<Ball>().Init();
 
         _teamBlueAgentGroup = new List<ShotPredictionAgent>();
+
         foreach (var agentGameObject in _teamController.TeamBlue)
         {
             var agent = agentGameObject.GetComponent<ShotPredictionAgent>();
@@ -57,7 +61,9 @@ public class MatchEnvController : MonoBehaviour
         _teamOrangeAgentGroup[0].rbEnemy = _teamOrangeAgentGroup[0].enemy.GetComponent<Rigidbody>();
         _teamOrangeAgentGroup[0].InitializeEnemyGoal();
 
-        _ball = transform.Find("Ball");
+
+
+        
 
         _mapData = transform.Find("World").Find("Rocket_Map").GetComponent<MapData>();
         _spawnPositions = transform.Find("World").Find("Rocket_Map").Find("SpawnPositions");

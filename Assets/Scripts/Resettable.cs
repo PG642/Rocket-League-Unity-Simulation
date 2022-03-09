@@ -14,6 +14,11 @@ public class Resettable : MonoBehaviour
 
     public virtual void Start()
     {
+        Init();
+    }
+
+    public void Init()
+    {
         rb = GetComponent<Rigidbody>();
     }
 

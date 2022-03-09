@@ -29,7 +29,7 @@ public class Ball : Resettable
     public bool useShotPrediction = false;
     public GameObject HitMarker;
     public Vector3 predictedImpactPosition;
-    public HashSet<ShotPredictionAgent> agents;
+    public List<ShotPredictionAgent> agents;
 
     public override void Start()
     {
@@ -39,7 +39,6 @@ public class Ball : Resettable
         rb.maxAngularVelocity = maxAngularVelocity;
         rb.maxDepenetrationVelocity = maxVelocity;
         BallStuck = false;
-        agents = new HashSet<ShotPredictionAgent>();
     }
 
     private void LateUpdate()
