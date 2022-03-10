@@ -125,7 +125,7 @@ public class ShotPredictionAgent : OneVsOneAgent
     public void FixedUpdate()
     {
         float timePenalty = 0.01f;
-        float angleScale = 1f;
+        float angleScale = 0.25f;
         float ballGoalScale = 2f;
 
         Vector3 carToBall = ball.localPosition - transform.localPosition;
@@ -197,6 +197,11 @@ public class ShotPredictionAgent : OneVsOneAgent
         */
     }
 
+    public override void OnEpisodeBegin()
+    {
+        GetComponentInChildren<CubeBoosting>().boostAmount = 33;
+    }
+
 
     public void InitializeEnemyGoal()
     {
@@ -213,7 +218,7 @@ public class ShotPredictionAgent : OneVsOneAgent
     {
         if (other.gameObject.tag.Equals("Ball"))
         {
-            if (Time.frameCount - lastFrameBallHit >= 10f * 120f)
+            if (Time.frameCount - lastFrameBallHit >= 3f * 120f)
             {
                 AddReward(2f);
                 lastFrameBallHit = Time.frameCount;
