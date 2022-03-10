@@ -15,7 +15,7 @@ public class ShotPredictionAgent : OneVsOneAgent
     float r;
     Transform goalLines;
 
-    public float maxTimePenalty = 0.01f;
+    public float maxTimePenalty = 0.002f;
     public float angleScale = 0.25f;
     public float ballGoalScale = 2f;
 
