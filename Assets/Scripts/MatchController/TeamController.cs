@@ -19,6 +19,9 @@ public class TeamController : MonoBehaviour
     public GameObject[] TeamBlue;
     public GameObject[] TeamOrange;
 
+    private GUIStyle _styleOrangeLabel;
+    private GUIStyle _styleBlueLabel;
+
     public void Initialize()
     {
         // Set a team for each car in the environment
@@ -30,7 +33,15 @@ public class TeamController : MonoBehaviour
             // Spawn each car
             SpawnTeams();
         }
+        _styleOrangeLabel = new GUIStyle();
+        _styleOrangeLabel.normal.textColor = new Color(1.0f, 0.47f, 0f);
+        _styleOrangeLabel.fontSize = 25;
+        _styleOrangeLabel.fontStyle = FontStyle.Bold;
 
+        _styleBlueLabel = new GUIStyle();
+        _styleBlueLabel.normal.textColor = new Color(0f, 0.72f, 1f);
+        _styleBlueLabel.fontSize = 25;
+        _styleBlueLabel.fontStyle = FontStyle.Bold;
     }
 
     public void SetTeams(List<GameObject> teamBlue, List<GameObject> teamOrange)
@@ -156,6 +167,24 @@ public class TeamController : MonoBehaviour
     { 
         (TeamBlue, TeamOrange) = (TeamOrange, TeamBlue);
         ColorCars();
+    }
+
+    public void OnGUI()
+    {
+        GUI.Label(new Rect(Screen.width - 140, Screen.height - 35, 150, 130), $"Boost {(int) TeamOrange[0].GetComponentInChildren<CubeBoosting>().boostAmount}", _styleOrangeLabel);
+        GUI.Label(new Rect(Screen.width - 140, Screen.height - 60, 150, 130), $"Boost {(int) TeamBlue[0].GetComponentInChildren<CubeBoosting>().boostAmount}", _styleBlueLabel);
+
+        int orangeInfoAnchor = Screen.height - 40;
+        GUI.Label(new Rect(40, orangeInfoAnchor - 75, 150, 130), $"CarToBall {(int)TeamOrange[0].GetComponent<ShotPredictionAgent>().carToBallDist}", _styleOrangeLabel);
+        GUI.Label(new Rect(40, orangeInfoAnchor - 50, 150, 130), $"BallToGoal {(int)TeamOrange[0].GetComponent<ShotPredictionAgent>().ballToGoalDist}", _styleOrangeLabel);
+        GUI.Label(new Rect(40, orangeInfoAnchor - 25, 150, 130), $"AlignmentAngle {(int)TeamOrange[0].GetComponent<ShotPredictionAgent>().ballGoalAlignmentAngle}", _styleOrangeLabel);
+        GUI.Label(new Rect(40, orangeInfoAnchor, 150, 130), $"Penalty {(int)TeamOrange[0].GetComponent<ShotPredictionAgent>().penalty}", _styleOrangeLabel);
+
+        int blueInfoAnchor = Screen.height - 170;
+        GUI.Label(new Rect(40, blueInfoAnchor - 75, 150, 130), $"CarToBall {(int)TeamBlue[0].GetComponent<ShotPredictionAgent>().carToBallDist}", _styleBlueLabel);
+        GUI.Label(new Rect(40, blueInfoAnchor - 50, 150, 130), $"BallToGoal {(int)TeamBlue[0].GetComponent<ShotPredictionAgent>().ballToGoalDist}", _styleBlueLabel);
+        GUI.Label(new Rect(40, blueInfoAnchor - 25, 150, 130), $"AlignmentAngle {(int)TeamBlue[0].GetComponent<ShotPredictionAgent>().ballGoalAlignmentAngle}", _styleBlueLabel);
+        GUI.Label(new Rect(40, blueInfoAnchor, 150, 130), $"Penalty {(int)TeamBlue[0].GetComponent<ShotPredictionAgent>().penalty}", _styleBlueLabel);
     }
 
 }

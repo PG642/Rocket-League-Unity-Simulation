@@ -98,6 +98,6 @@ public class CubeBoosting : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.Label(new Rect(Screen.width - 140, Screen.height - 50, 150, 130), $"Boost {(int)boostAmount}", _style);
+        //GUI.Label(new Rect(Screen.width - 140, Screen.height - 50, 150, 130), $"Boost {(int)boostAmount}", _style);
     }
 }

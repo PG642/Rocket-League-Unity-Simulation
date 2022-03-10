@@ -15,6 +15,15 @@ public class ShotPredictionAgent : OneVsOneAgent
     float r;
     Transform goalLines;
 
+    public float maxTimePenalty = 0.01f;
+    public float angleScale = 0.25f;
+    public float ballGoalScale = 2f;
+
+    public float carToBallDist;
+    public float ballToGoalDist;
+    public float ballGoalAlignmentAngle;
+    public float penalty;
+
     // Start is called before the first frame update
     public void Init()
     {
@@ -124,19 +133,15 @@ public class ShotPredictionAgent : OneVsOneAgent
     // Update is called once per frame
     public void FixedUpdate()
     {
-        float timePenalty = 0.01f;
-        float angleScale = 0.25f;
-        float ballGoalScale = 2f;
-
         Vector3 carToBall = ball.localPosition - transform.localPosition;
-        float carToBallDist = carToBall.magnitude;
+        carToBallDist = carToBall.magnitude;
         Vector3 enemyGoalPoint = enemyGoal.ClosestPoint(ball.localPosition);
         enemyGoalPoint.x += team == TeamController.Team.BLUE ? 0.2f : -0.2f;
         Vector3 ballToGoal = enemyGoalPoint - ball.localPosition;
-        float ballToGoalDist = ballToGoal.magnitude;
+        ballToGoalDist = ballToGoal.magnitude;
         int raycastMask = team == TeamController.Team.BLUE ? (1 << 14) : (1 << 13);
         bool ballAndCarAligned = Physics.Raycast(ball.localPosition, carToBall, maxBallGoalDist, raycastMask, QueryTriggerInteraction.Collide);
-        float ballGoalAlignmentAngle = 0;
+        ballGoalAlignmentAngle = 0;
         if (!ballAndCarAligned)
         {
             
@@ -184,9 +189,9 @@ public class ShotPredictionAgent : OneVsOneAgent
             Vector3 carToIntersection = intersection - transform.localPosition;
             ballGoalAlignmentAngle = Vector3.Angle(carToIntersection, carToBall);
         }
-        float penalty = carToBallDist + ballGoalScale * ballToGoalDist + angleScale * ballGoalAlignmentAngle;
+        penalty = carToBallDist + ballGoalScale * ballToGoalDist + angleScale * ballGoalAlignmentAngle;
         float maxPenalty = maxCarBallDist + ballGoalScale * maxBallGoalDist + angleScale * 180f;
-        AddReward(-timePenalty * penalty/maxPenalty);
+        AddReward(-maxTimePenalty * penalty/maxPenalty);
 
         /*
         if (team == TeamController.Team.BLUE)
