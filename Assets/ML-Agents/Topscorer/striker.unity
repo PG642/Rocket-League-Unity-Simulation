@@ -285,7 +285,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6750119729296308298, guid: d7d4e7d3a9271ea41b992cd47164035f, type: 3}
       propertyPath: defaultParameter.difficulty
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6750119729296308302, guid: d7d4e7d3a9271ea41b992cd47164035f, type: 3}
       propertyPath: m_LocalPosition.x
