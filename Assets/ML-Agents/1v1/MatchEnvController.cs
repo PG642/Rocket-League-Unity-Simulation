@@ -17,7 +17,7 @@ public class MatchEnvController : MonoBehaviour
 
     public MapData _mapData;
 
-    public int maxSteps = 120*20;
+    private int maxSteps = 120*60;
     private int _stepCount;
 
     // Start is called before the first frame update
@@ -25,7 +25,6 @@ public class MatchEnvController : MonoBehaviour
     {
         _teamController = transform.GetComponent<TeamController>();
         _teamController.Initialize();
-        maxSteps = 120 * 20;
         _ball = transform.Find("Ball");
         _ball.GetComponent<Ball>().agents = new List<ShotPredictionAgent>();
         _ball.GetComponent<Ball>().Init();
