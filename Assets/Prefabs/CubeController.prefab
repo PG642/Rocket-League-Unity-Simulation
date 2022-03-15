@@ -367,7 +367,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2524205654340989323}
   m_Material: {fileID: 13400000, guid: 296a077b1a45f9d48871c2bf4df6da5c, type: 2}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -10295,11 +10295,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 632d9afdf18b1cc448b6bc66407c5311, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableGroundStabilization: 0
+  disableWallStabilization: 0
+  disableDrift: 0
   turnRadiusCoefficient: 50
   currentSteerAngle: 0
-  driftTime: 3
-  wheelSideFriction: 8
-  wheelSideFrictionDrift: 0.5
+  driftFactor: 0.5
 --- !u!114 &8156201382413549511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10325,11 +10326,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7d623d9400c5db42bdc0cca65857859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsFirstJump: 0
-  IsSecondJump: 0
-  IsDodge: 0
-  TimerDodge: 0
-  IsCancelled: 0
+  disableDoubleJump: 0
+  isFirstJump: 0
+  isSecondJump: 0
+  isDodge: 0
+  isCancelled: 0
+  timerDodge: 0
   upForce: 0.03
   upTorque: 100
 --- !u!114 &2116498333786674321
@@ -10344,10 +10346,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 498cd74abbec0fd40a63836e21610c62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoostForceMultiplier: 1
   isBoosting: 0
-  _boostAmount: 32
-  _infiniteBoosting: 0
+  infiniteBoosting: 0
+  disableBoosting: 0
+  boostForceMultiplier: 1
+  boostAmount: 33
+  agent: {fileID: 0}
 --- !u!1 &3935954015676575273
 GameObject:
   m_ObjectHideFlags: 0
@@ -15439,7 +15443,7 @@ Transform:
   m_GameObject: {fileID: 6018635384138998012}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.2075, z: 0.1388}
-  m_LocalScale: {x: 0.8420003, y: 0.3616, z: 1.1801}
+  m_LocalScale: {x: 0.842, y: 0.3616, z: 1.1801}
   m_Children:
   - {fileID: 8387919132236064341}
   m_Father: {fileID: 5295069023348888368}
