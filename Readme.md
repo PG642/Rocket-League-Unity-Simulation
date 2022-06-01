@@ -1,14 +1,18 @@
-﻿# RoboLeague Repository
+ # Rocket League Unity Simulation
  
- ## Tests ausführen
+ ## Run tests
  
- Um Tests auszuführen, muss man in der settings json den absoluten Pfad zur Konfiguration für den Physikabgleich setzen. Aus der Json werden folgende Informationen gesammelt:
- * Absoluter Pfad zum Szenarienordner
- * Absoluter Pfad zum Testergebnisse speichern
- * Name des auszuführenden Szenarios
- 
- Diese Json muss in Unity unter Im Testszenario unter env beim Test Controller hinzugefügt werden.
+ To run tests, one must set the absolute path to the configuration for physics matching in the settings JSON. The following information is collected from  JSON:
+
+  * Absolute path to the scenario folder
+  * Absolute path to save test results
+  * Name of the scenario to run
+
+JSON must be added to the test controller in Unity under In test scenario under env. 
+
  ![image info](./Pictures/TestController.png)
  
- Zum Ausführen den TestController aktivieren und die Szene starten.
- In der Konsole warten, bis die json gespeichert worden ist.
+ Activate the TestController and start the scene.
+ 
+ Wait in the console until JSON has been saved.
+
